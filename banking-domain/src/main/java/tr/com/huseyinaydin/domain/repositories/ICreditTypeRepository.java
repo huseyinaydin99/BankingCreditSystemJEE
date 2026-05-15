@@ -2,16 +2,15 @@ package tr.com.huseyinaydin.domain.repositories;
 
 import tr.com.huseyinaydin.domain.credittype.CreditType;
 import tr.com.huseyinaydin.domain.enums.CustomerType;
+import tr.com.huseyinaydin.sharedkernel.pagination.Paginate;
+import tr.com.huseyinaydin.sharedkernel.pagination.PaginationRequest;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-public interface ICreditTypeRepository {
-    Optional<CreditType> findById(UUID id);
-    CreditType save(CreditType creditType);
-    void delete(UUID id);
-    List<CreditType> findAll();
-    List<CreditType> findByCustomerType(CustomerType customerType);
-    List<CreditType> findByParentCreditTypeId(UUID parentCreditTypeId);
+public interface ICreditTypeRepository extends IAsyncRepository<CreditType, UUID> {
+
+    Paginate<CreditType> findByCustomerType(CustomerType type, PaginationRequest pagination);
+
+    List<CreditType> findSubTypes(UUID parentId);
 }

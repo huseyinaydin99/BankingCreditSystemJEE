@@ -2,16 +2,14 @@ package tr.com.huseyinaydin.domain.repositories;
 
 import tr.com.huseyinaydin.domain.creditapplication.CreditApplication;
 import tr.com.huseyinaydin.domain.enums.CreditApplicationStatus;
+import tr.com.huseyinaydin.sharedkernel.pagination.Paginate;
+import tr.com.huseyinaydin.sharedkernel.pagination.PaginationRequest;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-public interface ICreditApplicationRepository {
-    Optional<CreditApplication> findById(UUID id);
-    CreditApplication save(CreditApplication application);
-    void delete(UUID id);
-    List<CreditApplication> findByCustomerId(UUID customerId);
-    List<CreditApplication> findByStatus(CreditApplicationStatus status);
-    boolean existsById(UUID id);
+public interface ICreditApplicationRepository extends IAsyncRepository<CreditApplication, UUID> {
+
+    Paginate<CreditApplication> findByCustomerId(UUID customerId, PaginationRequest pagination);
+
+    Paginate<CreditApplication> findByStatus(CreditApplicationStatus status, PaginationRequest pagination);
 }
