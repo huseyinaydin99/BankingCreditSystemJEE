@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.banking.credit</groupId>
+        <groupId>tr.com.huseyinaydin</groupId>
         <artifactId>enterprise-java-template</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
@@ -33,7 +33,7 @@
 
         <!-- Shared kernel: Result<T>, exception'lar, CQRS contract'ları -->
         <dependency>
-            <groupId>com.banking.credit</groupId>
+            <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-shared-kernel</artifactId>
         </dependency>
 

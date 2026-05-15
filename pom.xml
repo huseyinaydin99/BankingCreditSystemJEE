@@ -6,7 +6,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.banking.credit</groupId>
+    <groupId>tr.com.huseyinaydin</groupId>
     <artifactId>enterprise-java-template</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
@@ -90,27 +90,27 @@
                  INTERNAL MODULES
                  ================================================================ -->
             <dependency>
-                <groupId>com.banking.credit</groupId>
+                <groupId>tr.com.huseyinaydin</groupId>
                 <artifactId>banking-shared-kernel</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.banking.credit</groupId>
+                <groupId>tr.com.huseyinaydin</groupId>
                 <artifactId>banking-domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.banking.credit</groupId>
+                <groupId>tr.com.huseyinaydin</groupId>
                 <artifactId>banking-application</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.banking.credit</groupId>
+                <groupId>tr.com.huseyinaydin</groupId>
                 <artifactId>banking-infrastructure</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.banking.credit</groupId>
+                <groupId>tr.com.huseyinaydin</groupId>
                 <artifactId>banking-persistence</artifactId>
                 <version>${project.version}</version>
             </dependency>

@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.banking.credit</groupId>
+        <groupId>tr.com.huseyinaydin</groupId>
         <artifactId>enterprise-java-template</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
@@ -39,26 +39,26 @@
 
         <!-- Application katmanı (use-case interface'leri + DTO'lar) -->
         <dependency>
-            <groupId>com.banking.credit</groupId>
+            <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-application</artifactId>
         </dependency>
 
         <!-- Shared kernel (exception/response tipleri) -->
         <dependency>
-            <groupId>com.banking.credit</groupId>
+            <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-shared-kernel</artifactId>
         </dependency>
 
         <!-- Infrastructure (runtime: repository impl, security impl, mapper impl) -->
         <dependency>
-            <groupId>com.banking.credit</groupId>
+            <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-infrastructure</artifactId>
             <scope>runtime</scope>
         </dependency>
 
         <!-- Persistence (runtime: DataSource, EntityManagerFactory) -->
         <dependency>
-            <groupId>com.banking.credit</groupId>
+            <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-persistence</artifactId>
             <scope>runtime</scope>
         </dependency>
