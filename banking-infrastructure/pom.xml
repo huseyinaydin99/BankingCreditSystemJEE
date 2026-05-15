@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.banking.credit</groupId>
+        <artifactId>enterprise-java-template</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>banking-infrastructure</artifactId>
+    <packaging>jar</packaging>
+    <name>Banking Infrastructure</name>
+    <description>
+        Infrastructure implementasyonları: JPA/Hibernate repository'leri, security (JWT, HMACSHA512
+        password hashing), email/OTP helper'ları, MapStruct mapper implementasyonları,
+        Spring CQRS Mediator/Bus implementasyonu.
+    </description>
+
+    <!--
+        Bağımlılık kuralı:
+          banking-infrastructure → banking-application (interface'leri implement eder)
+          banking-infrastructure → banking-domain
+          banking-infrastructure → banking-shared-kernel
+          banking-infrastructure → Hibernate Core (JPA implementasyonu)
+          banking-infrastructure → Spring ORM, Spring TX (JPA entegrasyonu)
+          banking-infrastructure → Spring Security (JWT filter, AuthenticationManager)
+          banking-infrastructure → JJWT (JWT üretim/doğrulama)
+          banking-infrastructure → MapStruct (mapper implement eder)
+          banking-infrastructure → Hibernate Validator (validation runtime)
+    -->
+
+    <dependencies>
+
+        <!-- Application layer interface'leri -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-application</artifactId>
+        </dependency>
+
+        <!-- Domain modeli -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-domain</artifactId>
+        </dependency>
+
+        <!-- Shared kernel -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-shared-kernel</artifactId>
+        </dependency>
+
+        <!-- JPA API -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+
+        <!-- Hibernate ORM (JPA implementasyonu) -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+
+        <!-- Spring ORM: LocalContainerEntityManagerFactoryBean, HibernateJpaVendorAdapter -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
+
+        <!-- Spring TX: PlatformTransactionManager, JpaTransactionManager -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+
+        <!-- Spring Context: @Component, @Repository, ApplicationContext -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <!-- Spring Security: OncePerRequestFilter, SecurityContext, AuthenticationManager -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+
+        <!-- JWT -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- MapStruct (implementasyon üretimi) -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Hibernate Validator (validation runtime) -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.expressly</groupId>
+            <artifactId>expressly</artifactId>
+        </dependency>
+
+        <!-- Jakarta Inject -->
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+        </dependency>
+
+        <!-- Logback runtime -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+      </profile>
+      <profile name="Annotation profile for Banking Credit System - Enterprise Java Template" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.5.Final/mapstruct-processor-1.5.5.Final.jar" />
+        </processorPath>
+        <module name="banking-persistence" />
+        <module name="banking-infrastructure" />
+        <module name="banking-application" />
+        <module name="banking-domain" />
+        <module name="banking-shared-kernel" />
+        <module name="banking-web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="shared-kernel" target="17" />
+      <module name="user-application" target="17" />
+      <module name="user-domain" target="17" />
+      <module name="user-infrastructure" target="17" />
+      <module name="user-presentation" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

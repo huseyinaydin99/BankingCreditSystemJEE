@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.banking.credit</groupId>
+        <artifactId>enterprise-java-template</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>banking-domain</artifactId>
+    <packaging>jar</packaging>
+    <name>Banking Domain</name>
+    <description>
+        Bankacılık/kredi domain modeli: entity'ler, value object'ler, aggregate root'lar,
+        domain event interface'leri, repository interface'leri, enum'lar.
+        Spring ve Hibernate bağımlılığı yoktur — sadece JPA annotation API ve shared-kernel.
+    </description>
+
+    <!--
+        Bağımlılık kuralı (Clean Architecture — Dependency Rule):
+          banking-domain → banking-shared-kernel (tek dış bağımlılık)
+          banking-domain → Jakarta Persistence API (sadece @Entity, @Column vb. annotation'lar)
+          banking-domain → Spring, Hibernate, veritabanı sürücüleri GİRMEZ.
+    -->
+
+    <dependencies>
+
+        <!-- Shared kernel: Result<T>, exception'lar, CQRS contract'ları -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-shared-kernel</artifactId>
+        </dependency>
+
+        <!-- JPA Annotations — sadece @Entity, @MappedSuperclass, @Column vb. için.
+             Hibernate implementasyonu persistence katmanında kalır. -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>

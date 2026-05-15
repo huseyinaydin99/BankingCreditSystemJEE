@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.banking.credit</groupId>
+        <artifactId>enterprise-java-template</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>banking-application</artifactId>
+    <packaging>jar</packaging>
+    <name>Banking Application</name>
+    <description>
+        Use-case orchestration katmanı: CQRS command/query handler'lar, business rules sınıfları,
+        response DTO'lar, servis interface'leri, validation interface'leri, mapper interface'leri.
+        Infrastructure ve persistence bağımlılığı yoktur; sadece domain ve shared-kernel'e bağımlıdır.
+    </description>
+
+    <!--
+        Bağımlılık kuralı:
+          banking-application → banking-domain
+          banking-application → banking-shared-kernel
+          banking-application → Spring Context (DI için @Component, @Service vb.)
+          banking-application → Jakarta Validation API (handler input validation)
+          banking-application → MapStruct API (mapper interface tanımı)
+          banking-application → Hibernate, JDBC, Security impl GİRMEZ.
+    -->
+
+    <dependencies>
+
+        <!-- Domain modeli -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-domain</artifactId>
+        </dependency>
+
+        <!-- Shared kernel -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-shared-kernel</artifactId>
+        </dependency>
+
+        <!-- Spring Context: @Component, @Service, @Autowired, ApplicationContext -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <!-- Spring TX: PlatformTransactionManager interface (uygulama persistence'da) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+
+        <!-- Spring AOP: pipeline behavior interceptor'ları için -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+        </dependency>
+
+        <!-- Jakarta Validation API: @Valid, constraint annotation'ları -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+        <!-- MapStruct: mapper interface'leri bu katmanda tanımlanır -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+
+        <!-- Logback runtime -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

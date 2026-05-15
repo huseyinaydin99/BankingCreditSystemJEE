@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.banking.credit</groupId>
+        <artifactId>enterprise-java-template</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>banking-web</artifactId>
+    <packaging>war</packaging>
+    <name>Banking Web</name>
+    <description>
+        Presentation katmanı (WAR): Spring MVC REST controller'ları, JSF/Facelets Managed Bean'leri,
+        Servlet ve Filter'lar, GlobalExceptionHandler, Spring Security konfigürasyonu,
+        web.xml (veya WebApplicationInitializer), DispatcherServlet yapılandırması.
+        Tüm diğer modülleri bir araya getirir; yalnızca application ve shared-kernel'e doğrudan bağımlıdır.
+    </description>
+
+    <!--
+        Bağımlılık kuralı:
+          banking-web → banking-application (use-case'leri tetikler, interface'lere bağımlıdır)
+          banking-web → banking-shared-kernel (exception/response tipleri)
+          banking-web → banking-infrastructure (runtime: Spring boot ederken context'e dahil edilir)
+          banking-web → banking-persistence  (runtime: DataSource/EntityManagerFactory)
+          banking-web → Spring WebMVC, Spring Security Web
+          banking-web → Jakarta Servlet API (provided — container tarafından sağlanır)
+          banking-web → Jakarta Faces API  (provided — container tarafından sağlanır)
+          banking-web → Jackson (JSON serializasyon)
+    -->
+
+    <dependencies>
+
+        <!-- Application katmanı (use-case interface'leri + DTO'lar) -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-application</artifactId>
+        </dependency>
+
+        <!-- Shared kernel (exception/response tipleri) -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-shared-kernel</artifactId>
+        </dependency>
+
+        <!-- Infrastructure (runtime: repository impl, security impl, mapper impl) -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-infrastructure</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Persistence (runtime: DataSource, EntityManagerFactory) -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-persistence</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Spring WebMVC (DispatcherServlet, @RestController, @ControllerAdvice vb.) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <!-- Spring Context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <!-- Spring Security Web (filter chain, SecurityContextPersistenceFilter vb.) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+
+        <!-- Jakarta Servlet API (provided — Tomcat/WildFly/GlassFish tarafından sağlanır) -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jakarta Faces API (provided — uygulama sunucusu tarafından sağlanır) -->
+        <dependency>
+            <groupId>jakarta.faces</groupId>
+            <artifactId>jakarta.faces-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jakarta Inject (JSF Managed Bean'ler için @Named, @Inject) -->
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+        </dependency>
+
+        <!-- JSON serializasyon (REST yanıtları) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <!-- Logback runtime -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warName>banking-credit-system</warName>
+                    <!-- web.xml opsiyonel; WebApplicationInitializer kullanıyoruz -->
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

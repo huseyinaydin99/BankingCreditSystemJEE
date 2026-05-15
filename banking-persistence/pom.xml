@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.banking.credit</groupId>
+        <artifactId>enterprise-java-template</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>banking-persistence</artifactId>
+    <packaging>jar</packaging>
+    <name>Banking Persistence</name>
+    <description>
+        Persistence altyapı konfigürasyonu: DataSource (HikariCP), EntityManagerFactory,
+        JpaTransactionManager, Hibernate dialect ve property'leri, Oracle-uyumlu DDL script'leri.
+        Entity sınıfları banking-domain'den gelir; bu modül sadece konfigürasyon ve migration içerir.
+    </description>
+
+    <!--
+        Bağımlılık kuralı:
+          banking-persistence → banking-domain (entity sınıfları için scan)
+          banking-persistence → banking-shared-kernel
+          banking-persistence → Hibernate Core, Spring ORM, Spring TX
+          banking-persistence → Oracle JDBC, HikariCP
+          banking-persistence → banking-application GİRMEZ (döngüsel bağımlılık riski)
+
+        Not: banking-persistence, banking-infrastructure'dan ayrıdır; persistence sadece
+        veritabanı bağlantı/session factory konfigürasyonunu içerir; repository implementasyonları
+        banking-infrastructure'dadır.
+    -->
+
+    <dependencies>
+
+        <!-- Domain (entity scan için) -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-domain</artifactId>
+        </dependency>
+
+        <!-- Shared kernel -->
+        <dependency>
+            <groupId>com.banking.credit</groupId>
+            <artifactId>banking-shared-kernel</artifactId>
+        </dependency>
+
+        <!-- JPA API -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+
+        <!-- Hibernate ORM -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+
+        <!-- Spring ORM & TX -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <!-- Oracle JDBC -->
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
+        </dependency>
+
+        <!-- HikariCP Connection Pool -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
+        <!-- Logback runtime -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Test: H2 in-memory (persistence testleri için) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

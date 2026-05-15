@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.banking.credit</groupId>
+        <artifactId>enterprise-java-template</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>banking-shared-kernel</artifactId>
+    <packaging>jar</packaging>
+    <name>Banking Shared Kernel</name>
+    <description>
+        Cross-cutting tipler: Result monad, exception hiyerarşisi, Paginate, Guard, CQRS contract'ları.
+        Hiçbir domain ya da framework modülüne bağımlı değildir; tüm modüller bu modüle bağımlıdır.
+    </description>
+
+    <!--
+        Bağımlılık kuralı:
+          banking-shared-kernel → dışarıya bağımlılık YOK.
+          Bu modül saf Java + SLF4J API + Jakarta Validation API'dan ibarettir.
+          Spring, Hibernate, veritabanı sürücüleri bu modüle GİRMEZ.
+    -->
+
+    <dependencies>
+
+        <!-- Validation API (sadece constraint annotation'ları için) -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+        <!-- Logback runtime (shared-kernel log üretir; diğer modüller ihtiyaç duydukça override eder) -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>
