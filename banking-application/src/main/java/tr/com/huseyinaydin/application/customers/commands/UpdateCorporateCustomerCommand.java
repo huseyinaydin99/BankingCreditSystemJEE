@@ -1,6 +1,7 @@
 package tr.com.huseyinaydin.application.customers.commands;
 
 import org.springframework.stereotype.Component;
+import tr.com.huseyinaydin.application.customers.dtos.UpdatedCorporateCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.CorporateCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
@@ -9,7 +10,6 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record UpdateCorporateCustomerCommand(
@@ -22,19 +22,12 @@ public record UpdateCorporateCustomerCommand(
         String phoneNumber,
         String email,
         String address
-) implements ICommand<UpdateCorporateCustomerCommand.Response> {
-
-    public record Response(
-            UUID id,
-            String companyName,
-            String email,
-            LocalDateTime updatedDate
-    ) {}
+) implements ICommand<UpdatedCorporateCustomerResponse> {
 
     @Component
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public static class Handler
-            implements ICommandHandler<UpdateCorporateCustomerCommand, Response> {
+            implements ICommandHandler<UpdateCorporateCustomerCommand, UpdatedCorporateCustomerResponse> {
 
         private final IUnitOfWork uow;
         private final CorporateCustomerBusinessRules businessRules;
@@ -49,7 +42,7 @@ public record UpdateCorporateCustomerCommand(
         }
 
         @Override
-        public Response handle(UpdateCorporateCustomerCommand command) {
+        public UpdatedCorporateCustomerResponse handle(UpdateCorporateCustomerCommand command) {
             businessRules.customerShouldExistWhenRequested(command.id());
 
             CorporateCustomer customer = uow.corporateCustomers()
@@ -71,11 +64,11 @@ public record UpdateCorporateCustomerCommand(
             uow.corporateCustomers().update(customer);
             uow.commit();
 
-            return new Response(
+            return new UpdatedCorporateCustomerResponse(
                     customer.getId(),
                     customer.getCompanyName(),
                     customer.getEmail(),
-                    customer.getUpdatedDate()
+                    "Kurumsal müşteri başarıyla güncellendi"
             );
         }
     }

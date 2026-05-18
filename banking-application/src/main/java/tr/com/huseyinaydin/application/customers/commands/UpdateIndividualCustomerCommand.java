@@ -1,6 +1,7 @@
 package tr.com.huseyinaydin.application.customers.commands;
 
 import org.springframework.stereotype.Component;
+import tr.com.huseyinaydin.application.customers.dtos.UpdatedIndividualCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.IndividualCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
@@ -9,7 +10,6 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record UpdateIndividualCustomerCommand(
@@ -22,19 +22,12 @@ public record UpdateIndividualCustomerCommand(
         String phoneNumber,
         String email,
         String address
-) implements ICommand<UpdateIndividualCustomerCommand.Response> {
-
-    public record Response(
-            UUID id,
-            String fullName,
-            String email,
-            LocalDateTime updatedDate
-    ) {}
+) implements ICommand<UpdatedIndividualCustomerResponse> {
 
     @Component
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public static class Handler
-            implements ICommandHandler<UpdateIndividualCustomerCommand, Response> {
+            implements ICommandHandler<UpdateIndividualCustomerCommand, UpdatedIndividualCustomerResponse> {
 
         private final IUnitOfWork uow;
         private final IndividualCustomerBusinessRules businessRules;
@@ -49,7 +42,7 @@ public record UpdateIndividualCustomerCommand(
         }
 
         @Override
-        public Response handle(UpdateIndividualCustomerCommand command) {
+        public UpdatedIndividualCustomerResponse handle(UpdateIndividualCustomerCommand command) {
             businessRules.customerShouldExistWhenRequested(command.id());
 
             IndividualCustomer customer = uow.individualCustomers()
@@ -71,11 +64,12 @@ public record UpdateIndividualCustomerCommand(
             uow.individualCustomers().update(customer);
             uow.commit();
 
-            return new Response(
+            return new UpdatedIndividualCustomerResponse(
                     customer.getId(),
-                    customer.getFullName(),
+                    customer.getFirstName(),
+                    customer.getLastName(),
                     customer.getEmail(),
-                    customer.getUpdatedDate()
+                    "Bireysel müşteri başarıyla güncellendi"
             );
         }
     }

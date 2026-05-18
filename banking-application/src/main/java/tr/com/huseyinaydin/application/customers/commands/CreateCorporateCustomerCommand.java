@@ -1,6 +1,7 @@
 package tr.com.huseyinaydin.application.customers.commands;
 
 import org.springframework.stereotype.Component;
+import tr.com.huseyinaydin.application.customers.dtos.CreatedCorporateCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.CorporateCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IPasswordHashService;
@@ -12,8 +13,6 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 public record CreateCorporateCustomerCommand(
         String companyName,
@@ -26,20 +25,12 @@ public record CreateCorporateCustomerCommand(
         String email,
         String address,
         String password
-) implements ICommand<CreateCorporateCustomerCommand.Response> {
-
-    public record Response(
-            UUID id,
-            String companyName,
-            String taxNumber,
-            String email,
-            LocalDateTime createdDate
-    ) {}
+) implements ICommand<CreatedCorporateCustomerResponse> {
 
     @Component
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public static class Handler
-            implements ICommandHandler<CreateCorporateCustomerCommand, Response> {
+            implements ICommandHandler<CreateCorporateCustomerCommand, CreatedCorporateCustomerResponse> {
 
         private final IUnitOfWork uow;
         private final CorporateCustomerBusinessRules businessRules;
@@ -57,7 +48,7 @@ public record CreateCorporateCustomerCommand(
         }
 
         @Override
-        public Response handle(CreateCorporateCustomerCommand command) {
+        public CreatedCorporateCustomerResponse handle(CreateCorporateCustomerCommand command) {
             businessRules.taxNumberCannotBeDuplicatedWhenInserted(command.taxNumber());
 
             CorporateCustomer customer = new CorporateCustomer(
@@ -88,12 +79,11 @@ public record CreateCorporateCustomerCommand(
             uow.applicationUsers().save(user);
             uow.commit();
 
-            return new Response(
+            return new CreatedCorporateCustomerResponse(
                     customer.getId(),
                     customer.getCompanyName(),
                     customer.getTaxNumber(),
-                    customer.getEmail(),
-                    customer.getCreatedDate()
+                    "Kurumsal müşteri başarıyla oluşturuldu"
             );
         }
     }

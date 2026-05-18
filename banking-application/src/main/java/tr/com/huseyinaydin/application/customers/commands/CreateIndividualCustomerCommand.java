@@ -1,6 +1,7 @@
 package tr.com.huseyinaydin.application.customers.commands;
 
 import org.springframework.stereotype.Component;
+import tr.com.huseyinaydin.application.customers.dtos.CreatedIndividualCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.IndividualCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IPasswordHashService;
@@ -12,8 +13,6 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 public record CreateIndividualCustomerCommand(
         String firstName,
@@ -26,20 +25,12 @@ public record CreateIndividualCustomerCommand(
         String email,
         String address,
         String password
-) implements ICommand<CreateIndividualCustomerCommand.Response> {
-
-    public record Response(
-            UUID id,
-            String fullName,
-            String email,
-            String nationalId,
-            LocalDateTime createdDate
-    ) {}
+) implements ICommand<CreatedIndividualCustomerResponse> {
 
     @Component
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public static class Handler
-            implements ICommandHandler<CreateIndividualCustomerCommand, Response> {
+            implements ICommandHandler<CreateIndividualCustomerCommand, CreatedIndividualCustomerResponse> {
 
         private final IUnitOfWork uow;
         private final IndividualCustomerBusinessRules businessRules;
@@ -57,7 +48,7 @@ public record CreateIndividualCustomerCommand(
         }
 
         @Override
-        public Response handle(CreateIndividualCustomerCommand command) {
+        public CreatedIndividualCustomerResponse handle(CreateIndividualCustomerCommand command) {
             businessRules.nationalIdCannotBeDuplicatedWhenInserted(command.nationalId());
 
             IndividualCustomer customer = new IndividualCustomer(
@@ -88,12 +79,13 @@ public record CreateIndividualCustomerCommand(
             uow.applicationUsers().save(user);
             uow.commit();
 
-            return new Response(
+            return new CreatedIndividualCustomerResponse(
                     customer.getId(),
-                    customer.getFullName(),
-                    customer.getEmail(),
+                    customer.getFirstName(),
+                    customer.getLastName(),
                     customer.getNationalId(),
-                    customer.getCreatedDate()
+                    customer.getEmail(),
+                    "Bireysel müşteri başarıyla oluşturuldu"
             );
         }
     }
