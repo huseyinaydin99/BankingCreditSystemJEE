@@ -9,26 +9,26 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "individual_customers")
-@DiscriminatorValue("INDIVIDUAL")
+@Table(name = "INDIVIDUAL_CUSTOMERS")
+@DiscriminatorValue("1")
 public class IndividualCustomer extends Customer {
 
-    @Column(name = "first_name", nullable = false, length = 100)
+    @Column(name = "FIRST_NAME", nullable = false, length = 50)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 100)
+    @Column(name = "LAST_NAME", nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "national_id", nullable = false, unique = true, length = 11)
+    @Column(name = "NATIONAL_ID", nullable = false, unique = true, length = 11)
     private String nationalId;
 
-    @Column(name = "date_of_birth")
+    @Column(name = "DATE_OF_BIRTH")
     private LocalDate dateOfBirth;
 
-    @Column(name = "mother_name", length = 100)
+    @Column(name = "MOTHER_NAME", length = 100)
     private String motherName;
 
-    @Column(name = "father_name", length = 100)
+    @Column(name = "FATHER_NAME", length = 100)
     private String fatherName;
 
     protected IndividualCustomer() {

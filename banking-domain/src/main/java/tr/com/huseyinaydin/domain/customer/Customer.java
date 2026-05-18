@@ -12,24 +12,24 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 @jakarta.persistence.Entity
-@Table(name = "customers")
+@Table(name = "CUSTOMERS")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "customer_type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "CUSTOMER_TYPE_CODE", discriminatorType = DiscriminatorType.STRING)
 public abstract class Customer extends Entity<UUID> {
 
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$");
 
-    @Column(name = "phone_number", length = 20)
+    @Column(name = "PHONE_NUMBER", length = 20)
     private String phoneNumber;
 
-    @Column(name = "email", nullable = false, length = 150)
+    @Column(name = "EMAIL", nullable = false, length = 150)
     private String email;
 
-    @Column(name = "address", length = 500)
+    @Column(name = "ADDRESS", length = 500)
     private String address;
 
-    @Column(name = "is_active", nullable = false)
+    @Column(name = "IS_ACTIVE", nullable = false)
     private boolean isActive;
 
     protected Customer() {

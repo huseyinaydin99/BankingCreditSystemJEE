@@ -5,8 +5,11 @@ import tr.com.huseyinaydin.domain.enums.CustomerType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,38 +17,39 @@ import java.util.List;
 import java.util.UUID;
 
 @jakarta.persistence.Entity
-@Table(name = "credit_types")
+@Table(name = "CREDIT_TYPES")
 public class CreditType extends Entity<UUID> {
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "NAME", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "description", length = 500)
+    @Column(name = "DESCRIPTION", length = 500)
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "customer_type", nullable = false, length = 20)
+    @Column(name = "CUSTOMER_TYPE", nullable = false, length = 20)
     private CustomerType customerType;
 
-    @Column(name = "min_amount", nullable = false, precision = 19, scale = 2)
+    @Column(name = "MIN_AMOUNT", nullable = false, precision = 18, scale = 2)
     private BigDecimal minAmount;
 
-    @Column(name = "max_amount", nullable = false, precision = 19, scale = 2)
+    @Column(name = "MAX_AMOUNT", nullable = false, precision = 18, scale = 2)
     private BigDecimal maxAmount;
 
-    @Column(name = "min_term", nullable = false)
+    @Column(name = "MIN_TERM", nullable = false)
     private int minTerm;
 
-    @Column(name = "max_term", nullable = false)
+    @Column(name = "MAX_TERM", nullable = false)
     private int maxTerm;
 
-    @Column(name = "base_interest_rate", nullable = false, precision = 5, scale = 2)
+    @Column(name = "BASE_INTEREST_RATE", nullable = false, precision = 5, scale = 2)
     private BigDecimal baseInterestRate;
 
-    @Column(name = "parent_credit_type_id")
-    private UUID parentCreditTypeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PARENT_CREDIT_TYPE_ID")
+    private CreditType parentCreditType;
 
-    @Transient
+    @OneToMany(mappedBy = "parentCreditType", fetch = FetchType.LAZY)
     private List<CreditType> subCreditTypes = new ArrayList<>();
 
     protected CreditType() {
@@ -67,7 +71,11 @@ public class CreditType extends Entity<UUID> {
     }
 
     public boolean isSubType() {
-        return parentCreditTypeId != null;
+        return parentCreditType != null;
+    }
+
+    public UUID getParentCreditTypeId() {
+        return parentCreditType != null ? parentCreditType.getId() : null;
     }
 
     public String getName() { return name; }
@@ -94,8 +102,8 @@ public class CreditType extends Entity<UUID> {
     public BigDecimal getBaseInterestRate() { return baseInterestRate; }
     public void setBaseInterestRate(BigDecimal baseInterestRate) { this.baseInterestRate = baseInterestRate; }
 
-    public UUID getParentCreditTypeId() { return parentCreditTypeId; }
-    public void setParentCreditTypeId(UUID parentCreditTypeId) { this.parentCreditTypeId = parentCreditTypeId; }
+    public CreditType getParentCreditType() { return parentCreditType; }
+    public void setParentCreditType(CreditType parentCreditType) { this.parentCreditType = parentCreditType; }
 
     public List<CreditType> getSubCreditTypes() { return subCreditTypes; }
     public void setSubCreditTypes(List<CreditType> subCreditTypes) { this.subCreditTypes = subCreditTypes; }

@@ -9,26 +9,26 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "corporate_customers")
-@DiscriminatorValue("CORPORATE")
+@Table(name = "CORPORATE_CUSTOMERS")
+@DiscriminatorValue("2")
 public class CorporateCustomer extends Customer {
 
-    @Column(name = "company_name", nullable = false, length = 200)
+    @Column(name = "COMPANY_NAME", nullable = false, length = 100)
     private String companyName;
 
-    @Column(name = "tax_number", nullable = false, unique = true, length = 10)
+    @Column(name = "TAX_NUMBER", nullable = false, unique = true, length = 10)
     private String taxNumber;
 
-    @Column(name = "tax_office", length = 100)
+    @Column(name = "TAX_OFFICE", length = 100)
     private String taxOffice;
 
-    @Column(name = "company_registration_number", length = 50)
+    @Column(name = "COMPANY_REGISTRATION_NUMBER", length = 50)
     private String companyRegistrationNumber;
 
-    @Column(name = "authorized_person_name", length = 200)
+    @Column(name = "AUTHORIZED_PERSON_NAME", length = 200)
     private String authorizedPersonName;
 
-    @Column(name = "company_foundation_date")
+    @Column(name = "COMPANY_FOUNDATION_DATE")
     private LocalDate companyFoundationDate;
 
     protected CorporateCustomer() {

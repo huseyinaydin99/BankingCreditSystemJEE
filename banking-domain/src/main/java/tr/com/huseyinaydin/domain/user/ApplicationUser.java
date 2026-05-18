@@ -10,26 +10,26 @@ import jakarta.persistence.Table;
 import java.util.UUID;
 
 @jakarta.persistence.Entity
-@Table(name = "application_users")
+@Table(name = "APPLICATION_USERS")
 public class ApplicationUser extends Entity<UUID> {
 
-    @Column(name = "customer_id")
+    @Column(name = "CUSTOMER_ID")
     private UUID customerId;
 
-    @Column(name = "email", nullable = false, unique = true, length = 150)
+    @Column(name = "EMAIL", nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "password_hash")
+    @Column(name = "PASSWORD_HASH", columnDefinition = "RAW(64)")
     private byte[] passwordHash;
 
-    @Column(name = "password_salt")
+    @Column(name = "PASSWORD_SALT", columnDefinition = "RAW(64)")
     private byte[] passwordSalt;
 
-    @Column(name = "is_active", nullable = false)
+    @Column(name = "IS_ACTIVE", nullable = false)
     private boolean isActive;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 20)
+    @Column(name = "ROLE", nullable = false, length = 20)
     private UserRole role;
 
     protected ApplicationUser() {

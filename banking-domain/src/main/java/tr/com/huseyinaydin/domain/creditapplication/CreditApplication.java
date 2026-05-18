@@ -1,10 +1,15 @@
 package tr.com.huseyinaydin.domain.creditapplication;
 
 import tr.com.huseyinaydin.domain.common.Entity;
+import tr.com.huseyinaydin.domain.customer.Customer;
 import tr.com.huseyinaydin.domain.enums.CreditApplicationStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
@@ -13,52 +18,54 @@ import java.math.RoundingMode;
 import java.util.UUID;
 
 @jakarta.persistence.Entity
-@Table(name = "credit_applications")
+@Table(name = "CREDIT_APPLICATIONS")
 public class CreditApplication extends Entity<UUID> {
 
-    @Column(name = "customer_id", nullable = false)
-    private UUID customerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false,
+                foreignKey = @ForeignKey(name = "FK_CREDIT_APP_CUSTOMER"))
+    private Customer customer;
 
-    @Column(name = "credit_type_id", nullable = false)
+    @Column(name = "CREDIT_TYPE_ID", nullable = false)
     private UUID creditTypeId;
 
-    @Column(name = "requested_amount", nullable = false, precision = 19, scale = 2)
+    @Column(name = "REQUESTED_AMOUNT", nullable = false, precision = 18, scale = 2)
     private BigDecimal requestedAmount;
 
-    @Column(name = "requested_term", nullable = false)
+    @Column(name = "REQUESTED_TERM", nullable = false)
     private int requestedTerm;
 
-    @Column(name = "approved_amount", precision = 19, scale = 2)
+    @Column(name = "APPROVED_AMOUNT", precision = 18, scale = 2)
     private BigDecimal approvedAmount;
 
-    @Column(name = "approved_term")
+    @Column(name = "APPROVED_TERM")
     private int approvedTerm;
 
-    @Column(name = "interest_rate", precision = 5, scale = 2)
+    @Column(name = "INTEREST_RATE", precision = 5, scale = 2)
     private BigDecimal interestRate;
 
-    @Column(name = "monthly_payment", precision = 19, scale = 2)
+    @Column(name = "MONTHLY_PAYMENT", precision = 18, scale = 2)
     private BigDecimal monthlyPayment;
 
-    @Column(name = "total_payment", precision = 19, scale = 2)
+    @Column(name = "TOTAL_PAYMENT", precision = 18, scale = 2)
     private BigDecimal totalPayment;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "STATUS_CODE", nullable = false)
     private CreditApplicationStatus status;
 
-    @Column(name = "rejection_reason", length = 500)
+    @Column(name = "REJECTION_REASON", length = 500)
     private String rejectionReason;
 
     protected CreditApplication() {
         super();
     }
 
-    public CreditApplication(UUID customerId, UUID creditTypeId,
+    public CreditApplication(Customer customer, UUID creditTypeId,
                              BigDecimal requestedAmount, int requestedTerm) {
         super();
         this.id = UUID.randomUUID();
-        this.customerId = customerId;
+        this.customer = customer;
         this.creditTypeId = creditTypeId;
         this.requestedAmount = requestedAmount;
         this.requestedTerm = requestedTerm;
@@ -85,9 +92,6 @@ public class CreditApplication extends Entity<UUID> {
     }
 
     public void calculatePayments(BigDecimal amount, int term, BigDecimal annualRate) {
-        // r = annualRate / 1200
-        // monthly = amount * r * (1+r)^term / ((1+r)^term - 1)
-        // total = monthly * term
         MathContext mc = new MathContext(15, RoundingMode.HALF_UP);
         BigDecimal r = annualRate.divide(BigDecimal.valueOf(1200), mc);
         BigDecimal onePlusR = BigDecimal.ONE.add(r, mc);
@@ -99,7 +103,8 @@ public class CreditApplication extends Entity<UUID> {
                                           .setScale(2, RoundingMode.HALF_UP);
     }
 
-    public UUID getCustomerId() { return customerId; }
+    public Customer getCustomer() { return customer; }
+    public UUID getCustomerId() { return customer != null ? customer.getId() : null; }
     public UUID getCreditTypeId() { return creditTypeId; }
     public BigDecimal getRequestedAmount() { return requestedAmount; }
     public int getRequestedTerm() { return requestedTerm; }
