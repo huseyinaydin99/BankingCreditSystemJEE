@@ -1,5 +1,11 @@
 package tr.com.huseyinaydin.application.credittype.commands;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
 import tr.com.huseyinaydin.domain.credittype.CreditType;
@@ -13,14 +19,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record CreateCreditTypeCommand(
-        String name,
+        @NotBlank String name,
         String description,
-        CustomerType customerType,
-        BigDecimal minAmount,
-        BigDecimal maxAmount,
-        int minTerm,
-        int maxTerm,
-        BigDecimal baseInterestRate,
+        @NotNull CustomerType customerType,
+        @NotNull @Positive BigDecimal minAmount,
+        @NotNull @Positive BigDecimal maxAmount,
+        @Min(1) int minTerm,
+        @Min(1) int maxTerm,
+        @NotNull @DecimalMin("0.01") @DecimalMax("99.99") BigDecimal baseInterestRate,
         UUID parentCreditTypeId
 ) implements ICommand<CreateCreditTypeCommand.Response> {
 

@@ -1,11 +1,13 @@
 package tr.com.huseyinaydin.application.config;
 
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import tr.com.huseyinaydin.application.pipeline.ICurrentUserService;
 import tr.com.huseyinaydin.application.pipeline.behavior.AuthorizationBehavior;
 import tr.com.huseyinaydin.application.pipeline.behavior.LoggingBehavior;
@@ -17,9 +19,16 @@ import tr.com.huseyinaydin.application.pipeline.behavior.ValidationBehavior;
 public class BehaviorConfig {
 
     @Bean
+    public LocalValidatorFactoryBean localValidatorFactoryBean() {
+        return new LocalValidatorFactoryBean();
+    }
+
+    @Bean
     @Order(1)
-    public ValidationBehavior<?, ?> validationBehavior(ApplicationContext context) {
-        return new ValidationBehavior<>(context);
+    public ValidationBehavior<?, ?> validationBehavior(
+            ApplicationContext context,
+            @Autowired(required = false) Validator beanValidator) {
+        return new ValidationBehavior<>(context, beanValidator);
     }
 
     @Bean

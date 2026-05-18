@@ -1,11 +1,16 @@
 package tr.com.huseyinaydin.application.customers.commands;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.customers.dtos.CreatedCorporateCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.CorporateCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IPasswordHashService;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.application.validation.constraints.PhoneNumber;
+import tr.com.huseyinaydin.application.validation.constraints.TurkishTaxNumber;
 import tr.com.huseyinaydin.domain.customer.CorporateCustomer;
 import tr.com.huseyinaydin.domain.enums.UserRole;
 import tr.com.huseyinaydin.domain.user.ApplicationUser;
@@ -15,16 +20,16 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 import java.time.LocalDate;
 
 public record CreateCorporateCustomerCommand(
-        String companyName,
-        String taxNumber,
+        @NotBlank @Size(max = 100) String companyName,
+        @NotBlank @TurkishTaxNumber String taxNumber,
         String taxOffice,
         String companyRegistrationNumber,
-        String authorizedPersonName,
+        @NotBlank String authorizedPersonName,
         LocalDate companyFoundationDate,
-        String phoneNumber,
-        String email,
+        @NotBlank @PhoneNumber String phoneNumber,
+        @NotBlank @Email String email,
         String address,
-        String password
+        @NotBlank String password
 ) implements ICommand<CreatedCorporateCustomerResponse> {
 
     @Component

@@ -1,8 +1,12 @@
 package tr.com.huseyinaydin.application.creditapplication.commands;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.creditapplication.rules.CreditApplicationBusinessRules;
-import tr.com.huseyinaydin.application.customers.rules.IndividualCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
 import tr.com.huseyinaydin.domain.creditapplication.CreditApplication;
 import tr.com.huseyinaydin.domain.credittype.CreditType;
@@ -16,10 +20,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record CreateCreditApplicationCommand(
-        UUID customerId,
-        UUID creditTypeId,
-        BigDecimal requestedAmount,
-        int requestedTerm
+        @NotNull UUID customerId,
+        @NotNull UUID creditTypeId,
+        @NotNull @Positive @DecimalMax("10000000") BigDecimal requestedAmount,
+        @Min(1) @Max(360) int requestedTerm
 ) implements ICommand<CreateCreditApplicationCommand.Response> {
 
     public record Response(

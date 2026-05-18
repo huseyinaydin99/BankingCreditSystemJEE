@@ -1,11 +1,17 @@
 package tr.com.huseyinaydin.application.customers.commands;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.customers.dtos.CreatedIndividualCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.IndividualCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IPasswordHashService;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.application.validation.constraints.PhoneNumber;
+import tr.com.huseyinaydin.application.validation.constraints.TurkishNationalId;
 import tr.com.huseyinaydin.domain.customer.IndividualCustomer;
 import tr.com.huseyinaydin.domain.enums.UserRole;
 import tr.com.huseyinaydin.domain.user.ApplicationUser;
@@ -15,16 +21,16 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 import java.time.LocalDate;
 
 public record CreateIndividualCustomerCommand(
-        String firstName,
-        String lastName,
-        String nationalId,
-        LocalDate dateOfBirth,
+        @NotBlank @Size(max = 50) String firstName,
+        @NotBlank @Size(max = 50) String lastName,
+        @NotBlank @TurkishNationalId String nationalId,
+        @NotNull LocalDate dateOfBirth,
         String motherName,
         String fatherName,
-        String phoneNumber,
-        String email,
+        @NotBlank @PhoneNumber String phoneNumber,
+        @NotBlank @Email String email,
         String address,
-        String password
+        @NotBlank String password
 ) implements ICommand<CreatedIndividualCustomerResponse> {
 
     @Component
