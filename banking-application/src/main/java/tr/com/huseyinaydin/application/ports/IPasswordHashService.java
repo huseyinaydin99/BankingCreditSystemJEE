@@ -2,9 +2,7 @@ package tr.com.huseyinaydin.application.ports;
 
 public interface IPasswordHashService {
 
-    byte[] generateSalt();
+    PasswordHash createHash(String plainPassword);
 
-    byte[] hashPassword(String plainPassword, byte[] salt);
-
-    boolean verify(String plainPassword, byte[] hash, byte[] salt);
+    boolean verifyHash(String plainPassword, PasswordHash hash);
 }

@@ -9,6 +9,7 @@ import tr.com.huseyinaydin.application.customers.dtos.CreatedIndividualCustomerR
 import tr.com.huseyinaydin.application.customers.rules.IndividualCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IPasswordHashService;
+import tr.com.huseyinaydin.application.ports.PasswordHash;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
 import tr.com.huseyinaydin.application.validation.constraints.PhoneNumber;
 import tr.com.huseyinaydin.application.validation.constraints.TurkishNationalId;
@@ -69,14 +70,13 @@ public record CreateIndividualCustomerCommand(
             customer.setPhoneNumber(command.phoneNumber());
             customer.setAddress(command.address());
 
-            byte[] salt = passwordHashService.generateSalt();
-            byte[] hash = passwordHashService.hashPassword(command.password(), salt);
+            PasswordHash passwordHash = passwordHashService.createHash(command.password());
 
             ApplicationUser user = new ApplicationUser(
                     customer.getId(),
                     command.email(),
-                    hash,
-                    salt,
+                    passwordHash.hash(),
+                    passwordHash.salt(),
                     UserRole.CUSTOMER
             );
 

@@ -12,6 +12,8 @@ public interface CreditApplicationMapper {
     // app.getCustomerId() — convenience method on entity
     // app.getCustomer().getFullName() — requires lazy-loaded Customer; safe within a transaction
     // creditType — second source parameter; may be null if credit type is deleted
+    @Mapping(target = "id", source = "app.id")
+    @Mapping(target = "createdDate", source = "app.createdDate")
     @Mapping(target = "customerId",
              expression = "java(app.getCustomerId())")
     @Mapping(target = "customerName",

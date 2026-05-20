@@ -8,6 +8,7 @@ import tr.com.huseyinaydin.application.customers.dtos.CreatedCorporateCustomerRe
 import tr.com.huseyinaydin.application.customers.rules.CorporateCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IPasswordHashService;
+import tr.com.huseyinaydin.application.ports.PasswordHash;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
 import tr.com.huseyinaydin.application.validation.constraints.PhoneNumber;
 import tr.com.huseyinaydin.application.validation.constraints.TurkishTaxNumber;
@@ -68,14 +69,13 @@ public record CreateCorporateCustomerCommand(
             customer.setPhoneNumber(command.phoneNumber());
             customer.setAddress(command.address());
 
-            byte[] salt = passwordHashService.generateSalt();
-            byte[] hash = passwordHashService.hashPassword(command.password(), salt);
+            PasswordHash passwordHash = passwordHashService.createHash(command.password());
 
             ApplicationUser user = new ApplicationUser(
                     customer.getId(),
                     command.email(),
-                    hash,
-                    salt,
+                    passwordHash.hash(),
+                    passwordHash.salt(),
                     UserRole.CUSTOMER
             );
 

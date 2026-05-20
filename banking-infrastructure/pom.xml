@@ -136,6 +136,13 @@
             <artifactId>expressly</artifactId>
         </dependency>
 
+        <!-- Jakarta Servlet API: OncePerRequestFilter, HttpServletRequest/Response -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Jakarta Inject -->
         <dependency>
             <groupId>jakarta.inject</groupId>
