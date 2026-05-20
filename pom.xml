@@ -283,6 +283,15 @@
             </dependency>
 
             <!-- ================================================================
+                 JAKARTA ANNOTATION (@PostConstruct, @PreDestroy vb.)
+                 ================================================================ -->
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>2.1.1</version>
+            </dependency>
+
+            <!-- ================================================================
                  DEPENDENCY INJECTION
                  ================================================================ -->
             <dependency>

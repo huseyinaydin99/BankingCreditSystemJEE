@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      lang="tr">
+
+<h:head>
+    <title>Bireysel Müşteriler</title>
+    <style>
+        .data-table { border-collapse: collapse; width: 100%; }
+        .data-table th, .data-table td { border: 1px solid #ddd; padding: 8px; }
+        .table-header { background-color: #4a90d9; color: white; }
+        .row-odd  { background-color: #f9f9f9; }
+        .row-even { background-color: #ffffff; }
+        .form-grid td { padding: 6px 10px; }
+        .messages { padding: 8px; margin-bottom: 12px; border-radius: 4px; }
+        .btn-primary { background: #4a90d9; color: white; padding: 6px 14px; border: none; cursor: pointer; }
+        .btn-danger  { background: #d9534f; color: white; padding: 4px 10px; border: none; cursor: pointer; }
+        .btn-search  { background: #5cb85c; color: white; padding: 4px 10px; border: none; cursor: pointer; }
+        .btn-default { background: #aaa; color: white; padding: 4px 10px; border: none; cursor: pointer; }
+    </style>
+</h:head>
+
+<h:body>
+
+    <h1>Bireysel Müşteri Yönetimi</h1>
+
+    <!-- Uygulama mesajları -->
+    <h:messages globalOnly="true" styleClass="messages" showDetail="true"/>
+
+    <!-- Arama formu -->
+    <h:form id="searchForm">
+        <h:panelGrid columns="3">
+            <h:outputLabel for="searchNationalId" value="TC Kimlik No:"/>
+            <h:inputText id="searchNationalId"
+                         value="#{individualCustomerBean.searchNationalId}"
+                         maxlength="11"/>
+            <h:commandButton value="Ara"
+                             action="#{individualCustomerBean.searchByNationalId}"
+                             styleClass="btn-search"/>
+        </h:panelGrid>
+        <h:commandButton value="Tümünü Göster"
+                         action="#{individualCustomerBean.loadCustomers}"
+                         styleClass="btn-default"/>
+    </h:form>
+
+    <!-- Müşteri listesi -->
+    <h:form id="listForm">
+        <h:dataTable value="#{individualCustomerBean.customers}"
+                     var="customer"
+                     styleClass="data-table"
+                     headerClass="table-header"
+                     rowClasses="row-odd,row-even"
+                     emptyDataMessage="Kayıt bulunamadı.">
+
+            <h:column>
+                <f:facet name="header">Ad</f:facet>
+                <h:outputText value="#{customer.firstName}"/>
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">Soyad</f:facet>
+                <h:outputText value="#{customer.lastName}"/>
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">TC Kimlik No</f:facet>
+                <h:outputText value="#{customer.nationalId}"/>
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">E-posta</f:facet>
+                <h:outputText value="#{customer.email}"/>
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">Telefon</f:facet>
+                <h:outputText value="#{customer.phoneNumber}"/>
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">Durum</f:facet>
+                <h:outputText value="#{customer.isActive ? 'Aktif' : 'Pasif'}"/>
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">İşlemler</f:facet>
+                <h:commandButton value="Sil"
+                                 action="#{individualCustomerBean.delete(customer.id)}"
+                                 styleClass="btn-danger"
+                                 onclick="return confirm('Bu müşteriyi silmek istediğinize emin misiniz?')"/>
+            </h:column>
+
+        </h:dataTable>
+    </h:form>
+
+    <!-- Yeni müşteri oluşturma formu -->
+    <h:form id="createForm">
+        <h:panelGroup id="createPanel">
+            <h2>Yeni Bireysel Müşteri</h2>
+
+            <h:panelGrid columns="2" styleClass="form-grid">
+
+                <h:outputLabel for="firstName" value="Ad: *"/>
+                <h:inputText id="firstName"
+                             value="#{individualCustomerBean.firstName}"
+                             required="true" maxlength="50"/>
+
+                <h:outputLabel for="lastName" value="Soyad: *"/>
+                <h:inputText id="lastName"
+                             value="#{individualCustomerBean.lastName}"
+                             required="true" maxlength="50"/>
+
+                <h:outputLabel for="nationalId" value="TC Kimlik No: *"/>
+                <h:inputText id="nationalId"
+                             value="#{individualCustomerBean.nationalId}"
+                             required="true" maxlength="11"/>
+
+                <h:outputLabel for="dateOfBirth" value="Doğum Tarihi: *"/>
+                <h:inputText id="dateOfBirth"
+                             value="#{individualCustomerBean.dateOfBirth}"
+                             required="true">
+                    <f:convertDateTime pattern="dd.MM.yyyy" type="localDate"/>
+                </h:inputText>
+
+                <h:outputLabel for="motherName" value="Anne Adı:"/>
+                <h:inputText id="motherName"
+                             value="#{individualCustomerBean.motherName}"
+                             maxlength="50"/>
+
+                <h:outputLabel for="fatherName" value="Baba Adı:"/>
+                <h:inputText id="fatherName"
+                             value="#{individualCustomerBean.fatherName}"
+                             maxlength="50"/>
+
+                <h:outputLabel for="phoneNumber" value="Telefon: *"/>
+                <h:inputText id="phoneNumber"
+                             value="#{individualCustomerBean.phoneNumber}"
+                             required="true" maxlength="15"/>
+
+                <h:outputLabel for="email" value="E-posta: *"/>
+                <h:inputText id="email"
+                             value="#{individualCustomerBean.email}"
+                             required="true" maxlength="150"/>
+
+                <h:outputLabel for="address" value="Adres:"/>
+                <h:inputTextarea id="address"
+                                 value="#{individualCustomerBean.address}"
+                                 rows="3" cols="40"/>
+
+                <h:outputLabel for="password" value="Şifre: *"/>
+                <h:inputSecret id="password"
+                               value="#{individualCustomerBean.password}"
+                               required="true"/>
+
+            </h:panelGrid>
+
+            <h:commandButton value="Kaydet"
+                             action="#{individualCustomerBean.save}"
+                             styleClass="btn-primary"/>
+            <h:commandButton value="Temizle"
+                             action="#{individualCustomerBean.prepareCreate}"
+                             immediate="true"
+                             styleClass="btn-default"/>
+        </h:panelGroup>
+    </h:form>
+
+</h:body>
+</html>

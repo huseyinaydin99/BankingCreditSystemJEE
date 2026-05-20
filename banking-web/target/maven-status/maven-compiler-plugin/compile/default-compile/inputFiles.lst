@@ -1,0 +1,16 @@
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/config/BankingWebConfig.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/config/SecurityWebAppInitializer.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/config/WebAppInitializer.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/CorporateCustomersController.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/CreditApplicationsController.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/CreditTypesController.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/IndividualCustomersController.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/exception/ErrorResponse.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/exception/FieldError.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/exception/GlobalExceptionHandler.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/exception/ValidationErrorResponse.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/filter/CorsFilter.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/jsf/AbstractManagedBean.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/jsf/CreditApplicationBean.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/jsf/IndividualCustomerBean.java
+/Users/huseyinaydin99/Desktop/Projects/enterprise-java-template/banking-web/src/main/java/tr/com/huseyinaydin/web/servlet/HealthServlet.java

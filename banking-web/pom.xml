@@ -99,6 +99,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Jakarta Annotation (@PostConstruct, @PreDestroy) -->
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+
         <!-- Jakarta Inject (JSF Managed Bean'ler için @Named, @Inject) -->
         <dependency>
             <groupId>jakarta.inject</groupId>
