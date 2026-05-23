@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui"
+      lang="tr">
+
+<h:head>
+    <title>Bireysel Müşteriler — PrimeFaces</title>
+</h:head>
+
+<h:body styleClass="p-4">
+
+    <!-- Bildirim alanı (tüm formların dışında, mutlak ID: growl) -->
+    <p:growl id="growl" showDetail="true" life="4000" sticky="false"/>
+
+    <h2 style="margin-bottom: 1rem;">Bireysel Müşteri Yönetimi</h2>
+
+    <!-- ============================================================
+         ARAMA FORMU
+    ============================================================ -->
+    <h:form id="searchForm">
+        <p:toolbar style="margin-bottom: 1rem;">
+            <p:toolbarGroup>
+                <p:outputLabel for="searchNationalId" value="TC Kimlik No:&#160;"/>
+                <p:inputText id="searchNationalId"
+                             value="#{individualCustomerBean.searchNationalId}"
+                             maxlength="11"
+                             placeholder="11 haneli TC kimlik no"
+                             style="margin-right: 0.5rem;"/>
+                <p:commandButton value="Ara"
+                                 icon="pi pi-search"
+                                 action="#{individualCustomerBean.searchByNationalId}"
+                                 update=":listForm :growl"
+                                 style="margin-right: 0.4rem;"/>
+                <p:commandButton value="Tümünü Göster"
+                                 icon="pi pi-list"
+                                 action="#{individualCustomerBean.loadCustomers}"
+                                 update=":listForm :growl"
+                                 styleClass="ui-button-secondary"/>
+            </p:toolbarGroup>
+        </p:toolbar>
+    </h:form>
+
+    <!-- ============================================================
+         MÜŞTERİ LİSTESİ
+    ============================================================ -->
+    <h:form id="listForm">
+        <p:dataTable id="customerTable"
+                     value="#{individualCustomerBean.customers}"
+                     var="customer"
+                     paginator="true"
+                     rows="10"
+                     rowsPerPageTemplate="5,10,25"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     currentPageReportTemplate="{startRecord}-{endRecord} / {totalRecords} kayıt"
+                     emptyMessage="Kayıt bulunamadı."
+                     sortMode="multiple"
+                     resizableColumns="true"
+                     tableStyle="min-width:50rem"
+                     style="margin-bottom: 1rem;">
+
+            <f:facet name="header">
+                <span style="font-size: 1.1rem; font-weight: bold;">Müşteri Listesi</span>
+            </f:facet>
+
+            <p:column headerText="Ad"
+                      sortBy="#{customer.firstName}"
+                      filterBy="#{customer.firstName}"
+                      filterPlaceholder="Ada göre filtrele">
+                <h:outputText value="#{customer.firstName}"/>
+            </p:column>
+
+            <p:column headerText="Soyad"
+                      sortBy="#{customer.lastName}"
+                      filterBy="#{customer.lastName}"
+                      filterPlaceholder="Soyadına göre filtrele">
+                <h:outputText value="#{customer.lastName}"/>
+            </p:column>
+
+            <p:column headerText="TC Kimlik No" sortBy="#{customer.nationalId}">
+                <h:outputText value="#{customer.nationalId}"/>
+            </p:column>
+
+            <p:column headerText="E-posta" sortBy="#{customer.email}">
+                <h:outputText value="#{customer.email}"/>
+            </p:column>
+
+            <p:column headerText="Telefon">
+                <h:outputText value="#{customer.phoneNumber}"/>
+            </p:column>
+
+            <p:column headerText="Durum" sortBy="#{customer.isActive}">
+                <p:tag value="#{customer.isActive ? 'Aktif' : 'Pasif'}"
+                       severity="#{customer.isActive ? 'success' : 'danger'}"/>
+            </p:column>
+
+            <p:column headerText="İşlemler" exportable="false">
+                <p:commandButton icon="pi pi-trash"
+                                 styleClass="ui-button-rounded ui-button-danger ui-button-outlined"
+                                 title="Müşteriyi sil"
+                                 action="#{individualCustomerBean.delete(customer.id)}"
+                                 update="@form :growl">
+                    <p:confirm header="Silme Onayı"
+                               message="Bu müşteriyi silmek istediğinize emin misiniz?"
+                               icon="pi pi-exclamation-triangle"/>
+                </p:commandButton>
+            </p:column>
+
+        </p:dataTable>
+
+        <!-- Global silme onay diyaloğu -->
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="Evet"
+                             type="button"
+                             styleClass="ui-confirmdialog-yes"
+                             icon="pi pi-check"
+                             style="margin-right: 0.4rem;"/>
+            <p:commandButton value="Hayır"
+                             type="button"
+                             styleClass="ui-confirmdialog-no ui-button-secondary"
+                             icon="pi pi-times"/>
+        </p:confirmDialog>
+    </h:form>
+
+    <!-- ============================================================
+         YENİ MÜŞTERİ FORMU
+    ============================================================ -->
+    <h:form id="createForm">
+        <p:panel header="Yeni Bireysel Müşteri Ekle" toggleable="true">
+
+            <p:messages id="createMessages" showDetail="true" closable="true"/>
+
+            <p:panelGrid columns="2" cellpadding="6">
+
+                <p:outputLabel for="firstName" value="Ad *"/>
+                <p:inputText id="firstName"
+                             value="#{individualCustomerBean.firstName}"
+                             required="true"
+                             maxlength="50"
+                             placeholder="Adını giriniz"/>
+
+                <p:outputLabel for="lastName" value="Soyad *"/>
+                <p:inputText id="lastName"
+                             value="#{individualCustomerBean.lastName}"
+                             required="true"
+                             maxlength="50"
+                             placeholder="Soyadını giriniz"/>
+
+                <p:outputLabel for="nationalId" value="TC Kimlik No *"/>
+                <p:inputText id="nationalId"
+                             value="#{individualCustomerBean.nationalId}"
+                             required="true"
+                             maxlength="11"
+                             placeholder="11 haneli TC kimlik no"/>
+
+                <p:outputLabel for="dateOfBirth" value="Doğum Tarihi *"/>
+                <p:datePicker id="dateOfBirth"
+                              value="#{individualCustomerBean.dateOfBirth}"
+                              required="true"
+                              pattern="dd.MM.yyyy"
+                              showButtonBar="true"
+                              placeholder="GG.AA.YYYY"
+                              style="width:100%">
+                    <f:convertDateTime pattern="dd.MM.yyyy" type="localDate"/>
+                </p:datePicker>
+
+                <p:outputLabel for="motherName" value="Anne Adı"/>
+                <p:inputText id="motherName"
+                             value="#{individualCustomerBean.motherName}"
+                             maxlength="50"
+                             placeholder="Anne adını giriniz"/>
+
+                <p:outputLabel for="fatherName" value="Baba Adı"/>
+                <p:inputText id="fatherName"
+                             value="#{individualCustomerBean.fatherName}"
+                             maxlength="50"
+                             placeholder="Baba adını giriniz"/>
+
+                <p:outputLabel for="phoneNumber" value="Telefon *"/>
+                <p:inputText id="phoneNumber"
+                             value="#{individualCustomerBean.phoneNumber}"
+                             required="true"
+                             maxlength="15"
+                             placeholder="05xxxxxxxxx"/>
+
+                <p:outputLabel for="email" value="E-posta *"/>
+                <p:inputText id="email"
+                             value="#{individualCustomerBean.email}"
+                             required="true"
+                             maxlength="150"
+                             placeholder="ornek@mail.com"/>
+
+                <p:outputLabel for="address" value="Adres"/>
+                <p:inputTextarea id="address"
+                                 value="#{individualCustomerBean.address}"
+                                 rows="3"
+                                 cols="40"
+                                 autoResize="true"
+                                 placeholder="Adresinizi giriniz"/>
+
+                <p:outputLabel for="password" value="Şifre *"/>
+                <p:password id="password"
+                            value="#{individualCustomerBean.password}"
+                            required="true"
+                            feedback="true"
+                            toggleMask="true"
+                            promptLabel="Şifre giriniz"
+                            weakLabel="Zayıf"
+                            goodLabel="Orta"
+                            strongLabel="Güçlü"/>
+
+            </p:panelGrid>
+
+            <div style="margin-top: 1rem;">
+                <p:commandButton value="Kaydet"
+                                 icon="pi pi-save"
+                                 action="#{individualCustomerBean.save}"
+                                 process="@form"
+                                 update="@form :listForm :growl"
+                                 styleClass="ui-button-success"
+                                 style="margin-right: 0.5rem;"/>
+                <p:commandButton value="Temizle"
+                                 icon="pi pi-refresh"
+                                 action="#{individualCustomerBean.prepareCreate}"
+                                 immediate="true"
+                                 process="@this"
+                                 update="@form"
+                                 styleClass="ui-button-secondary"/>
+            </div>
+
+        </p:panel>
+    </h:form>
+
+</h:body>
+</html>

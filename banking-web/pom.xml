@@ -111,6 +111,14 @@
             <artifactId>jakarta.inject-api</artifactId>
         </dependency>
 
+        <!-- PrimeFaces UI bileşen kütüphanesi (Jakarta EE 10 / JSF 4.0 uyumlu) -->
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>14.0.0</version>
+            <classifier>jakarta</classifier>
+        </dependency>
+
         <!-- JSON serializasyon (REST yanıtları) -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

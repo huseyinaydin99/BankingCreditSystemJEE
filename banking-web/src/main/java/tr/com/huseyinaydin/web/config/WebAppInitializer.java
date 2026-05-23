@@ -39,6 +39,9 @@ public class WebAppInitializer implements WebApplicationInitializer {
         api.setLoadOnStartup(1);
         api.addMapping("/api/*");
 
+        // PrimeFaces tema ayarı (saga: açık mavi tema)
+        ctx.setInitParameter("primefaces.THEME", "saga");
+
         // JSF/Facelets servlet
         ServletRegistration.Dynamic faces = ctx.addServlet("FacesServlet", "jakarta.faces.webapp.FacesServlet");
         faces.setLoadOnStartup(2);
