@@ -9,21 +9,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.application.credittype.commands.CreateCreditTypeCommand;
 import tr.com.huseyinaydin.application.credittype.dtos.CreditTypeResponse;
 import tr.com.huseyinaydin.application.credittype.queries.GetListCreditTypeQuery;
-import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.domain.enums.CustomerType;
 import tr.com.huseyinaydin.sharedkernel.pagination.Paginate;
 
 @RestController
 @RequestMapping("/api/credit-types")
-public class CreditTypesController {
-
-    private final Mediator mediator;
+public class CreditTypesController extends BaseController {
 
     public CreditTypesController(Mediator mediator) {
-        this.mediator = mediator;
+        super(mediator);
     }
 
     @PostMapping

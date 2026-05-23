@@ -10,22 +10,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.application.creditapplication.commands.CreateCreditApplicationCommand;
 import tr.com.huseyinaydin.application.creditapplication.dtos.CreditApplicationResponse;
 import tr.com.huseyinaydin.application.creditapplication.queries.GetListByCustomerCreditApplicationQuery;
-import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.sharedkernel.pagination.Paginate;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/credit-applications")
-public class CreditApplicationsController {
-
-    private final Mediator mediator;
+public class CreditApplicationsController extends BaseController {
 
     public CreditApplicationsController(Mediator mediator) {
-        this.mediator = mediator;
+        super(mediator);
     }
 
     @PostMapping

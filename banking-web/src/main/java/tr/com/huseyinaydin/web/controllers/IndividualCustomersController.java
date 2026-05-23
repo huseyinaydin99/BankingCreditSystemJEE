@@ -28,12 +28,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/individual-customers")
-public class IndividualCustomersController {
-
-    private final Mediator mediator;
+public class IndividualCustomersController extends BaseController {
 
     public IndividualCustomersController(Mediator mediator) {
-        this.mediator = mediator;
+        super(mediator);
     }
 
     @PostMapping
