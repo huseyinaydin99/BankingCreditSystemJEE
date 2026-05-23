@@ -1,4 +1,4 @@
-package tr.com.huseyinaydin.web.exception;
+package tr.com.huseyinaydin.sharedkernel.exception;
 
 import java.time.LocalDateTime;
 

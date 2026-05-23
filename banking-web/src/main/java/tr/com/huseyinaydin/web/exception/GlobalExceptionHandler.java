@@ -10,11 +10,31 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import tr.com.huseyinaydin.sharedkernel.exception.AuthorizationException;
 import tr.com.huseyinaydin.sharedkernel.exception.BusinessException;
 import tr.com.huseyinaydin.sharedkernel.exception.ConflictException;
+import tr.com.huseyinaydin.sharedkernel.exception.ErrorResponse;
+import tr.com.huseyinaydin.sharedkernel.exception.FieldError;
 import tr.com.huseyinaydin.sharedkernel.exception.NotFoundException;
 import tr.com.huseyinaydin.sharedkernel.exception.ValidationException;
+import tr.com.huseyinaydin.sharedkernel.exception.ValidationErrorResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+// GlobalExceptionHandler sınıfı Neden Shared-Kernel Yerine Web Projesinde (Gösterim Katmanında) Konumlandırıldı?
+/* CEVAP:
+Bu mimaride asıl amaç yalnızca hataları yakalamak veya sınıfları katmanlara ayırmak değil,
+sistemin düşünce yapısını teknoloji bağımlılıklarından arındırarak iş kurallarını merkeze yerleştirmektir.
+Bu nedenle hata tipleri, domain olayları ve hata sözleşmeleri çekirdek yapıda konumlanırken,
+HTTP’ye özgü davranışlar dış katmana bırakılır.
+Özellikle GlobalExceptionHandler’ın shared-kernel yerine web yani gösterim katmanında bulunmasının nedeni,
+onun iş kurallarını değil HTTP dünyasını anlamasıdır; çünkü istek–yanıt akışı, durum kodları,
+hata gövdeleri ve istemciye sunulacak format tamamen sunum katmanının sorumluluğudur.
+Shared-kernel yalnızca “hangi hata oluştuğunu” bilir,
+fakat bu hatanın kullanıcıya 400, 401 veya 500 olarak nasıl yansıtılacağını bilmemelidir.
+Aksi durumda çekirdek yapı teknoloji detaylarını içine çekmeye başlar ve zamanla bağımlılık zinciri oluşur.
+Bu ayrım ilk bakışta daha katı görünse de uzun vadede sistemi
+framework merkezli bir yapıya dönüştürmek yerine iş kuralları merkezli, bağımsız,
+sürdürülebilir ve ölçeklenebilir bir mimariye dönüştüren kritik bir tasarım sınırı oluşturur.
+*/
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
