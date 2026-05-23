@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                            https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
+        version="3.1">
+
+    <!--
+        Kredi türü varlığı.
+        customerType enum alanı STRING olarak saklanır (okunabilirlik ve şema esnekliği).
+        parentCreditType: öz-referanslı ManyToOne ilişkisi — sahip (owning) taraf, PARENT_CREDIT_TYPE_ID kolonuna yazar.
+        subCreditTypes: ters OneToMany — aynı PARENT_CREDIT_TYPE_ID kolonu üzerinden OKUR;
+                        insertable/updatable=false ile yazma yetkisi parentCreditType'a bırakılır.
+                        mapped-by yerine bu yaklaşım kullanılır: öz-referanslı XML mapping'de
+                        IntelliJ mapped-by sembol çözümlemesi yapamaz; davranış tamamen eşdeğerdir.
+    -->
+    <entity class="tr.com.huseyinaydin.domain.credittype.CreditType" access="FIELD">
+
+        <table name="CREDIT_TYPES"/>
+
+        <attributes>
+            <basic name="name">
+                <column name="NAME" nullable="false" length="100"/>
+            </basic>
+            <basic name="description">
+                <column name="DESCRIPTION" length="500" nullable="true"/>
+            </basic>
+            <basic name="customerType">
+                <column name="CUSTOMER_TYPE" nullable="false" length="20"/>
+                <enumerated>STRING</enumerated>
+            </basic>
+            <basic name="minAmount">
+                <column name="MIN_AMOUNT" nullable="false" precision="18" scale="2"/>
+            </basic>
+            <basic name="maxAmount">
+                <column name="MAX_AMOUNT" nullable="false" precision="18" scale="2"/>
+            </basic>
+            <basic name="minTerm">
+                <column name="MIN_TERM" nullable="false"/>
+            </basic>
+            <basic name="maxTerm">
+                <column name="MAX_TERM" nullable="false"/>
+            </basic>
+            <basic name="baseInterestRate">
+                <column name="BASE_INTEREST_RATE" nullable="false" precision="5" scale="2"/>
+            </basic>
+            <many-to-one name="parentCreditType"
+                         target-entity="tr.com.huseyinaydin.domain.credittype.CreditType"
+                         fetch="LAZY">
+                <join-column name="PARENT_CREDIT_TYPE_ID" nullable="true"/>
+            </many-to-one>
+            <one-to-many name="subCreditTypes"
+                         target-entity="tr.com.huseyinaydin.domain.credittype.CreditType"
+                         fetch="LAZY">
+                <join-column name="PARENT_CREDIT_TYPE_ID"
+                             nullable="true"
+                             insertable="false"
+                             updatable="false"/>
+            </one-to-many>
+        </attributes>
+
+    </entity>
+
+</entity-mappings>

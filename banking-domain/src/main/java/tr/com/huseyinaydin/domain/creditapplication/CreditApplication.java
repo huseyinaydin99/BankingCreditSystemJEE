@@ -3,58 +3,58 @@ package tr.com.huseyinaydin.domain.creditapplication;
 import tr.com.huseyinaydin.domain.common.Entity;
 import tr.com.huseyinaydin.domain.customer.Customer;
 import tr.com.huseyinaydin.domain.enums.CreditApplicationStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+// import jakarta.persistence.Column;       — META-INF/orm/CreditApplication.xml ile eşleme sağlanmaktadır.
+// import jakarta.persistence.EnumType;
+// import jakarta.persistence.Enumerated;
+// import jakarta.persistence.FetchType;
+// import jakarta.persistence.ForeignKey;
+// import jakarta.persistence.JoinColumn;
+// import jakarta.persistence.ManyToOne;
+// import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.UUID;
 
-@jakarta.persistence.Entity
-@Table(name = "CREDIT_APPLICATIONS")
+// @jakarta.persistence.Entity
+// @Table(name = "CREDIT_APPLICATIONS")
 public class CreditApplication extends Entity<UUID> {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ID", nullable = false,
-                foreignKey = @ForeignKey(name = "FK_CREDIT_APP_CUSTOMER"))
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "CUSTOMER_ID", nullable = false,
+    //             foreignKey = @ForeignKey(name = "FK_CREDIT_APP_CUSTOMER"))
     private Customer customer;
 
-    @Column(name = "CREDIT_TYPE_ID", nullable = false)
+    // @Column(name = "CREDIT_TYPE_ID", nullable = false)
     private UUID creditTypeId;
 
-    @Column(name = "REQUESTED_AMOUNT", nullable = false, precision = 18, scale = 2)
+    // @Column(name = "REQUESTED_AMOUNT", nullable = false, precision = 18, scale = 2)
     private BigDecimal requestedAmount;
 
-    @Column(name = "REQUESTED_TERM", nullable = false)
+    // @Column(name = "REQUESTED_TERM", nullable = false)
     private int requestedTerm;
 
-    @Column(name = "APPROVED_AMOUNT", precision = 18, scale = 2)
+    // @Column(name = "APPROVED_AMOUNT", precision = 18, scale = 2)
     private BigDecimal approvedAmount;
 
-    @Column(name = "APPROVED_TERM")
+    // @Column(name = "APPROVED_TERM")
     private int approvedTerm;
 
-    @Column(name = "INTEREST_RATE", precision = 5, scale = 2)
+    // @Column(name = "INTEREST_RATE", precision = 5, scale = 2)
     private BigDecimal interestRate;
 
-    @Column(name = "MONTHLY_PAYMENT", precision = 18, scale = 2)
+    // @Column(name = "MONTHLY_PAYMENT", precision = 18, scale = 2)
     private BigDecimal monthlyPayment;
 
-    @Column(name = "TOTAL_PAYMENT", precision = 18, scale = 2)
+    // @Column(name = "TOTAL_PAYMENT", precision = 18, scale = 2)
     private BigDecimal totalPayment;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "STATUS_CODE", nullable = false)
+    // @Enumerated(EnumType.ORDINAL)
+    // @Column(name = "STATUS_CODE", nullable = false)
     private CreditApplicationStatus status;
 
-    @Column(name = "REJECTION_REASON", length = 500)
+    // @Column(name = "REJECTION_REASON", length = 500)
     private String rejectionReason;
 
     protected CreditApplication() {

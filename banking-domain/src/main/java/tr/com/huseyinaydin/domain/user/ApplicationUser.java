@@ -2,34 +2,34 @@ package tr.com.huseyinaydin.domain.user;
 
 import tr.com.huseyinaydin.domain.common.Entity;
 import tr.com.huseyinaydin.domain.enums.UserRole;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+// import jakarta.persistence.Column;       — META-INF/orm/ApplicationUser.xml ile eşleme sağlanmaktadır.
+// import jakarta.persistence.EnumType;
+// import jakarta.persistence.Enumerated;
+// import jakarta.persistence.Table;
 
 import java.util.UUID;
 
-@jakarta.persistence.Entity
-@Table(name = "APPLICATION_USERS")
+// @jakarta.persistence.Entity
+// @Table(name = "APPLICATION_USERS")
 public class ApplicationUser extends Entity<UUID> {
 
-    @Column(name = "CUSTOMER_ID")
+    // @Column(name = "CUSTOMER_ID")
     private UUID customerId;
 
-    @Column(name = "EMAIL", nullable = false, unique = true, length = 150)
+    // @Column(name = "EMAIL", nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "PASSWORD_HASH", columnDefinition = "RAW(64)")
+    // @Column(name = "PASSWORD_HASH", columnDefinition = "RAW(64)")
     private byte[] passwordHash;
 
-    @Column(name = "PASSWORD_SALT", columnDefinition = "RAW(64)")
+    // @Column(name = "PASSWORD_SALT", columnDefinition = "RAW(64)")
     private byte[] passwordSalt;
 
-    @Column(name = "IS_ACTIVE", nullable = false)
+    // @Column(name = "IS_ACTIVE", nullable = false)
     private boolean isActive;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "ROLE", nullable = false, length = 20)
+    // @Enumerated(EnumType.STRING)
+    // @Column(name = "ROLE", nullable = false, length = 20)
     private UserRole role;
 
     protected ApplicationUser() {

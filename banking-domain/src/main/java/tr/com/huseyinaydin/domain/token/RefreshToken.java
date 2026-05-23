@@ -1,30 +1,30 @@
 package tr.com.huseyinaydin.domain.token;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+// import jakarta.persistence.Column;  — META-INF/orm/RefreshToken.xml ile eşleme sağlanmaktadır.
+// import jakarta.persistence.Id;
+// import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@jakarta.persistence.Entity
-@Table(name = "REFRESH_TOKENS")
+// @jakarta.persistence.Entity
+// @Table(name = "REFRESH_TOKENS")
 public class RefreshToken {
 
-    @Id
-    @Column(name = "ID")
+    // @Id
+    // @Column(name = "ID")
     private UUID id;
 
-    @Column(name = "USER_ID", nullable = false)
+    // @Column(name = "USER_ID", nullable = false)
     private UUID userId;
 
-    @Column(name = "TOKEN", nullable = false, unique = true, length = 512)
+    // @Column(name = "TOKEN", nullable = false, unique = true, length = 512)
     private String token;
 
-    @Column(name = "EXPIRATION", nullable = false)
+    // @Column(name = "EXPIRATION", nullable = false)
     private LocalDateTime expiration;
 
-    @Column(name = "IS_REVOKED", nullable = false)
+    // @Column(name = "IS_REVOKED", nullable = false)
     private boolean isRevoked;
 
     protected RefreshToken() {}

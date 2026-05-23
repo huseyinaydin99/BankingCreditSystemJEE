@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                            https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
+        version="3.1">
+
+    <!--
+        Kurumsal müşteri varlığı.
+        CUSTOMERS tablosuna JOINED stratejisiyle bağlanır; discriminator değeri "2".
+        taxNumber: 10 haneli vergi no — benzersizlik kısıtı (unique="true") uygulanır.
+    -->
+    <entity class="tr.com.huseyinaydin.domain.customer.CorporateCustomer" access="FIELD">
+
+        <table name="CORPORATE_CUSTOMERS"/>
+        <discriminator-value>2</discriminator-value>
+
+        <attributes>
+            <basic name="companyName">
+                <column name="COMPANY_NAME" nullable="false" length="100"/>
+            </basic>
+            <basic name="taxNumber">
+                <column name="TAX_NUMBER" nullable="false" unique="true" length="10"/>
+            </basic>
+            <basic name="taxOffice">
+                <column name="TAX_OFFICE" length="100" nullable="true"/>
+            </basic>
+            <basic name="companyRegistrationNumber">
+                <column name="COMPANY_REGISTRATION_NUMBER" length="50" nullable="true"/>
+            </basic>
+            <basic name="authorizedPersonName">
+                <column name="AUTHORIZED_PERSON_NAME" length="200" nullable="true"/>
+            </basic>
+            <basic name="companyFoundationDate">
+                <column name="COMPANY_FOUNDATION_DATE" nullable="true"/>
+            </basic>
+        </attributes>
+
+    </entity>
+
+</entity-mappings>

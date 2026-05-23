@@ -2,54 +2,54 @@ package tr.com.huseyinaydin.domain.credittype;
 
 import tr.com.huseyinaydin.domain.common.Entity;
 import tr.com.huseyinaydin.domain.enums.CustomerType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+// import jakarta.persistence.Column;       — META-INF/orm/CreditType.xml ile eşleme sağlanmaktadır.
+// import jakarta.persistence.EnumType;
+// import jakarta.persistence.Enumerated;
+// import jakarta.persistence.FetchType;
+// import jakarta.persistence.JoinColumn;
+// import jakarta.persistence.ManyToOne;
+// import jakarta.persistence.OneToMany;
+// import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@jakarta.persistence.Entity
-@Table(name = "CREDIT_TYPES")
+// @jakarta.persistence.Entity
+// @Table(name = "CREDIT_TYPES")
 public class CreditType extends Entity<UUID> {
 
-    @Column(name = "NAME", nullable = false, length = 100)
+    // @Column(name = "NAME", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "DESCRIPTION", length = 500)
+    // @Column(name = "DESCRIPTION", length = 500)
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "CUSTOMER_TYPE", nullable = false, length = 20)
+    // @Enumerated(EnumType.STRING)
+    // @Column(name = "CUSTOMER_TYPE", nullable = false, length = 20)
     private CustomerType customerType;
 
-    @Column(name = "MIN_AMOUNT", nullable = false, precision = 18, scale = 2)
+    // @Column(name = "MIN_AMOUNT", nullable = false, precision = 18, scale = 2)
     private BigDecimal minAmount;
 
-    @Column(name = "MAX_AMOUNT", nullable = false, precision = 18, scale = 2)
+    // @Column(name = "MAX_AMOUNT", nullable = false, precision = 18, scale = 2)
     private BigDecimal maxAmount;
 
-    @Column(name = "MIN_TERM", nullable = false)
+    // @Column(name = "MIN_TERM", nullable = false)
     private int minTerm;
 
-    @Column(name = "MAX_TERM", nullable = false)
+    // @Column(name = "MAX_TERM", nullable = false)
     private int maxTerm;
 
-    @Column(name = "BASE_INTEREST_RATE", nullable = false, precision = 5, scale = 2)
+    // @Column(name = "BASE_INTEREST_RATE", nullable = false, precision = 5, scale = 2)
     private BigDecimal baseInterestRate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PARENT_CREDIT_TYPE_ID")
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "PARENT_CREDIT_TYPE_ID")
     private CreditType parentCreditType;
 
-    @OneToMany(mappedBy = "parentCreditType", fetch = FetchType.LAZY)
+    // @OneToMany(mappedBy = "parentCreditType", fetch = FetchType.LAZY)
     private List<CreditType> subCreditTypes = new ArrayList<>();
 
     protected CreditType() {

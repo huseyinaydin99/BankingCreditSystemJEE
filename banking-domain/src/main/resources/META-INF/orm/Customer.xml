@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                            https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
+        version="3.1">
+
+    <!--
+        Soyut müşteri varlığı.
+        Kalıtım stratejisi: JOINED — her alt tablo kendi sütunlarını tutar, ortak sütunlar CUSTOMERS'da durur.
+        Discriminator sütunu CUSTOMER_TYPE_CODE: "1" = bireysel, "2" = kurumsal.
+        EMAIL_PATTERN alanı static final olduğundan JPA tarafından görmezden gelinir.
+    -->
+    <entity class="tr.com.huseyinaydin.domain.customer.Customer" access="FIELD">
+
+        <table name="CUSTOMERS"/>
+        <inheritance strategy="JOINED"/>
+        <discriminator-column name="CUSTOMER_TYPE_CODE" discriminator-type="STRING" length="10"/>
+
+        <attributes>
+            <basic name="phoneNumber">
+                <column name="PHONE_NUMBER" length="20" nullable="true"/>
+            </basic>
+            <basic name="email">
+                <column name="EMAIL" nullable="false" length="150"/>
+            </basic>
+            <basic name="address">
+                <column name="ADDRESS" length="500" nullable="true"/>
+            </basic>
+            <basic name="isActive">
+                <column name="IS_ACTIVE" nullable="false"/>
+            </basic>
+        </attributes>
+
+    </entity>
+
+</entity-mappings>

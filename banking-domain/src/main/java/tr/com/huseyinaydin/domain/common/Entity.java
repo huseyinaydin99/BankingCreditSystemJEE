@@ -1,17 +1,17 @@
 package tr.com.huseyinaydin.domain.common;
 
 import tr.com.huseyinaydin.domain.events.DomainEvent;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Transient;
+// import jakarta.persistence.MappedSuperclass;  — META-INF/orm/Entity.xml ile eşleme sağlanmaktadır.
+// import jakarta.persistence.Transient;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@MappedSuperclass
+// @MappedSuperclass
 public abstract class Entity<TId> extends BaseEntity<TId> {
 
-    @Transient
+    // @Transient
     private final List<DomainEvent> domainEvents = new ArrayList<>();
 
     protected Entity() {

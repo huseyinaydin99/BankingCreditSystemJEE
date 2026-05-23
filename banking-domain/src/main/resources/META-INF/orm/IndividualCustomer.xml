@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                            https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
+        version="3.1">
+
+    <!--
+        Bireysel müşteri varlığı.
+        CUSTOMERS tablosuna JOINED stratejisiyle bağlanır; discriminator değeri "1".
+        nationalId: 11 haneli TC kimlik no — benzersizlik kısıtı (unique="true") uygulanır.
+    -->
+    <entity class="tr.com.huseyinaydin.domain.customer.IndividualCustomer" access="FIELD">
+
+        <table name="INDIVIDUAL_CUSTOMERS"/>
+        <discriminator-value>1</discriminator-value>
+
+        <attributes>
+            <basic name="firstName">
+                <column name="FIRST_NAME" nullable="false" length="50"/>
+            </basic>
+            <basic name="lastName">
+                <column name="LAST_NAME" nullable="false" length="50"/>
+            </basic>
+            <basic name="nationalId">
+                <column name="NATIONAL_ID" nullable="false" unique="true" length="11"/>
+            </basic>
+            <basic name="dateOfBirth">
+                <column name="DATE_OF_BIRTH" nullable="true"/>
+            </basic>
+            <basic name="motherName">
+                <column name="MOTHER_NAME" length="100" nullable="true"/>
+            </basic>
+            <basic name="fatherName">
+                <column name="FATHER_NAME" length="100" nullable="true"/>
+            </basic>
+        </attributes>
+
+    </entity>
+
+</entity-mappings>

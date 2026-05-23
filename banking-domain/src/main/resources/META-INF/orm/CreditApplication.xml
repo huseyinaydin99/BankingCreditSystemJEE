@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                            https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
+        version="3.1">
+
+    <!--
+        Kredi başvurusu varlığı.
+        customer: ManyToOne (FK: FK_CREDIT_APP_CUSTOMER) — nullable=false, fetch=LAZY.
+        creditTypeId: CreditType'a UUID referansı; şemada FK olarak tanımlanmıştır
+                      ancak JPA ilişkisi kurulmamıştır (çapraz aggregate referans).
+        status: ORDINAL olarak saklanır — CreditApplicationStatus.ordinal() değeri kullanılır.
+        Finansal alanlar (amount, payment) 18,2 hassasiyetinde BigDecimal.
+
+        NOT: JPA ORM XML şeması <attributes> içinde kesin sıra gerektirir:
+             basic → version → many-to-one → one-to-many → ...
+             many-to-one her zaman basic bloklarından SONRA gelmelidir.
+    -->
+    <entity class="tr.com.huseyinaydin.domain.creditapplication.CreditApplication" access="FIELD">
+
+        <table name="CREDIT_APPLICATIONS"/>
+
+        <attributes>
+            <basic name="creditTypeId">
+                <column name="CREDIT_TYPE_ID" nullable="false"/>
+            </basic>
+            <basic name="requestedAmount">
+                <column name="REQUESTED_AMOUNT" nullable="false" precision="18" scale="2"/>
+            </basic>
+            <basic name="requestedTerm">
+                <column name="REQUESTED_TERM" nullable="false"/>
+            </basic>
+            <basic name="approvedAmount">
+                <column name="APPROVED_AMOUNT" nullable="true" precision="18" scale="2"/>
+            </basic>
+            <basic name="approvedTerm">
+                <column name="APPROVED_TERM" nullable="true"/>
+            </basic>
+            <basic name="interestRate">
+                <column name="INTEREST_RATE" nullable="true" precision="5" scale="2"/>
+            </basic>
+            <basic name="monthlyPayment">
+                <column name="MONTHLY_PAYMENT" nullable="true" precision="18" scale="2"/>
+            </basic>
+            <basic name="totalPayment">
+                <column name="TOTAL_PAYMENT" nullable="true" precision="18" scale="2"/>
+            </basic>
+            <basic name="status">
+                <column name="STATUS_CODE" nullable="false"/>
+                <enumerated>ORDINAL</enumerated>
+            </basic>
+            <basic name="rejectionReason">
+                <column name="REJECTION_REASON" length="500" nullable="true"/>
+            </basic>
+            <many-to-one name="customer"
+                         target-entity="tr.com.huseyinaydin.domain.customer.Customer"
+                         fetch="LAZY"
+                         optional="false">
+                <join-column name="CUSTOMER_ID" nullable="false"/>
+                <foreign-key name="FK_CREDIT_APP_CUSTOMER"/>
+            </many-to-one>
+        </attributes>
+
+    </entity>
+
+</entity-mappings>

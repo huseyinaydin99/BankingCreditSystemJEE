@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                            https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
+        version="3.1">
+
+    <!--
+        Domain event destekli baz sınıf.
+        domainEvents alanı yalnızca bellek içi kullanım içindir; veritabanına yansıtılmaz (transient).
+    -->
+    <mapped-superclass class="tr.com.huseyinaydin.domain.common.Entity" access="FIELD">
+
+        <attributes>
+            <transient name="domainEvents"/>
+        </attributes>
+
+    </mapped-superclass>
+
+</entity-mappings>

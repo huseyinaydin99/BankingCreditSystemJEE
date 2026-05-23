@@ -34,7 +34,18 @@ public class PersistenceConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         emf.setDataSource(dataSource);
-        emf.setPackagesToScan("tr.com.huseyinaydin.domain");
+        // emf.setPackagesToScan("tr.com.huseyinaydin.domain");  — XML ORM mapping aktif; annotation tarama devre dışı.
+        emf.setMappingResources(
+            "META-INF/orm/BaseEntity.xml",
+            "META-INF/orm/Entity.xml",
+            "META-INF/orm/Customer.xml",
+            "META-INF/orm/IndividualCustomer.xml",
+            "META-INF/orm/CorporateCustomer.xml",
+            "META-INF/orm/CreditType.xml",
+            "META-INF/orm/CreditApplication.xml",
+            "META-INF/orm/ApplicationUser.xml",
+            "META-INF/orm/RefreshToken.xml"
+        );
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         emf.setJpaProperties(hibernateProperties());
         return emf;

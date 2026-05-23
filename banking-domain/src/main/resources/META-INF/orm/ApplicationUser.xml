@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                            https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
+        version="3.1">
+
+    <!--
+        Uygulama kullanıcısı varlığı (kimlik doğrulama ve yetkilendirme).
+        customerId: Customer aggregate'e UUID referansı (JPA ilişkisi yok — çapraz aggregate).
+        email: benzersiz (unique="true") — oturum açma kimliği.
+        passwordHash / passwordSalt: Oracle RAW(64) — 64 baytlık HMAC-SHA512 değerleri.
+        role: STRING enum — UserRole (CUSTOMER, ADMIN, OFFICER).
+    -->
+    <entity class="tr.com.huseyinaydin.domain.user.ApplicationUser" access="FIELD">
+
+        <table name="APPLICATION_USERS"/>
+
+        <attributes>
+            <basic name="customerId">
+                <column name="CUSTOMER_ID" nullable="true"/>
+            </basic>
+            <basic name="email">
+                <column name="EMAIL" nullable="false" unique="true" length="150"/>
+            </basic>
+            <basic name="passwordHash">
+                <column name="PASSWORD_HASH" column-definition="RAW(64)" nullable="true"/>
+            </basic>
+            <basic name="passwordSalt">
+                <column name="PASSWORD_SALT" column-definition="RAW(64)" nullable="true"/>
+            </basic>
+            <basic name="isActive">
+                <column name="IS_ACTIVE" nullable="false"/>
+            </basic>
+            <basic name="role">
+                <column name="ROLE" nullable="false" length="20"/>
+                <enumerated>STRING</enumerated>
+            </basic>
+        </attributes>
+
+    </entity>
+
+</entity-mappings>

@@ -1,35 +1,35 @@
 package tr.com.huseyinaydin.domain.customer;
 
 import tr.com.huseyinaydin.domain.common.Entity;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
+// import jakarta.persistence.Column;              — META-INF/orm/Customer.xml ile eşleme sağlanmaktadır.
+// import jakarta.persistence.DiscriminatorColumn;
+// import jakarta.persistence.DiscriminatorType;
+// import jakarta.persistence.Inheritance;
+// import jakarta.persistence.InheritanceType;
+// import jakarta.persistence.Table;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-@jakarta.persistence.Entity
-@Table(name = "CUSTOMERS")
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "CUSTOMER_TYPE_CODE", discriminatorType = DiscriminatorType.STRING)
+// @jakarta.persistence.Entity
+// @Table(name = "CUSTOMERS")
+// @Inheritance(strategy = InheritanceType.JOINED)
+// @DiscriminatorColumn(name = "CUSTOMER_TYPE_CODE", discriminatorType = DiscriminatorType.STRING)
 public abstract class Customer extends Entity<UUID> {
 
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$");
 
-    @Column(name = "PHONE_NUMBER", length = 20)
+    // @Column(name = "PHONE_NUMBER", length = 20)
     private String phoneNumber;
 
-    @Column(name = "EMAIL", nullable = false, length = 150)
+    // @Column(name = "EMAIL", nullable = false, length = 150)
     private String email;
 
-    @Column(name = "ADDRESS", length = 500)
+    // @Column(name = "ADDRESS", length = 500)
     private String address;
 
-    @Column(name = "IS_ACTIVE", nullable = false)
+    // @Column(name = "IS_ACTIVE", nullable = false)
     private boolean isActive;
 
     protected Customer() {

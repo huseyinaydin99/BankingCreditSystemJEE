@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                            https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
+        version="3.1">
+
+    <!--
+        Ortak baz sınıf — tüm entity'lerin paylaştığı birincil anahtar,
+        denetim sütunları (createdDate, updatedDate) ve yumuşak silme sütunu (deletedDate).
+        Lifecycle callback'ler: onPrePersist (@PrePersist) ve onPreUpdate (@PreUpdate).
+    -->
+    <mapped-superclass class="tr.com.huseyinaydin.domain.common.BaseEntity" access="FIELD">
+
+        <pre-persist method-name="onPrePersist"/>
+        <pre-update  method-name="onPreUpdate"/>
+
+        <attributes>
+            <id name="id">
+                <column name="ID"/>
+            </id>
+            <basic name="createdDate">
+                <column name="CREATED_DATE" nullable="false" updatable="false"/>
+            </basic>
+            <basic name="updatedDate">
+                <column name="UPDATED_DATE" nullable="true"/>
+            </basic>
+            <basic name="deletedDate">
+                <column name="DELETED_DATE" nullable="true"/>
+            </basic>
+        </attributes>
+
+    </mapped-superclass>
+
+</entity-mappings>
