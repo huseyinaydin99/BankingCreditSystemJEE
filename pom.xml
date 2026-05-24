@@ -76,6 +76,9 @@
         <assertj.version>3.25.3</assertj.version>
         <h2.version>2.2.224</h2.version>
 
+        <!-- API Documentation -->
+        <springdoc.version>2.5.0</springdoc.version>
+
         <!-- Maven Plugins -->
         <maven-compiler.version>3.13.0</maven-compiler.version>
         <maven-war.version>3.4.0</maven-war.version>
@@ -326,6 +329,15 @@
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- ================================================================
+                 API DOCUMENTATION
+                 ================================================================ -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
             </dependency>
 
             <!-- ================================================================

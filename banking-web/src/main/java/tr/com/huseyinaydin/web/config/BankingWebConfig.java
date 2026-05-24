@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.ViewResolver;
@@ -19,6 +20,7 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 @ComponentScan("tr.com.huseyinaydin.web")
+@Import(OpenApiConfig.class)
 public class BankingWebConfig implements WebMvcConfigurer {
 
     @Bean
@@ -34,6 +36,11 @@ public class BankingWebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**")
                 .addResourceLocations("/WEB-INF/resources/");
+        // Swagger UI statik dosyaları (CSS, JS) — springdoc jar'ından webjars olarak sunulur
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/swagger-ui/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/");
     }
 
     @Override

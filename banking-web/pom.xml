@@ -119,6 +119,12 @@
             <classifier>jakarta</classifier>
         </dependency>
 
+        <!-- OpenAPI / Swagger UI (banking-web katmanına özel; iç katmanlara sızmaz) -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+
         <!-- JSON serializasyon (REST yanıtları) -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

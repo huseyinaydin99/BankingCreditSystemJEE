@@ -37,7 +37,11 @@ public class WebAppInitializer implements WebApplicationInitializer {
         DispatcherServlet dispatcher = new DispatcherServlet(webCtx);
         ServletRegistration.Dynamic api = ctx.addServlet("apiServlet", dispatcher);
         api.setLoadOnStartup(1);
-        api.addMapping("/api/*");
+        // /api/* → REST endpoint'leri
+        // /v3/*  → springdoc OpenAPI spec endpoint'i (/v3/api-docs)
+        // /swagger-ui/* ve /swagger-ui.html → Swagger UI
+        // /webjars/* → Swagger UI CSS/JS statik dosyaları
+        api.addMapping("/api/*", "/v3/*", "/swagger-ui/*", "/swagger-ui.html", "/webjars/*");
 
         // PrimeFaces tema ayarı (saga: açık mavi tema)
         ctx.setInitParameter("primefaces.THEME", "saga");
