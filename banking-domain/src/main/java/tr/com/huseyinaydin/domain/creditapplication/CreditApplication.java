@@ -85,6 +85,17 @@ public class CreditApplication extends Entity<UUID> {
         this.status = CreditApplicationStatus.UNDER_REVIEW;
     }
 
+    /**
+     * Henüz sonuçlanmamış (PENDING) bir başvurunun talep bilgilerini günceller.
+     * Durum ve yetki kontrolü uygulama katmanında (CreditApplicationBusinessRules)
+     * yapılır; bu metot yalnızca alanları set eder.
+     */
+    public void updateRequest(UUID creditTypeId, BigDecimal requestedAmount, int requestedTerm) {
+        this.creditTypeId = creditTypeId;
+        this.requestedAmount = requestedAmount;
+        this.requestedTerm = requestedTerm;
+    }
+
     public void approve(Money approvedAmount, Integer approvedTerm, BigDecimal annualInterestRate) {
         this.approvedAmount = approvedAmount;
         this.approvedTerm = approvedTerm;
