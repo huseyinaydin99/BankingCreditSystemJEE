@@ -26,6 +26,9 @@ public record CreateCreditApplicationCommand(
         @Min(1) @Max(360) int requestedTerm
 ) implements ICommand<CreateCreditApplicationCommand.Response> {
 
+    // Money'nin para birimi API sözleşmesine dahil değildir; sistem geneli varsayılan.
+    private static final String DEFAULT_CURRENCY = "TRY";
+
     public record Response(
             UUID id,
             UUID customerId,
@@ -79,7 +82,8 @@ public record CreateCreditApplicationCommand(
             application.calculatePayments(
                     command.requestedAmount(),
                     command.requestedTerm(),
-                    creditType.getAnnualInterestRate()
+                    creditType.getAnnualInterestRate(),
+                    DEFAULT_CURRENCY
             );
 
             uow.beginTransaction();
@@ -92,8 +96,8 @@ public record CreateCreditApplicationCommand(
                     command.creditTypeId(),
                     application.getRequestedAmount(),
                     application.getRequestedTerm(),
-                    application.getMonthlyPayment(),
-                    application.getTotalPayment(),
+                    application.getMonthlyPayment().getAmount(),
+                    application.getTotalPayment().getAmount(),
                     application.getStatus().name(),
                     application.getCreatedDate()
             );

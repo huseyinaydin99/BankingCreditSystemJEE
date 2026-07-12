@@ -32,20 +32,11 @@
             <basic name="requestedTerm">
                 <column name="REQUESTED_TERM" nullable="false"/>
             </basic>
-            <basic name="approvedAmount">
-                <column name="APPROVED_AMOUNT" nullable="true" precision="18" scale="2"/>
-            </basic>
             <basic name="approvedTerm">
                 <column name="APPROVED_TERM" nullable="true"/>
             </basic>
             <basic name="interestRate">
                 <column name="INTEREST_RATE" nullable="true" precision="5" scale="2"/>
-            </basic>
-            <basic name="monthlyPayment">
-                <column name="MONTHLY_PAYMENT" nullable="true" precision="18" scale="2"/>
-            </basic>
-            <basic name="totalPayment">
-                <column name="TOTAL_PAYMENT" nullable="true" precision="18" scale="2"/>
             </basic>
             <basic name="status">
                 <column name="STATUS_CODE" nullable="false"/>
@@ -61,6 +52,37 @@
                 <join-column name="CUSTOMER_ID" nullable="false"/>
                 <foreign-key name="FK_CREDIT_APP_CUSTOMER"/>
             </many-to-one>
+            <!--
+                Finansal tutarlar Money value object olarak embedded eşlenir. Money embeddable
+                tanımı CreditType.xml içinde global olarak mevcuttur; burada yeniden tanımlanmaz,
+                yalnızca <attribute-override> ile gerçek kolonlara bağlanır.
+                Tümü nullable'dır (yalnızca onayda dolar).
+                XSD sırası gereği <embedded> öğeleri many-to-one'dan SONRA gelir.
+            -->
+            <embedded name="approvedAmount">
+                <attribute-override name="amount">
+                    <column name="APPROVED_AMOUNT" nullable="true" precision="18" scale="2"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="APPROVED_CURRENCY" nullable="true" length="3"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="monthlyPayment">
+                <attribute-override name="amount">
+                    <column name="MONTHLY_PAYMENT" nullable="true" precision="18" scale="2"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="MONTHLY_PAYMENT_CURRENCY" nullable="true" length="3"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="totalPayment">
+                <attribute-override name="amount">
+                    <column name="TOTAL_PAYMENT" nullable="true" precision="18" scale="2"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="TOTAL_PAYMENT_CURRENCY" nullable="true" length="3"/>
+                </attribute-override>
+            </embedded>
         </attributes>
 
     </entity>

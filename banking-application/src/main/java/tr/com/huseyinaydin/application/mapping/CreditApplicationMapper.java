@@ -22,5 +22,12 @@ public interface CreditApplicationMapper {
              source = "app.creditTypeId")
     @Mapping(target = "creditTypeName",
              expression = "java(creditType != null ? creditType.getName() : \"\")")
+    // Money value object → BigDecimal (null-safe; bu alanlar yalnızca onayda dolar)
+    @Mapping(target = "approvedAmount",
+             expression = "java(app.getApprovedAmount() != null ? app.getApprovedAmount().getAmount() : null)")
+    @Mapping(target = "monthlyPayment",
+             expression = "java(app.getMonthlyPayment() != null ? app.getMonthlyPayment().getAmount() : null)")
+    @Mapping(target = "totalPayment",
+             expression = "java(app.getTotalPayment() != null ? app.getTotalPayment().getAmount() : null)")
     CreditApplicationResponse toResponse(CreditApplication app, CreditType creditType);
 }

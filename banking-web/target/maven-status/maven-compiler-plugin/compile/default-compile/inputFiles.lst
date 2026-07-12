@@ -2,6 +2,7 @@
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/config/OpenApiConfig.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/config/SecurityWebAppInitializer.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/config/WebAppInitializer.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/ApproveCreditApplicationsController.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/BaseController.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/CorporateCustomersController.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/CreditApplicationsController.java

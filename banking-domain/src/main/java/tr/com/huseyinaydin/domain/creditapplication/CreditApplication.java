@@ -3,7 +3,9 @@ package tr.com.huseyinaydin.domain.creditapplication;
 import tr.com.huseyinaydin.domain.common.Entity;
 import tr.com.huseyinaydin.domain.customer.Customer;
 import tr.com.huseyinaydin.domain.enums.CreditApplicationStatus;
+import tr.com.huseyinaydin.domain.valueobjects.Money;
 // import jakarta.persistence.Column;       — META-INF/orm/CreditApplication.xml ile eşleme sağlanmaktadır.
+// import jakarta.persistence.Embedded;
 // import jakarta.persistence.EnumType;
 // import jakarta.persistence.Enumerated;
 // import jakarta.persistence.FetchType;
@@ -35,20 +37,20 @@ public class CreditApplication extends Entity<UUID> {
     // @Column(name = "REQUESTED_TERM", nullable = false)
     private int requestedTerm;
 
-    // @Column(name = "APPROVED_AMOUNT", precision = 18, scale = 2)
-    private BigDecimal approvedAmount;
+    // @Embedded — AMOUNT → APPROVED_AMOUNT, CURRENCY → APPROVED_CURRENCY (onayda dolar)
+    private Money approvedAmount;
 
-    // @Column(name = "APPROVED_TERM")
-    private int approvedTerm;
+    // @Column(name = "APPROVED_TERM")  — nullable olduğu için Integer
+    private Integer approvedTerm;
 
     // @Column(name = "INTEREST_RATE", precision = 5, scale = 2)
     private BigDecimal interestRate;
 
-    // @Column(name = "MONTHLY_PAYMENT", precision = 18, scale = 2)
-    private BigDecimal monthlyPayment;
+    // @Embedded — AMOUNT → MONTHLY_PAYMENT, CURRENCY → MONTHLY_PAYMENT_CURRENCY
+    private Money monthlyPayment;
 
-    // @Column(name = "TOTAL_PAYMENT", precision = 18, scale = 2)
-    private BigDecimal totalPayment;
+    // @Embedded — AMOUNT → TOTAL_PAYMENT, CURRENCY → TOTAL_PAYMENT_CURRENCY
+    private Money totalPayment;
 
     // @Enumerated(EnumType.ORDINAL)
     // @Column(name = "STATUS_CODE", nullable = false)
@@ -72,35 +74,53 @@ public class CreditApplication extends Entity<UUID> {
         this.status = CreditApplicationStatus.PENDING;
     }
 
-    public void approve(BigDecimal rate) {
-        if (status != CreditApplicationStatus.PENDING) {
-            throw new IllegalStateException("Yalnızca PENDING durumundaki başvurular onaylanabilir");
-        }
-        this.interestRate = rate;
-        this.approvedAmount = requestedAmount;
-        this.approvedTerm = requestedTerm;
-        calculatePayments(approvedAmount, approvedTerm, rate);
+    /*
+     * Durum geçişleri. Geçiş meşruiyeti (hangi durumdan hangisine izinli olduğu)
+     * uygulama katmanındaki CreditApplicationBusinessRules.statusTransitionMustBeValid
+     * tarafından doğrulanır; bu nedenle entity metotları guard içermez, yalnızca
+     * durumu ve ilgili alanları günceller.
+     */
+
+    public void moveToReview() {
+        this.status = CreditApplicationStatus.UNDER_REVIEW;
+    }
+
+    public void approve(Money approvedAmount, Integer approvedTerm, BigDecimal annualInterestRate) {
+        this.approvedAmount = approvedAmount;
+        this.approvedTerm = approvedTerm;
+        this.interestRate = annualInterestRate;
+        calculatePayments(approvedAmount.getAmount(), approvedTerm, annualInterestRate,
+                approvedAmount.getCurrency());
         this.status = CreditApplicationStatus.APPROVED;
     }
 
     public void reject(String reason) {
-        if (status != CreditApplicationStatus.PENDING) {
-            throw new IllegalStateException("Yalnızca PENDING durumundaki başvurular reddedilebilir");
-        }
         this.rejectionReason = reason;
         this.status = CreditApplicationStatus.REJECTED;
     }
 
-    public void calculatePayments(BigDecimal amount, int term, BigDecimal annualRate) {
+    public void cancel() {
+        this.status = CreditApplicationStatus.CANCELLED;
+    }
+
+    /**
+     * Anüite (eşit taksitli) ödeme planı:
+     * M = P · [r(1+r)^n] / [(1+r)^n − 1], burada r = yıllık faiz / 12 (aylık, ondalık).
+     * annualRate yüzde olarak verilir (ör. 12 → %12); r = annualRate / 1200.
+     * Sonuçlar verilen para birimiyle Money olarak saklanır.
+     */
+    public void calculatePayments(BigDecimal amount, int term, BigDecimal annualRate, String currency) {
         MathContext mc = new MathContext(15, RoundingMode.HALF_UP);
         BigDecimal r = annualRate.divide(BigDecimal.valueOf(1200), mc);
         BigDecimal onePlusR = BigDecimal.ONE.add(r, mc);
         BigDecimal onePlusRPowTerm = onePlusR.pow(term, mc);
         BigDecimal numerator = amount.multiply(r, mc).multiply(onePlusRPowTerm, mc);
         BigDecimal denominator = onePlusRPowTerm.subtract(BigDecimal.ONE, mc);
-        this.monthlyPayment = numerator.divide(denominator, 2, RoundingMode.HALF_UP);
-        this.totalPayment = monthlyPayment.multiply(BigDecimal.valueOf(term))
-                                          .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal monthly = numerator.divide(denominator, 2, RoundingMode.HALF_UP);
+        BigDecimal total = monthly.multiply(BigDecimal.valueOf(term))
+                                  .setScale(2, RoundingMode.HALF_UP);
+        this.monthlyPayment = Money.of(monthly, currency);
+        this.totalPayment = Money.of(total, currency);
     }
 
     public Customer getCustomer() { return customer; }
@@ -108,11 +128,11 @@ public class CreditApplication extends Entity<UUID> {
     public UUID getCreditTypeId() { return creditTypeId; }
     public BigDecimal getRequestedAmount() { return requestedAmount; }
     public int getRequestedTerm() { return requestedTerm; }
-    public BigDecimal getApprovedAmount() { return approvedAmount; }
-    public int getApprovedTerm() { return approvedTerm; }
+    public Money getApprovedAmount() { return approvedAmount; }
+    public Integer getApprovedTerm() { return approvedTerm; }
     public BigDecimal getInterestRate() { return interestRate; }
-    public BigDecimal getMonthlyPayment() { return monthlyPayment; }
-    public BigDecimal getTotalPayment() { return totalPayment; }
+    public Money getMonthlyPayment() { return monthlyPayment; }
+    public Money getTotalPayment() { return totalPayment; }
     public CreditApplicationStatus getStatus() { return status; }
     public String getRejectionReason() { return rejectionReason; }
 }
