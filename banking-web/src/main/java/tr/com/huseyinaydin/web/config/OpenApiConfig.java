@@ -6,7 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -27,7 +27,8 @@ import java.util.List;
  * springdoc-openapi-starter-webmvc-ui bağımlılığı spring-boot-autoconfigure'ı
  * transitif olarak getirir — @EnableConfigurationProperties dolayısıyla çalışır.
  *
- * ErrorResponse ve ValidationErrorResponse şemaları programatik olarak tanımlanır;
+ * RFC 7807 Problem Details şemaları (ProblemDetail / BusinessProblemDetail /
+ * ValidationProblemDetail) programatik olarak tanımlanır;
  * bu sayede shared-kernel modülü dokümantasyon bağımlılıklarından temiz kalır.
  */
 @Configuration
@@ -65,9 +66,14 @@ public class OpenApiConfig {
     }
 
     /*
-     * ErrorResponse ve ValidationErrorResponse şemaları burada programatik olarak tanımlanır.
-     * Bu sayede shared-kernel modülüne swagger-annotations bağımlılığı girmez.
+     * RFC 7807 "Problem Details" şemaları burada programatik olarak tanımlanır.
+     * Bu sayede shared-kernel modülüne swagger-annotations bağımlılığı girmez;
      * @Schema yerine OpenApiCustomizer kullanımı katman sınırını korur.
+     *
+     * Yayınlanan tipler:
+     *   - ProblemDetail            : RFC 7807 temel modeli (type/title/status/detail/instance)
+     *   - BusinessProblemDetail    : ProblemDetail + errorCode (400/401/404/409/500)
+     *   - ValidationProblemDetail  : ProblemDetail + errors (alan → mesaj listesi)
      */
     @Bean
     public OpenApiCustomizer errorSchemaCustomizer() {
@@ -76,47 +82,51 @@ public class OpenApiConfig {
                 openApi.setComponents(new Components());
             }
 
-            Schema<Object> fieldErrorSchema = new ObjectSchema()
-                    .description("Alan bazlı doğrulama hatası")
-                    .addProperty("field", new StringSchema()
-                            .description("Hatalı alan adı")
-                            .example("nationalId"))
-                    .addProperty("message", new StringSchema()
-                            .description("Hata mesajı")
-                            .example("Geçerli bir TC Kimlik Numarası giriniz"))
-                    .addProperty("rejectedValue", new Schema<>()
-                            .description("Reddedilen değer")
-                            .example("123abc"));
-            fieldErrorSchema.setRequired(List.of("field", "message"));
-
-            Schema<Object> errorResponseSchema = new ObjectSchema()
-                    .description("Genel hata yanıt modeli (400 / 401 / 404 / 409 / 500)")
-                    .addProperty("errorCode", new StringSchema()
-                            .description("Uygulama hata kodu")
-                            .example("BUSINESS_RULE_VIOLATION"))
-                    .addProperty("message", new StringSchema()
-                            .description("Kullanıcıya okunabilir hata mesajı")
+            Schema<Object> problemDetailSchema = new ObjectSchema()
+                    .description("RFC 7807 Problem Details temel modeli (application/problem+json)")
+                    .addProperty("type", new StringSchema()
+                            .format("uri")
+                            .description("Problemi tanımlayan URI referansı")
+                            .example("/problems/business-rule-violation"))
+                    .addProperty("title", new StringSchema()
+                            .description("Problem tipinin kısa, insan-okur özeti")
+                            .example("İş Kuralı İhlali"))
+                    .addProperty("status", new IntegerSchema()
+                            .description("HTTP durum kodu")
+                            .example(400))
+                    .addProperty("detail", new StringSchema()
+                            .description("Bu spesifik olaya özgü açıklama")
                             .example("Bu TC Kimlik Numarası zaten kayıtlı"))
-                    .addProperty("timestamp", new DateTimeSchema()
-                            .description("Hatanın oluştuğu zaman (ISO-8601)"))
-                    .addProperty("path", new StringSchema()
-                            .description("Hatanın oluştuğu istek yolu")
+                    .addProperty("instance", new StringSchema()
+                            .format("uri")
+                            .description("Problemin oluştuğu istek yolu")
                             .example("/api/individual-customers"));
-            errorResponseSchema.setRequired(List.of("errorCode", "message", "timestamp", "path"));
+            problemDetailSchema.setRequired(List.of("type", "title", "status"));
 
-            Schema<Object> validationErrorResponseSchema = new ObjectSchema()
-                    .description("Çoklu alan doğrulama hata yanıt modeli (400)")
-                    .addProperty("errors", new io.swagger.v3.oas.models.media.ArraySchema()
-                            .items(new Schema<>().$ref("#/components/schemas/FieldError"))
-                            .description("Alan bazlı hata listesi"))
-                    .addProperty("timestamp", new DateTimeSchema()
-                            .description("Hatanın oluştuğu zaman (ISO-8601)"));
-            validationErrorResponseSchema.setRequired(List.of("errors", "timestamp"));
+            Schema<Object> businessProblemDetailSchema = new ObjectSchema()
+                    .description("Uygulama hata kodu taşıyan Problem Details modeli "
+                            + "(400 / 401 / 404 / 409 / 500)");
+            businessProblemDetailSchema.addAllOfItem(
+                    new Schema<>().$ref("#/components/schemas/ProblemDetail"));
+            businessProblemDetailSchema.addAllOfItem(new ObjectSchema()
+                    .addProperty("errorCode", new StringSchema()
+                            .description("Programatik olarak ayırt edilebilen, dile bağlı olmayan hata kodu")
+                            .example("BUSINESS_RULE_VIOLATION")));
+
+            Schema<Object> validationProblemDetailSchema = new ObjectSchema()
+                    .description("Çoklu alan doğrulama Problem Details modeli (400)");
+            validationProblemDetailSchema.addAllOfItem(
+                    new Schema<>().$ref("#/components/schemas/ProblemDetail"));
+            validationProblemDetailSchema.addAllOfItem(new ObjectSchema()
+                    .addProperty("errors", new ObjectSchema()
+                            .additionalProperties(new io.swagger.v3.oas.models.media.ArraySchema()
+                                    .items(new StringSchema()))
+                            .description("Alan adı → o alana ait hata mesajları listesi")));
 
             openApi.getComponents()
-                    .addSchemas("FieldError", fieldErrorSchema)
-                    .addSchemas("ErrorResponse", errorResponseSchema)
-                    .addSchemas("ValidationErrorResponse", validationErrorResponseSchema);
+                    .addSchemas("ProblemDetail", problemDetailSchema)
+                    .addSchemas("BusinessProblemDetail", businessProblemDetailSchema)
+                    .addSchemas("ValidationProblemDetail", validationProblemDetailSchema);
         };
     }
 }

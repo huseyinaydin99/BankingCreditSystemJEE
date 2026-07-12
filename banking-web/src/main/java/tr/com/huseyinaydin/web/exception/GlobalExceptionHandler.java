@@ -3,21 +3,24 @@ package tr.com.huseyinaydin.web.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import tr.com.huseyinaydin.sharedkernel.exception.AuthorizationException;
+import tr.com.huseyinaydin.sharedkernel.exception.BankingErrorTypes;
 import tr.com.huseyinaydin.sharedkernel.exception.BusinessException;
+import tr.com.huseyinaydin.sharedkernel.exception.BusinessProblemDetail;
 import tr.com.huseyinaydin.sharedkernel.exception.ConflictException;
-import tr.com.huseyinaydin.sharedkernel.exception.ErrorResponse;
-import tr.com.huseyinaydin.sharedkernel.exception.FieldError;
 import tr.com.huseyinaydin.sharedkernel.exception.NotFoundException;
+import tr.com.huseyinaydin.sharedkernel.exception.ProblemDetail;
 import tr.com.huseyinaydin.sharedkernel.exception.ValidationException;
-import tr.com.huseyinaydin.sharedkernel.exception.ValidationErrorResponse;
+import tr.com.huseyinaydin.sharedkernel.exception.ValidationProblemDetail;
 
-import java.time.LocalDateTime;
+import java.net.URI;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 // GlobalExceptionHandler sınıfı Neden Shared-Kernel Yerine Web Projesinde (Gösterim Katmanında) Konumlandırıldı?
 /* CEVAP:
@@ -36,58 +39,97 @@ framework merkezli bir yapıya dönüştürmek yerine iş kuralları merkezli, b
 sürdürülebilir ve ölçeklenebilir bir mimariye dönüştüren kritik bir tasarım sınırı oluşturur.
 */
 
+/*
+ * Tüm hata yanıtları RFC 7807 "Problem Details for HTTP APIs" formatında,
+ * "application/problem+json" ortam tipiyle döndürülür. Problem tipleri, başlıkları ve
+ * durum kodları {@link BankingErrorTypes} kataloğundan gelir; böylece sözleşme tek
+ * kaynaktan yönetilir. İstisna hiyerarşisi (BusinessException, ValidationException,
+ * NotFoundException vb.) olduğu gibi korunur — burada yalnızca HTTP yanıt formatı
+ * standardize edilir.
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponse> handleBusiness(BusinessException ex,
-                                                         HttpServletRequest request) {
-        return ResponseEntity.badRequest().body(
-                new ErrorResponse(ex.getErrorCode(), ex.getMessage(),
-                        LocalDateTime.now(), request.getRequestURI()));
+    public ResponseEntity<ProblemDetail> handleBusiness(BusinessException ex,
+                                                        HttpServletRequest request) {
+        return business(BankingErrorTypes.BUSINESS_RULE_VIOLATION, ex.getMessage(),
+                ex.getErrorCode(), request);
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ValidationErrorResponse> handleValidation(ValidationException ex) {
-        List<FieldError> errors = ex.getErrors().stream()
-                .map(e -> new FieldError(e.field(), e.message(), e.rejectedValue()))
-                .toList();
-        return ResponseEntity.badRequest()
-                .body(new ValidationErrorResponse(errors, LocalDateTime.now()));
+    public ResponseEntity<ProblemDetail> handleValidation(ValidationException ex,
+                                                          HttpServletRequest request) {
+        BankingErrorTypes type = BankingErrorTypes.VALIDATION_FAILED;
+
+        Map<String, List<String>> errors = ex.getErrors().stream()
+                .collect(Collectors.groupingBy(
+                        e -> e.field(),
+                        Collectors.mapping(e -> e.message(), Collectors.toList())));
+
+        ValidationProblemDetail body = new ValidationProblemDetail(
+                type.type(), type.title(), type.status(), ex.getMessage(),
+                instance(request), errors);
+
+        return problem(type.status(), body);
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex,
-                                                         HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ErrorResponse(ex.getErrorCode(), ex.getMessage(),
-                        LocalDateTime.now(), request.getRequestURI()));
+    public ResponseEntity<ProblemDetail> handleNotFound(NotFoundException ex,
+                                                        HttpServletRequest request) {
+        return business(BankingErrorTypes.NOT_FOUND, ex.getMessage(),
+                ex.getErrorCode(), request);
     }
 
     @ExceptionHandler(AuthorizationException.class)
-    public ResponseEntity<ErrorResponse> handleAuthorization(AuthorizationException ex,
-                                                              HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                new ErrorResponse(ex.getErrorCode(), ex.getMessage(),
-                        LocalDateTime.now(), request.getRequestURI()));
+    public ResponseEntity<ProblemDetail> handleAuthorization(AuthorizationException ex,
+                                                             HttpServletRequest request) {
+        return business(BankingErrorTypes.UNAUTHORIZED, ex.getMessage(),
+                ex.getErrorCode(), request);
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex,
-                                                         HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                new ErrorResponse(ex.getErrorCode(), ex.getMessage(),
-                        LocalDateTime.now(), request.getRequestURI()));
+    public ResponseEntity<ProblemDetail> handleConflict(ConflictException ex,
+                                                        HttpServletRequest request) {
+        return business(BankingErrorTypes.CONFLICT, ex.getMessage(),
+                ex.getErrorCode(), request);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneral(Exception ex,
-                                                        HttpServletRequest request) {
+    public ResponseEntity<ProblemDetail> handleGeneral(Exception ex,
+                                                       HttpServletRequest request) {
         log.error("Beklenmeyen hata [{}]: {}", request.getRequestURI(), ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                new ErrorResponse("INTERNAL_ERROR", "Sunucu hatası oluştu",
-                        LocalDateTime.now(), request.getRequestURI()));
+        // Dahili hatanın ayrıntısı istemciye sızdırılmaz; genel bir mesaj döndürülür.
+        return business(BankingErrorTypes.INTERNAL_ERROR, "Sunucu hatası oluştu",
+                "INTERNAL_ERROR", request);
+    }
+
+    /* ----------------------------------------------------------------------
+       Yardımcılar
+       ---------------------------------------------------------------------- */
+
+    /** Uygulama hata kodu taşıyan (validation dışı) tüm problemler için ortak kurucu. */
+    private static ResponseEntity<ProblemDetail> business(BankingErrorTypes type,
+                                                          String detail,
+                                                          String errorCode,
+                                                          HttpServletRequest request) {
+        BusinessProblemDetail body = new BusinessProblemDetail(
+                type.type(), type.title(), type.status(), detail,
+                instance(request), errorCode);
+        return problem(type.status(), body);
+    }
+
+    /** RFC 7807 ortam tipiyle (application/problem+json) yanıtı sarmalar. */
+    private static ResponseEntity<ProblemDetail> problem(int status, ProblemDetail body) {
+        return ResponseEntity.status(status)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(body);
+    }
+
+    /** Problemin oluştuğu somut isteğin URI'si (RFC 7807 {@code instance}). */
+    private static URI instance(HttpServletRequest request) {
+        return URI.create(request.getRequestURI());
     }
 }

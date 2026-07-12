@@ -36,6 +36,18 @@
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
+        <!--
+            Jackson Annotations (yalnızca annotation'lar; databind/Spring İÇERMEZ).
+            RFC 7807 ProblemDetail tiplerinin serileştirme davranışını (@JsonInclude)
+            bildirmek için gereklidir. Bu jar saf annotation kütüphanesidir; çekirdeğin
+            framework'ten bağımsız kalma ilkesini bozmaz — çalışma zamanı serileştirici
+            (jackson-databind) yalnızca web katmanında bulunur.
+        -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+
         <!-- Logback runtime (shared-kernel log üretir; diğer modüller ihtiyaç duydukça override eder) -->
         <dependency>
             <groupId>ch.qos.logback</groupId>

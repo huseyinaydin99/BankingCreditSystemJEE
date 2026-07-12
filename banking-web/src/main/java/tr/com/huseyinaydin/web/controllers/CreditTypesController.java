@@ -40,11 +40,11 @@ public class CreditTypesController extends BaseController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Kredi türü başarıyla oluşturuldu"),
             @ApiResponse(responseCode = "400", description = "Doğrulama hatası",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ValidationErrorResponse"))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/ValidationProblemDetail"))),
             @ApiResponse(responseCode = "401", description = "Kimlik doğrulama gerekli",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse")))
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail")))
     })
     @PostMapping
     public ResponseEntity<CreateCreditTypeCommand.Response> create(
@@ -57,8 +57,8 @@ public class CreditTypesController extends BaseController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Liste başarıyla döndü"),
             @ApiResponse(responseCode = "401", description = "Kimlik doğrulama gerekli",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse")))
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail")))
     })
     @GetMapping
     public ResponseEntity<Paginate<CreditTypeResponse>> getList(

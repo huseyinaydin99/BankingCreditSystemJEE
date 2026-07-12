@@ -50,14 +50,14 @@ public class CorporateCustomersController extends BaseController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Müşteri başarıyla oluşturuldu"),
             @ApiResponse(responseCode = "400", description = "Doğrulama hatası",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ValidationErrorResponse"))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/ValidationProblemDetail"))),
             @ApiResponse(responseCode = "401", description = "Kimlik doğrulama gerekli",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse"))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail"))),
             @ApiResponse(responseCode = "409", description = "Vergi numarası zaten kayıtlı",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse")))
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail")))
     })
     @PostMapping
     public ResponseEntity<CreatedCorporateCustomerResponse> create(
@@ -70,14 +70,14 @@ public class CorporateCustomersController extends BaseController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Müşteri başarıyla güncellendi"),
             @ApiResponse(responseCode = "400", description = "Doğrulama hatası",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ValidationErrorResponse"))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/ValidationProblemDetail"))),
             @ApiResponse(responseCode = "401", description = "Kimlik doğrulama gerekli",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse"))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail"))),
             @ApiResponse(responseCode = "404", description = "Müşteri bulunamadı",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse")))
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail")))
     })
     @PutMapping("/{id}")
     public ResponseEntity<UpdatedCorporateCustomerResponse> update(
@@ -97,11 +97,11 @@ public class CorporateCustomersController extends BaseController {
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Müşteri başarıyla silindi"),
             @ApiResponse(responseCode = "401", description = "Kimlik doğrulama gerekli",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse"))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail"))),
             @ApiResponse(responseCode = "404", description = "Müşteri bulunamadı",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse")))
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail")))
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<DeletedCorporateCustomerResponse> delete(
@@ -116,11 +116,11 @@ public class CorporateCustomersController extends BaseController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Müşteri bulundu"),
             @ApiResponse(responseCode = "401", description = "Kimlik doğrulama gerekli",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse"))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail"))),
             @ApiResponse(responseCode = "404", description = "Müşteri bulunamadı",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse")))
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail")))
     })
     @GetMapping("/{id}")
     public ResponseEntity<CorporateCustomerResponse> getById(
@@ -134,8 +134,8 @@ public class CorporateCustomersController extends BaseController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Liste başarıyla döndü"),
             @ApiResponse(responseCode = "401", description = "Kimlik doğrulama gerekli",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse")))
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail")))
     })
     @GetMapping
     public ResponseEntity<Paginate<CorporateCustomerResponse>> getList(

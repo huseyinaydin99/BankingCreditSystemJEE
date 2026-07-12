@@ -42,14 +42,14 @@ public class CreditApplicationsController extends BaseController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Başvuru başarıyla oluşturuldu"),
             @ApiResponse(responseCode = "400", description = "Doğrulama hatası",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ValidationErrorResponse"))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/ValidationProblemDetail"))),
             @ApiResponse(responseCode = "401", description = "Kimlik doğrulama gerekli",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse"))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail"))),
             @ApiResponse(responseCode = "404", description = "Müşteri veya kredi türü bulunamadı",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse")))
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail")))
     })
     @PostMapping
     public ResponseEntity<CreateCreditApplicationCommand.Response> create(
@@ -62,11 +62,11 @@ public class CreditApplicationsController extends BaseController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Liste başarıyla döndü"),
             @ApiResponse(responseCode = "401", description = "Kimlik doğrulama gerekli",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse"))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail"))),
             @ApiResponse(responseCode = "404", description = "Müşteri bulunamadı",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(ref = "#/components/schemas/ErrorResponse")))
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(ref = "#/components/schemas/BusinessProblemDetail")))
     })
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<Paginate<CreditApplicationResponse>> getByCustomer(

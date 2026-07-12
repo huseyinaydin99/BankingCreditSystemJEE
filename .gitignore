@@ -1,0 +1,9 @@
+/.claude/
+/.idea/
+/.settings/
+/banking-application/target/
+/banking-domain/target/
+/banking-infrastructure/target/
+/banking-persistence/target/
+/banking-shared-kernel/target/
+/banking-web/target/
