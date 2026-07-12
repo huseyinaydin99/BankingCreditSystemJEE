@@ -6,8 +6,15 @@ import java.util.Objects;
 
 public final class Money {
 
-    private final BigDecimal amount;
-    private final String currency;
+    // JPA embeddable olarak eşlenir (bkz. META-INF/orm/CreditType.xml <embeddable>).
+    // Alanlar final DEĞİLDİR çünkü Hibernate field-access ile örneği doldurur;
+    // ancak public setter bulunmadığından değer, oluşturulduktan sonra dışarıdan değiştirilemez.
+    private BigDecimal amount;
+    private String currency;
+
+    // Hibernate'in yansıma (reflection) ile örnek üretebilmesi için no-arg constructor.
+    protected Money() {
+    }
 
     public Money(BigDecimal amount, String currency) {
         if (amount == null) {

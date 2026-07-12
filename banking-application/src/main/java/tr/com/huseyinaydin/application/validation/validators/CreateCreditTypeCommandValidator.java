@@ -22,38 +22,39 @@ public class CreateCreditTypeCommandValidator
         addRule(r -> r.customerType() == null,
                 "customerType", BankingValidationCodes.CUSTOMER_TYPE_REQUIRED);
 
-        addRule(r -> r.minAmount() == null,
-                "minAmount", BankingValidationCodes.MIN_AMOUNT_REQUIRED);
-        addRule(r -> r.minAmount() != null && r.minAmount().compareTo(BigDecimal.ZERO) <= 0,
-                "minAmount", BankingValidationCodes.MIN_AMOUNT_MUST_BE_POSITIVE,
-                r -> r.minAmount());
+        addRule(r -> r.minimumAmount() == null,
+                "minimumAmount", BankingValidationCodes.MIN_AMOUNT_REQUIRED);
+        addRule(r -> r.minimumAmount() != null && r.minimumAmount().compareTo(BigDecimal.ZERO) <= 0,
+                "minimumAmount", BankingValidationCodes.MIN_AMOUNT_MUST_BE_POSITIVE,
+                r -> r.minimumAmount());
 
-        addRule(r -> r.maxAmount() == null,
-                "maxAmount", BankingValidationCodes.MAX_AMOUNT_REQUIRED);
-        addRule(r -> r.maxAmount() != null && r.maxAmount().compareTo(BigDecimal.ZERO) <= 0,
-                "maxAmount", BankingValidationCodes.MAX_AMOUNT_MUST_BE_POSITIVE,
-                r -> r.maxAmount());
+        addRule(r -> r.maximumAmount() == null,
+                "maximumAmount", BankingValidationCodes.MAX_AMOUNT_REQUIRED);
+        addRule(r -> r.maximumAmount() != null && r.maximumAmount().compareTo(BigDecimal.ZERO) <= 0,
+                "maximumAmount", BankingValidationCodes.MAX_AMOUNT_MUST_BE_POSITIVE,
+                r -> r.maximumAmount());
 
-        addRule(r -> r.minAmount() != null && r.maxAmount() != null
-                        && r.minAmount().compareTo(r.maxAmount()) >= 0,
-                "minAmount", BankingValidationCodes.MIN_AMOUNT_EXCEEDS_MAX_AMOUNT,
-                r -> r.minAmount());
+        addRule(r -> r.minimumAmount() != null && r.maximumAmount() != null
+                        && r.minimumAmount().compareTo(r.maximumAmount()) >= 0,
+                "minimumAmount", BankingValidationCodes.MIN_AMOUNT_EXCEEDS_MAX_AMOUNT,
+                r -> r.minimumAmount());
 
-        addRule(r -> r.minTerm() < 1,
-                "minTerm", BankingValidationCodes.MIN_TERM_INVALID, r -> r.minTerm());
+        addRule(r -> r.minimumTermMonths() < 1,
+                "minimumTermMonths", BankingValidationCodes.MIN_TERM_INVALID, r -> r.minimumTermMonths());
 
-        addRule(r -> r.maxTerm() < 1,
-                "maxTerm", BankingValidationCodes.MAX_TERM_INVALID, r -> r.maxTerm());
+        addRule(r -> r.maximumTermMonths() < 1,
+                "maximumTermMonths", BankingValidationCodes.MAX_TERM_INVALID, r -> r.maximumTermMonths());
 
-        addRule(r -> r.minTerm() >= 1 && r.maxTerm() >= 1 && r.minTerm() >= r.maxTerm(),
-                "minTerm", BankingValidationCodes.MIN_TERM_EXCEEDS_MAX_TERM, r -> r.minTerm());
+        addRule(r -> r.minimumTermMonths() >= 1 && r.maximumTermMonths() >= 1
+                        && r.minimumTermMonths() >= r.maximumTermMonths(),
+                "minimumTermMonths", BankingValidationCodes.MIN_TERM_EXCEEDS_MAX_TERM, r -> r.minimumTermMonths());
 
-        addRule(r -> r.baseInterestRate() == null,
-                "baseInterestRate", BankingValidationCodes.INTEREST_RATE_REQUIRED);
-        addRule(r -> r.baseInterestRate() != null
-                        && (r.baseInterestRate().compareTo(MIN_RATE) < 0
-                            || r.baseInterestRate().compareTo(MAX_RATE) > 0),
-                "baseInterestRate", BankingValidationCodes.INTEREST_RATE_OUT_OF_RANGE,
-                r -> r.baseInterestRate());
+        addRule(r -> r.annualInterestRate() == null,
+                "annualInterestRate", BankingValidationCodes.INTEREST_RATE_REQUIRED);
+        addRule(r -> r.annualInterestRate() != null
+                        && (r.annualInterestRate().compareTo(MIN_RATE) < 0
+                            || r.annualInterestRate().compareTo(MAX_RATE) > 0),
+                "annualInterestRate", BankingValidationCodes.INTEREST_RATE_OUT_OF_RANGE,
+                r -> r.annualInterestRate());
     }
 }

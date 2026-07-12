@@ -13,7 +13,12 @@ import java.util.stream.Collectors;
 @Mapper(config = MapStructConfig.class)
 public interface CreditTypeMapper {
 
-    // Maps all flat fields; subCreditTypes handled in default toResponse()
+    // Maps all flat fields; subCreditTypes handled in default toResponse().
+    // Money value object → BigDecimal (yalnızca tutar açılır; para birimi API'de taşınmaz).
+    @Mapping(target = "minimumAmount",
+             expression = "java(entity.getMinimumAmount() != null ? entity.getMinimumAmount().getAmount() : null)")
+    @Mapping(target = "maximumAmount",
+             expression = "java(entity.getMaximumAmount() != null ? entity.getMaximumAmount().getAmount() : null)")
     @Mapping(target = "parentCreditTypeId",
              expression = "java(entity.getParentCreditTypeId())")
     @Mapping(target = "subCreditTypes", ignore = true)
@@ -31,8 +36,9 @@ public interface CreditTypeMapper {
         CreditTypeResponse flat = toResponseFlat(entity);
         return new CreditTypeResponse(
                 flat.id(), flat.name(), flat.description(), flat.customerType(),
-                flat.minAmount(), flat.maxAmount(), flat.minTerm(), flat.maxTerm(),
-                flat.baseInterestRate(), flat.parentCreditTypeId(),
+                flat.minimumAmount(), flat.maximumAmount(),
+                flat.minimumTermMonths(), flat.maximumTermMonths(),
+                flat.annualInterestRate(), flat.parentCreditTypeId(),
                 subs,
                 flat.createdDate()
         );

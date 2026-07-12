@@ -7,9 +7,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Component;
+import tr.com.huseyinaydin.application.credittype.rules.CreditTypeBusinessRules;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
 import tr.com.huseyinaydin.domain.credittype.CreditType;
 import tr.com.huseyinaydin.domain.enums.CustomerType;
+import tr.com.huseyinaydin.domain.valueobjects.Money;
 import tr.com.huseyinaydin.sharedkernel.exception.NotFoundException;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
@@ -22,23 +24,26 @@ public record CreateCreditTypeCommand(
         @NotBlank String name,
         String description,
         @NotNull CustomerType customerType,
-        @NotNull @Positive BigDecimal minAmount,
-        @NotNull @Positive BigDecimal maxAmount,
-        @Min(1) int minTerm,
-        @Min(1) int maxTerm,
-        @NotNull @DecimalMin("0.01") @DecimalMax("99.99") BigDecimal baseInterestRate,
+        @NotNull @Positive BigDecimal minimumAmount,
+        @NotNull @Positive BigDecimal maximumAmount,
+        @Min(1) int minimumTermMonths,
+        @Min(1) int maximumTermMonths,
+        @NotNull @DecimalMin("0.01") @DecimalMax("99.99") BigDecimal annualInterestRate,
         UUID parentCreditTypeId
 ) implements ICommand<CreateCreditTypeCommand.Response> {
+
+    // Money'nin para birimi API sözleşmesine dahil değildir; sistem geneli varsayılan.
+    private static final String DEFAULT_CURRENCY = "TRY";
 
     public record Response(
             UUID id,
             String name,
             String customerType,
-            BigDecimal minAmount,
-            BigDecimal maxAmount,
-            int minTerm,
-            int maxTerm,
-            BigDecimal baseInterestRate,
+            BigDecimal minimumAmount,
+            BigDecimal maximumAmount,
+            int minimumTermMonths,
+            int maximumTermMonths,
+            BigDecimal annualInterestRate,
             UUID parentCreditTypeId,
             LocalDateTime createdDate
     ) {}
@@ -49,21 +54,32 @@ public record CreateCreditTypeCommand(
             implements ICommandHandler<CreateCreditTypeCommand, Response> {
 
         private final IUnitOfWork uow;
+        private final CreditTypeBusinessRules rules;
 
-        public Handler(IUnitOfWork uow) {
+        public Handler(IUnitOfWork uow, CreditTypeBusinessRules rules) {
             this.uow = uow;
+            this.rules = rules;
         }
 
         @Override
         public Response handle(CreateCreditTypeCommand command) {
+            Money minimumAmount = Money.of(command.minimumAmount(), DEFAULT_CURRENCY);
+            Money maximumAmount = Money.of(command.maximumAmount(), DEFAULT_CURRENCY);
+
+            // Domain iş kuralları: tutar/vade/faiz tutarlılığı kaydetmeden önce garanti edilir.
+            rules.validateFinancialConstraints(
+                    minimumAmount, maximumAmount,
+                    command.minimumTermMonths(), command.maximumTermMonths(),
+                    command.annualInterestRate());
+
             CreditType creditType = new CreditType(
                     command.name(),
                     command.customerType(),
-                    command.minAmount(),
-                    command.maxAmount(),
-                    command.minTerm(),
-                    command.maxTerm(),
-                    command.baseInterestRate()
+                    minimumAmount,
+                    maximumAmount,
+                    command.minimumTermMonths(),
+                    command.maximumTermMonths(),
+                    command.annualInterestRate()
             );
             creditType.setDescription(command.description());
 
@@ -83,11 +99,11 @@ public record CreateCreditTypeCommand(
                     creditType.getId(),
                     creditType.getName(),
                     creditType.getCustomerType().name(),
-                    creditType.getMinAmount(),
-                    creditType.getMaxAmount(),
-                    creditType.getMinTerm(),
-                    creditType.getMaxTerm(),
-                    creditType.getBaseInterestRate(),
+                    creditType.getMinimumAmount().getAmount(),
+                    creditType.getMaximumAmount().getAmount(),
+                    creditType.getMinimumTermMonths(),
+                    creditType.getMaximumTermMonths(),
+                    creditType.getAnnualInterestRate(),
                     creditType.getParentCreditTypeId(),
                     creditType.getCreatedDate()
             );

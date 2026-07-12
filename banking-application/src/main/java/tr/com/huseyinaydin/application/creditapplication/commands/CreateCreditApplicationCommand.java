@@ -79,7 +79,7 @@ public record CreateCreditApplicationCommand(
             application.calculatePayments(
                     command.requestedAmount(),
                     command.requestedTerm(),
-                    creditType.getBaseInterestRate()
+                    creditType.getAnnualInterestRate()
             );
 
             uow.beginTransaction();

@@ -30,19 +30,13 @@
                 <column name="CUSTOMER_TYPE" nullable="false" length="20"/>
                 <enumerated>STRING</enumerated>
             </basic>
-            <basic name="minAmount">
-                <column name="MIN_AMOUNT" nullable="false" precision="18" scale="2"/>
-            </basic>
-            <basic name="maxAmount">
-                <column name="MAX_AMOUNT" nullable="false" precision="18" scale="2"/>
-            </basic>
-            <basic name="minTerm">
+            <basic name="minimumTermMonths">
                 <column name="MIN_TERM" nullable="false"/>
             </basic>
-            <basic name="maxTerm">
+            <basic name="maximumTermMonths">
                 <column name="MAX_TERM" nullable="false"/>
             </basic>
-            <basic name="baseInterestRate">
+            <basic name="annualInterestRate">
                 <column name="BASE_INTEREST_RATE" nullable="false" precision="5" scale="2"/>
             </basic>
             <many-to-one name="parentCreditType"
@@ -58,8 +52,48 @@
                              insertable="false"
                              updatable="false"/>
             </one-to-many>
+            <!--
+                minimumAmount / maximumAmount: Money value object embedded olarak eşlenir.
+                Money.amount → MIN_AMOUNT/MAX_AMOUNT, Money.currency → MIN_CURRENCY/MAX_CURRENCY.
+                Embeddable'ın kendi kolon adları attribute-override ile geçersiz kılınır.
+                NOT: JPA orm_3_1.xsd 'attributes' sıralaması gereği <embedded> öğeleri
+                basic/many-to-one/one-to-many öğelerinden SONRA gelmek zorundadır.
+            -->
+            <embedded name="minimumAmount">
+                <attribute-override name="amount">
+                    <column name="MIN_AMOUNT" nullable="false" precision="18" scale="2"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="MIN_CURRENCY" nullable="false" length="3"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="maximumAmount">
+                <attribute-override name="amount">
+                    <column name="MAX_AMOUNT" nullable="false" precision="18" scale="2"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="MAX_CURRENCY" nullable="false" length="3"/>
+                </attribute-override>
+            </embedded>
         </attributes>
 
     </entity>
+
+    <!--
+        Money value object'inin embeddable eşlemesi. Kolon adları burada nötr bırakılır
+        (AMOUNT / CURRENCY) ve her kullanım yerinde <attribute-override> ile gerçek kolonlara
+        bağlanır. Bu embeddable yalnızca CreditType tarafından kullanıldığından tanımı bu
+        dosyada tutulur; ayrı bir mapping dosyası ve PersistenceConfig değişikliği gerekmez.
+    -->
+    <embeddable class="tr.com.huseyinaydin.domain.valueobjects.Money" access="FIELD">
+        <attributes>
+            <basic name="amount">
+                <column name="AMOUNT" nullable="false" precision="18" scale="2"/>
+            </basic>
+            <basic name="currency">
+                <column name="CURRENCY" nullable="false" length="3"/>
+            </basic>
+        </attributes>
+    </embeddable>
 
 </entity-mappings>

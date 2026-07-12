@@ -2,7 +2,9 @@ package tr.com.huseyinaydin.domain.credittype;
 
 import tr.com.huseyinaydin.domain.common.Entity;
 import tr.com.huseyinaydin.domain.enums.CustomerType;
+import tr.com.huseyinaydin.domain.valueobjects.Money;
 // import jakarta.persistence.Column;       — META-INF/orm/CreditType.xml ile eşleme sağlanmaktadır.
+// import jakarta.persistence.Embedded;
 // import jakarta.persistence.EnumType;
 // import jakarta.persistence.Enumerated;
 // import jakarta.persistence.FetchType;
@@ -12,8 +14,8 @@ import tr.com.huseyinaydin.domain.enums.CustomerType;
 // import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 // @jakarta.persistence.Entity
@@ -30,44 +32,44 @@ public class CreditType extends Entity<UUID> {
     // @Column(name = "CUSTOMER_TYPE", nullable = false, length = 20)
     private CustomerType customerType;
 
-    // @Column(name = "MIN_AMOUNT", nullable = false, precision = 18, scale = 2)
-    private BigDecimal minAmount;
+    // @Embedded — AMOUNT → MIN_AMOUNT, CURRENCY → MIN_CURRENCY
+    private Money minimumAmount;
 
-    // @Column(name = "MAX_AMOUNT", nullable = false, precision = 18, scale = 2)
-    private BigDecimal maxAmount;
+    // @Embedded — AMOUNT → MAX_AMOUNT, CURRENCY → MAX_CURRENCY
+    private Money maximumAmount;
 
     // @Column(name = "MIN_TERM", nullable = false)
-    private int minTerm;
+    private int minimumTermMonths;
 
     // @Column(name = "MAX_TERM", nullable = false)
-    private int maxTerm;
+    private int maximumTermMonths;
 
     // @Column(name = "BASE_INTEREST_RATE", nullable = false, precision = 5, scale = 2)
-    private BigDecimal baseInterestRate;
+    private BigDecimal annualInterestRate;
 
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "PARENT_CREDIT_TYPE_ID")
     private CreditType parentCreditType;
 
     // @OneToMany(mappedBy = "parentCreditType", fetch = FetchType.LAZY)
-    private List<CreditType> subCreditTypes = new ArrayList<>();
+    private Set<CreditType> subCreditTypes = new HashSet<>();
 
     protected CreditType() {
         super();
     }
 
     public CreditType(String name, CustomerType customerType,
-                      BigDecimal minAmount, BigDecimal maxAmount,
-                      int minTerm, int maxTerm, BigDecimal baseInterestRate) {
+                      Money minimumAmount, Money maximumAmount,
+                      int minimumTermMonths, int maximumTermMonths, BigDecimal annualInterestRate) {
         super();
         this.id = UUID.randomUUID();
         this.name = name;
         this.customerType = customerType;
-        this.minAmount = minAmount;
-        this.maxAmount = maxAmount;
-        this.minTerm = minTerm;
-        this.maxTerm = maxTerm;
-        this.baseInterestRate = baseInterestRate;
+        this.minimumAmount = minimumAmount;
+        this.maximumAmount = maximumAmount;
+        this.minimumTermMonths = minimumTermMonths;
+        this.maximumTermMonths = maximumTermMonths;
+        this.annualInterestRate = annualInterestRate;
     }
 
     public boolean isSubType() {
@@ -87,24 +89,24 @@ public class CreditType extends Entity<UUID> {
     public CustomerType getCustomerType() { return customerType; }
     public void setCustomerType(CustomerType customerType) { this.customerType = customerType; }
 
-    public BigDecimal getMinAmount() { return minAmount; }
-    public void setMinAmount(BigDecimal minAmount) { this.minAmount = minAmount; }
+    public Money getMinimumAmount() { return minimumAmount; }
+    public void setMinimumAmount(Money minimumAmount) { this.minimumAmount = minimumAmount; }
 
-    public BigDecimal getMaxAmount() { return maxAmount; }
-    public void setMaxAmount(BigDecimal maxAmount) { this.maxAmount = maxAmount; }
+    public Money getMaximumAmount() { return maximumAmount; }
+    public void setMaximumAmount(Money maximumAmount) { this.maximumAmount = maximumAmount; }
 
-    public int getMinTerm() { return minTerm; }
-    public void setMinTerm(int minTerm) { this.minTerm = minTerm; }
+    public int getMinimumTermMonths() { return minimumTermMonths; }
+    public void setMinimumTermMonths(int minimumTermMonths) { this.minimumTermMonths = minimumTermMonths; }
 
-    public int getMaxTerm() { return maxTerm; }
-    public void setMaxTerm(int maxTerm) { this.maxTerm = maxTerm; }
+    public int getMaximumTermMonths() { return maximumTermMonths; }
+    public void setMaximumTermMonths(int maximumTermMonths) { this.maximumTermMonths = maximumTermMonths; }
 
-    public BigDecimal getBaseInterestRate() { return baseInterestRate; }
-    public void setBaseInterestRate(BigDecimal baseInterestRate) { this.baseInterestRate = baseInterestRate; }
+    public BigDecimal getAnnualInterestRate() { return annualInterestRate; }
+    public void setAnnualInterestRate(BigDecimal annualInterestRate) { this.annualInterestRate = annualInterestRate; }
 
     public CreditType getParentCreditType() { return parentCreditType; }
     public void setParentCreditType(CreditType parentCreditType) { this.parentCreditType = parentCreditType; }
 
-    public List<CreditType> getSubCreditTypes() { return subCreditTypes; }
-    public void setSubCreditTypes(List<CreditType> subCreditTypes) { this.subCreditTypes = subCreditTypes; }
+    public Set<CreditType> getSubCreditTypes() { return subCreditTypes; }
+    public void setSubCreditTypes(Set<CreditType> subCreditTypes) { this.subCreditTypes = subCreditTypes; }
 }

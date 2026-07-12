@@ -26,21 +26,22 @@ public class CreditApplicationBusinessRules {
     }
 
     public void amountMustBeInRange(BigDecimal amount, CreditType creditType) {
-        if (amount.compareTo(creditType.getMinAmount()) < 0
-                || amount.compareTo(creditType.getMaxAmount()) > 0) {
+        if (amount.compareTo(creditType.getMinimumAmount().getAmount()) < 0
+                || amount.compareTo(creditType.getMaximumAmount().getAmount()) > 0) {
             throw new BusinessException(
                     "Talep edilen tutar kredi türü limitlerinin dışında. Min: "
-                            + creditType.getMinAmount() + ", Max: " + creditType.getMaxAmount(),
+                            + creditType.getMinimumAmount().getAmount()
+                            + ", Max: " + creditType.getMaximumAmount().getAmount(),
                     BankingErrorCodes.AMOUNT_OUT_OF_RANGE
             );
         }
     }
 
     public void termMustBeInRange(int term, CreditType creditType) {
-        if (term < creditType.getMinTerm() || term > creditType.getMaxTerm()) {
+        if (term < creditType.getMinimumTermMonths() || term > creditType.getMaximumTermMonths()) {
             throw new BusinessException(
                     "Talep edilen vade kredi türü limitlerinin dışında. Min: "
-                            + creditType.getMinTerm() + ", Max: " + creditType.getMaxTerm(),
+                            + creditType.getMinimumTermMonths() + ", Max: " + creditType.getMaximumTermMonths(),
                     BankingErrorCodes.TERM_OUT_OF_RANGE
             );
         }
