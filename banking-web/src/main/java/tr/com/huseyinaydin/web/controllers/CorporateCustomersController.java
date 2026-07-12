@@ -85,7 +85,7 @@ public class CorporateCustomersController extends BaseController {
             @PathVariable UUID id,
             @RequestBody @Valid UpdateCorporateCustomerCommand body) {
         UpdateCorporateCustomerCommand cmd = new UpdateCorporateCustomerCommand(
-                id, body.companyName(), body.taxOffice(),
+                id, body.companyName(), body.tradeRegistrationNumber(), body.taxOffice(),
                 body.companyRegistrationNumber(), body.authorizedPersonName(),
                 body.companyFoundationDate(), body.phoneNumber(), body.email(), body.address()
         );

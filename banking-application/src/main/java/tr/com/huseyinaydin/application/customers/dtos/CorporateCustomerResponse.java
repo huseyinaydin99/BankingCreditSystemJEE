@@ -8,6 +8,7 @@ public record CorporateCustomerResponse(
         UUID id,
         String companyName,
         String taxNumber,
+        String tradeRegistrationNumber,
         String taxOffice,
         String companyRegistrationNumber,
         String authorizedPersonName,

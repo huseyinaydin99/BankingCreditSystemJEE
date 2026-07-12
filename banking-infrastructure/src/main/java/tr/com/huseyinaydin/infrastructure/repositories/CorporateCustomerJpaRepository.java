@@ -28,4 +28,16 @@ public class CorporateCustomerJpaRepository
         ));
         return entityManager.createQuery(query).getResultStream().findFirst();
     }
+
+    @Override
+    public Optional<CorporateCustomer> findByTradeRegistrationNumber(String tradeRegistrationNumber) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<CorporateCustomer> query = cb.createQuery(CorporateCustomer.class);
+        Root<CorporateCustomer> root = query.from(CorporateCustomer.class);
+        query.where(cb.and(
+                cb.equal(root.get("tradeRegistrationNumber"), tradeRegistrationNumber),
+                root.get("deletedDate").isNull()
+        ));
+        return entityManager.createQuery(query).getResultStream().findFirst();
+    }
 }

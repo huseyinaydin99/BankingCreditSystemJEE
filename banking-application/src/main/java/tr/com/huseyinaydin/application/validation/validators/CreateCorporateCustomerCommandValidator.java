@@ -28,6 +28,13 @@ public class CreateCorporateCustomerCommandValidator
         addRule(r -> !isBlank(r.taxNumber()) && !isValidVkn(r.taxNumber()),
                 "taxNumber", BankingValidationCodes.TAX_NUMBER_INVALID, r -> r.taxNumber());
 
+        addRule(r -> isBlank(r.tradeRegistrationNumber()),
+                "tradeRegistrationNumber", BankingValidationCodes.TRADE_REGISTRATION_NUMBER_REQUIRED);
+        addRule(r -> !isBlank(r.tradeRegistrationNumber())
+                        && !r.tradeRegistrationNumber().matches("\\d{4,16}"),
+                "tradeRegistrationNumber", BankingValidationCodes.TRADE_REGISTRATION_NUMBER_INVALID,
+                r -> r.tradeRegistrationNumber());
+
         addRule(r -> isBlank(r.authorizedPersonName()),
                 "authorizedPersonName", BankingValidationCodes.AUTHORIZED_PERSON_REQUIRED);
 

@@ -1,10 +1,12 @@
 package tr.com.huseyinaydin.application.customers.commands;
 
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.customers.dtos.UpdatedCorporateCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.CorporateCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.application.validation.constraints.TradeRegistrationNumber;
 import tr.com.huseyinaydin.domain.customer.CorporateCustomer;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
@@ -15,6 +17,7 @@ import java.util.UUID;
 public record UpdateCorporateCustomerCommand(
         UUID id,
         String companyName,
+        @NotBlank @TradeRegistrationNumber String tradeRegistrationNumber,
         String taxOffice,
         String companyRegistrationNumber,
         String authorizedPersonName,
@@ -50,8 +53,11 @@ public record UpdateCorporateCustomerCommand(
                     .orElseThrow();
 
             businessRules.customerShouldBeActive(customer);
+            businessRules.tradeRegistrationNumberMustBeUniqueForUpdate(
+                    command.tradeRegistrationNumber(), command.id());
 
             customer.setCompanyName(command.companyName());
+            customer.setTradeRegistrationNumber(command.tradeRegistrationNumber());
             customer.setTaxOffice(command.taxOffice());
             customer.setCompanyRegistrationNumber(command.companyRegistrationNumber());
             customer.setAuthorizedPersonName(command.authorizedPersonName());

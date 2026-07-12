@@ -26,6 +26,23 @@ public class CorporateCustomerBusinessRules {
         });
     }
 
+    public void tradeRegistrationNumberCannotBeDuplicatedWhenInserted(String tradeRegistrationNumber) {
+        corporateCustomerRepository.findByTradeRegistrationNumber(tradeRegistrationNumber)
+                .ifPresent(existing -> {
+                    throw new ConflictException("tradeRegistrationNumber", tradeRegistrationNumber,
+                            "Bu Ticaret Sicil Numarası zaten kayıtlı");
+                });
+    }
+
+    public void tradeRegistrationNumberMustBeUniqueForUpdate(String tradeRegistrationNumber, UUID currentId) {
+        corporateCustomerRepository.findByTradeRegistrationNumber(tradeRegistrationNumber)
+                .filter(existing -> !existing.getId().equals(currentId))
+                .ifPresent(existing -> {
+                    throw new ConflictException("tradeRegistrationNumber", tradeRegistrationNumber,
+                            "Bu Ticaret Sicil Numarası başka bir müşteriye ait");
+                });
+    }
+
     public void customerShouldExistWhenRequested(UUID id) {
         corporateCustomerRepository.findById(id).orElseThrow(() ->
                 new NotFoundException("CORPORATE_CUSTOMER", id.toString()));

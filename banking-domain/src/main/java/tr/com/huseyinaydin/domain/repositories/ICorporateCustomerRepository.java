@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface ICorporateCustomerRepository extends ICustomerRepository<CorporateCustomer> {
 
     Optional<CorporateCustomer> findByTaxNumber(String taxNumber);
+
+    Optional<CorporateCustomer> findByTradeRegistrationNumber(String tradeRegistrationNumber);
 }

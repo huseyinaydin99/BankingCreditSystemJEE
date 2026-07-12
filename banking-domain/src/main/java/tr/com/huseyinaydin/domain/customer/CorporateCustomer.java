@@ -25,6 +25,10 @@ public class CorporateCustomer extends Customer {
     // @Column(name = "COMPANY_REGISTRATION_NUMBER", length = 50)
     private String companyRegistrationNumber;
 
+    // @Column(name = "TRADE_REGISTRATION_NUMBER", nullable = false, unique = true, length = 20)
+    // Ticaret Sicil No — companyRegistrationNumber'dan farklı, benzersiz ve zorunlu alan.
+    private String tradeRegistrationNumber;
+
     // @Column(name = "AUTHORIZED_PERSON_NAME", length = 200)
     private String authorizedPersonName;
 
@@ -66,6 +70,15 @@ public class CorporateCustomer extends Customer {
 
     public String getCompanyRegistrationNumber() { return companyRegistrationNumber; }
     public void setCompanyRegistrationNumber(String number) { this.companyRegistrationNumber = number; }
+
+    public String getTradeRegistrationNumber() { return tradeRegistrationNumber; }
+
+    public void setTradeRegistrationNumber(String tradeRegistrationNumber) {
+        if (tradeRegistrationNumber == null || !tradeRegistrationNumber.matches("\\d{4,16}")) {
+            throw new IllegalArgumentException("Ticaret Sicil No 4-16 rakamdan oluşmalıdır");
+        }
+        this.tradeRegistrationNumber = tradeRegistrationNumber;
+    }
 
     public String getAuthorizedPersonName() { return authorizedPersonName; }
     public void setAuthorizedPersonName(String name) { this.authorizedPersonName = name; }

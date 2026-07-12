@@ -11,6 +11,7 @@ import tr.com.huseyinaydin.application.ports.IPasswordHashService;
 import tr.com.huseyinaydin.application.ports.PasswordHash;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
 import tr.com.huseyinaydin.application.validation.constraints.PhoneNumber;
+import tr.com.huseyinaydin.application.validation.constraints.TradeRegistrationNumber;
 import tr.com.huseyinaydin.application.validation.constraints.TurkishTaxNumber;
 import tr.com.huseyinaydin.domain.customer.CorporateCustomer;
 import tr.com.huseyinaydin.domain.enums.UserRole;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 public record CreateCorporateCustomerCommand(
         @NotBlank @Size(max = 100) String companyName,
         @NotBlank @TurkishTaxNumber String taxNumber,
+        @NotBlank @TradeRegistrationNumber String tradeRegistrationNumber,
         String taxOffice,
         String companyRegistrationNumber,
         @NotBlank String authorizedPersonName,
@@ -56,12 +58,15 @@ public record CreateCorporateCustomerCommand(
         @Override
         public CreatedCorporateCustomerResponse handle(CreateCorporateCustomerCommand command) {
             businessRules.taxNumberCannotBeDuplicatedWhenInserted(command.taxNumber());
+            businessRules.tradeRegistrationNumberCannotBeDuplicatedWhenInserted(
+                    command.tradeRegistrationNumber());
 
             CorporateCustomer customer = new CorporateCustomer(
                     command.companyName(),
                     command.taxNumber(),
                     command.email()
             );
+            customer.setTradeRegistrationNumber(command.tradeRegistrationNumber());
             customer.setTaxOffice(command.taxOffice());
             customer.setCompanyRegistrationNumber(command.companyRegistrationNumber());
             customer.setAuthorizedPersonName(command.authorizedPersonName());

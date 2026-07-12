@@ -29,6 +29,9 @@
             <basic name="companyRegistrationNumber">
                 <column name="COMPANY_REGISTRATION_NUMBER" length="50" nullable="true"/>
             </basic>
+            <basic name="tradeRegistrationNumber">
+                <column name="TRADE_REGISTRATION_NUMBER" nullable="false" unique="true" length="20"/>
+            </basic>
             <basic name="authorizedPersonName">
                 <column name="AUTHORIZED_PERSON_NAME" length="200" nullable="true"/>
             </basic>
