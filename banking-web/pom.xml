@@ -142,6 +142,22 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Structured (JSON) logging encoder — prod profilinde LogstashEncoder ile kullanılır -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.4</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Janino — logback.xml içindeki <if> koşullu profil ayrımı için (Spring Boot yok) -->
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>3.1.12</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework</groupId>

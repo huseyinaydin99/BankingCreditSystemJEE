@@ -2,22 +2,31 @@ package tr.com.huseyinaydin.application.pipeline.behavior;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.core.annotation.Order;
 import tr.com.huseyinaydin.application.cqrs.IPipelineBehavior;
 import tr.com.huseyinaydin.application.cqrs.PipelineDelegate;
+import tr.com.huseyinaydin.application.logging.MaskingSerializer;
 import tr.com.huseyinaydin.application.pipeline.ICurrentUserService;
 
-import java.lang.reflect.Field;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Her command/request için yapılandırılmış (structured) log üretir. Alanlar SLF4J 2.0
+ * key-value API'siyle ({@code addKeyValue}) eklenir; LogstashEncoder bunları JSON alanı
+ * olarak (tip korunarak) render eder. correlationId, MDC'den ({@code CorrelationIdFilter}
+ * tarafından set edilir) okunur.
+ *
+ * Alanlar: correlationId, userId, commandType, durationMs, success, errorType (hata varsa).
+ * Hata durumunda maskelenmiş istek payload'ı da {@code request} alanına yazılır
+ * ({@link MaskingSerializer} ile gizli alanlar gizlenir).
+ */
 @Order(3)
 public class LoggingBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingBehavior.class);
 
-    private static final Set<String> SENSITIVE_FIELDS =
-            Set.of("password", "passwordhash", "passwordsalt", "hash", "salt", "token", "secret", "pin");
+    private static final String MDC_CORRELATION_ID = "correlationId";
 
     private final ICurrentUserService currentUserService;
 
@@ -27,21 +36,34 @@ public class LoggingBehavior<TRequest, TResponse> implements IPipelineBehavior<T
 
     @Override
     public TResponse handle(TRequest request, PipelineDelegate<TResponse> next) {
-        String requestType = request.getClass().getSimpleName();
+        String correlationId = MDC.get(MDC_CORRELATION_ID);
         String userId = resolveUserId();
+        String commandType = request.getClass().getSimpleName();
         long startNs = System.nanoTime();
-
-        log.info("Handling [{}] by [{}]", requestType, userId);
 
         try {
             TResponse response = next.proceed();
             long elapsedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
-            log.info("[{}] tamamlandı — {}ms, kullanıcı: {}", requestType, elapsedMs, userId);
+            log.atInfo()
+                    .addKeyValue("correlationId", correlationId)
+                    .addKeyValue("userId", userId)
+                    .addKeyValue("commandType", commandType)
+                    .addKeyValue("durationMs", elapsedMs)
+                    .addKeyValue("success", true)
+                    .log("command handled");
             return response;
         } catch (Exception ex) {
             long elapsedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
-            log.error("[{}] HATA — {}ms, kullanıcı: {}, istek: {}, hata: {}",
-                    requestType, elapsedMs, userId, toSafeString(request), ex.getMessage(), ex);
+            log.atError()
+                    .addKeyValue("correlationId", correlationId)
+                    .addKeyValue("userId", userId)
+                    .addKeyValue("commandType", commandType)
+                    .addKeyValue("durationMs", elapsedMs)
+                    .addKeyValue("success", false)
+                    .addKeyValue("errorType", ex.getClass().getSimpleName())
+                    .addKeyValue("request", MaskingSerializer.serialize(request))
+                    .setCause(ex)
+                    .log("command failed");
             throw ex;
         }
     }
@@ -55,27 +77,5 @@ public class LoggingBehavior<TRequest, TResponse> implements IPipelineBehavior<T
         } catch (Exception e) {
             return "unknown";
         }
-    }
-
-    private String toSafeString(Object obj) {
-        if (obj == null) return "null";
-        StringBuilder sb = new StringBuilder(obj.getClass().getSimpleName()).append("{");
-        Field[] fields = obj.getClass().getDeclaredFields();
-        for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
-            field.setAccessible(true);
-            sb.append(field.getName()).append("=");
-            if (SENSITIVE_FIELDS.contains(field.getName().toLowerCase())) {
-                sb.append("***");
-            } else {
-                try {
-                    sb.append(field.get(obj));
-                } catch (IllegalAccessException e) {
-                    sb.append("?");
-                }
-            }
-            if (i < fields.length - 1) sb.append(", ");
-        }
-        return sb.append("}").toString();
     }
 }

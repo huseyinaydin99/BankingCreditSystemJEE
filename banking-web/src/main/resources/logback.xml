@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Profil ayrımı Janino <if> ile yapılır (uygulama Spring Boot değildir; <springProfile>
+    çalışmaz). Ortam değişkeni APP_PROFILE veya SPRING_PROFILES_ACTIVE "prod" içeriyorsa
+    JSON (LogstashEncoder), aksi halde geliştirici dostu renkli CONSOLE kullanılır.
+    Her iki biçimde de MDC correlationId görünür.
+-->
+<configuration>
+
+    <property name="APP_PROFILE"
+              value="${APP_PROFILE:-${SPRING_PROFILES_ACTIVE:-dev}}"/>
+
+    <if condition='p("APP_PROFILE").contains("prod")'>
+        <then>
+            <!-- PROD: yapılandırılmış JSON log (MDC + SLF4J key-value alanları otomatik) -->
+            <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                    <includeMdcKeyName>correlationId</includeMdcKeyName>
+                    <customFields>{"application":"banking-credit-system"}</customFields>
+                </encoder>
+            </appender>
+            <root level="INFO">
+                <appender-ref ref="JSON"/>
+            </root>
+        </then>
+        <else>
+            <!-- DEV: okunabilir renkli konsol; correlationId köşeli parantez içinde -->
+            <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%X{correlationId:-no-cid}] %cyan(%logger{36}) - %msg %kvp%n</pattern>
+                </encoder>
+            </appender>
+            <root level="INFO">
+                <appender-ref ref="CONSOLE"/>
+            </root>
+        </else>
+    </if>
+
+    <logger name="tr.com.huseyinaydin" level="DEBUG"/>
+
+</configuration>

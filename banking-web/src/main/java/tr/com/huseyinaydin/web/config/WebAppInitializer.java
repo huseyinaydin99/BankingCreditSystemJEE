@@ -10,6 +10,7 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
+import tr.com.huseyinaydin.web.filter.CorrelationIdFilter;
 import tr.com.huseyinaydin.web.filter.CorsFilter;
 import tr.com.huseyinaydin.web.servlet.HealthServlet;
 
@@ -53,6 +54,13 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
         // Health check servlet
         ctx.addServlet("HealthServlet", HealthServlet.class).addMapping("/health");
+
+        // Correlation ID filter — MDC'yi en erken kuran ilk filtre (tüm istek boyunca log izlenir)
+        FilterRegistration.Dynamic correlation =
+                ctx.addFilter("correlationIdFilter", new CorrelationIdFilter());
+        correlation.addMappingForUrlPatterns(
+                EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR),
+                false, "/*");
 
         // UTF-8 encoding filter for all requests
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter("UTF-8", true);
