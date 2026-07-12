@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                            https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
+        version="3.1">
+
+    <!--
+        Denetim izi kaydı. id ve denetim sütunları (createdDate/updatedDate/deletedDate)
+        BaseEntity mapped-superclass'tan gelir. action STRING olarak, oldValue/newValue
+        JSON gövdeleri CLOB (<lob>) olarak saklanır. performedBy kullanıcı UUID'sidir.
+        Soft delete kullanılmaz.
+    -->
+    <entity class="tr.com.huseyinaydin.domain.audit.AuditLog" access="FIELD">
+
+        <table name="AUDIT_LOGS"/>
+
+        <attributes>
+            <basic name="entityId">
+                <column name="ENTITY_ID" length="100" nullable="true"/>
+            </basic>
+            <basic name="entityType">
+                <column name="ENTITY_TYPE" length="100" nullable="true"/>
+            </basic>
+            <basic name="action">
+                <column name="ACTION" nullable="false" length="20"/>
+                <enumerated>STRING</enumerated>
+            </basic>
+            <basic name="performedBy">
+                <column name="PERFORMED_BY" nullable="true"/>
+            </basic>
+            <basic name="performedAt">
+                <column name="PERFORMED_AT" nullable="false"/>
+            </basic>
+            <basic name="ipAddress">
+                <column name="IP_ADDRESS" length="45" nullable="true"/>
+            </basic>
+            <basic name="oldValue">
+                <column name="OLD_VALUE"/>
+                <lob/>
+            </basic>
+            <basic name="newValue">
+                <column name="NEW_VALUE"/>
+                <lob/>
+            </basic>
+        </attributes>
+
+    </entity>
+
+</entity-mappings>

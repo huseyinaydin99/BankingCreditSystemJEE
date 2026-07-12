@@ -44,7 +44,8 @@ public class PersistenceConfig {
             "META-INF/orm/CreditType.xml",
             "META-INF/orm/CreditApplication.xml",
             "META-INF/orm/ApplicationUser.xml",
-            "META-INF/orm/RefreshToken.xml"
+            "META-INF/orm/RefreshToken.xml",
+            "META-INF/orm/AuditLog.xml"
         );
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         emf.setJpaProperties(hibernateProperties());
