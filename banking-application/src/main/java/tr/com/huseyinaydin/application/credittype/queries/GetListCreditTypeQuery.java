@@ -1,9 +1,11 @@
 package tr.com.huseyinaydin.application.credittype.queries;
 
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.credittype.dtos.CreditTypeResponse;
 import tr.com.huseyinaydin.application.mapping.CreditTypeMapper;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.credittype.CreditType;
 import tr.com.huseyinaydin.domain.enums.CustomerType;
 import tr.com.huseyinaydin.domain.repositories.Specification;
 import tr.com.huseyinaydin.sharedkernel.messaging.IQuery;
@@ -12,8 +14,19 @@ import tr.com.huseyinaydin.sharedkernel.pagination.PageableQuery;
 import tr.com.huseyinaydin.sharedkernel.pagination.Paginate;
 import tr.com.huseyinaydin.sharedkernel.pagination.PaginationRequest;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Kredi türlerini sayfalı listeler. Hiyerarşi filtresi:
+ * {@code parentCreditTypeId == null} → yalnızca kök türler (ebeveyni olmayanlar);
+ * değer verilirse → belirtilen ebeveynin alt türleri. İsteğe bağlı {@code customerType}
+ * filtresiyle birlikte uygulanabilir.
+ */
 public record GetListCreditTypeQuery(
         CustomerType customerType,
+        UUID parentCreditTypeId,
         int pageIndex,
         int pageSize
 ) implements IQuery<Paginate<CreditTypeResponse>>, PageableQuery {
@@ -38,15 +51,26 @@ public record GetListCreditTypeQuery(
         public Paginate<CreditTypeResponse> handle(GetListCreditTypeQuery query) {
             PaginationRequest pagination = new PaginationRequest(query.pageIndex(), query.pageSize());
 
-            if (query.customerType() != null) {
-                return mapper.toResponsePage(
-                        uow.creditTypes().findByCustomerType(query.customerType(), pagination)
-                );
-            }
+            // deletedDate filtresi findAll tarafından otomatik uygulanır.
+            Specification<CreditType> spec = (root, cq, cb) -> {
+                List<Predicate> predicates = new ArrayList<>();
+
+                if (query.parentCreditTypeId() == null) {
+                    predicates.add(cb.isNull(root.get("parentCreditType")));
+                } else {
+                    predicates.add(cb.equal(
+                            root.get("parentCreditType").get("id"), query.parentCreditTypeId()));
+                }
+
+                if (query.customerType() != null) {
+                    predicates.add(cb.equal(root.get("customerType"), query.customerType()));
+                }
+
+                return cb.and(predicates.toArray(new Predicate[0]));
+            };
 
             return mapper.toResponsePage(
-                    uow.creditTypes().findAll(Specification.all(), pagination)
-            );
+                    uow.creditTypes().findAll(spec, pagination));
         }
     }
 }

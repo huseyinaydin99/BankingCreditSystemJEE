@@ -2,20 +2,47 @@ package tr.com.huseyinaydin.application.credittype.rules;
 
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.common.BankingErrorCodes;
+import tr.com.huseyinaydin.domain.credittype.CreditType;
+import tr.com.huseyinaydin.domain.repositories.ICreditTypeRepository;
 import tr.com.huseyinaydin.domain.valueobjects.Money;
 import tr.com.huseyinaydin.sharedkernel.exception.BusinessException;
+import tr.com.huseyinaydin.sharedkernel.exception.NotFoundException;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
- * CreditType için finansal tutarlılık kurallarını uygulayan domain iş kuralı bileşeni.
+ * CreditType için finansal tutarlılık ve yaşam döngüsü kurallarını uygulayan
+ * domain iş kuralı bileşeni.
  *
- * Kurallar, entity kaydedilmeden önce {@code CreateCreditTypeCommand.Handler} içinde
- * çağrılır ve ihlal durumunda {@link BusinessException} fırlatır (HTTP katmanında
- * RFC 7807 "business-rule-violation" problem tipine eşlenir).
+ * Kurallar, ilgili command handler'ları içinde çağrılır ve ihlal durumunda
+ * {@link BusinessException}/{@link NotFoundException} fırlatır (HTTP katmanında
+ * RFC 7807 problem tiplerine eşlenir).
  */
 @Component
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class CreditTypeBusinessRules {
+
+    private final ICreditTypeRepository creditTypeRepository;
+
+    public CreditTypeBusinessRules(ICreditTypeRepository creditTypeRepository) {
+        this.creditTypeRepository = creditTypeRepository;
+    }
+
+    /** İstenen kredi türü var olmalı; yoksa {@link NotFoundException}. */
+    public CreditType creditTypeMustExist(UUID id) {
+        return creditTypeRepository.findById(id).orElseThrow(() ->
+                new NotFoundException("CREDIT_TYPE", id.toString()));
+    }
+
+    /** Alt kredi türü bulunan bir tür silinemez. */
+    public void subCreditTypesMustBeEmpty(CreditType creditType) {
+        if (creditType.getSubCreditTypes() != null && !creditType.getSubCreditTypes().isEmpty()) {
+            throw new BusinessException(
+                    "Alt kredi türü olan tür silinemez",
+                    BankingErrorCodes.CREDIT_TYPE_HAS_SUBTYPES);
+        }
+    }
 
     /**
      * Alt/üst tutar, alt/üst vade ve yıllık faiz oranının kendi içinde tutarlı
