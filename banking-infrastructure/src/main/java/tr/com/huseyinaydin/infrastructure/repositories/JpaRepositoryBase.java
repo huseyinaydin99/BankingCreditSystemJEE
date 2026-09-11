@@ -28,6 +28,7 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
     }
 
     @Override
+    @io.github.resilience4j.retry.annotation.Retry(name = "jpaRetry")
     public Optional<TEntity> findById(TId id) {
         TEntity entity = entityManager.find(entityClass, id);
         if (entity == null || entity.getDeletedDate() != null) {
@@ -67,6 +68,7 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
     }
 
     @Override
+    @io.github.resilience4j.retry.annotation.Retry(name = "jpaRetry")
     public TEntity save(TEntity entity) {
         entityManager.persist(entity);
         return entity;
@@ -79,6 +81,7 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
     }
 
     @Override
+    @io.github.resilience4j.retry.annotation.Retry(name = "jpaRetry")
     public TEntity update(TEntity entity) {
         entity.setUpdatedDate(LocalDateTime.now());
         return entityManager.merge(entity);
