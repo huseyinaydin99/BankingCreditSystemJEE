@@ -61,6 +61,7 @@ public record CreateCreditTypeCommand(
         }
 
         @Override
+        @org.springframework.cache.annotation.CacheEvict(value = "creditTypes", allEntries = true)
         public Response handle(CreateCreditTypeCommand command) {
             Money minimumAmount = Money.of(command.minimumAmount(), DEFAULT_CURRENCY);
             Money maximumAmount = Money.of(command.maximumAmount(), DEFAULT_CURRENCY);

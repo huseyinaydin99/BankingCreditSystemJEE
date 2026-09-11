@@ -28,6 +28,7 @@ public record GetByIdIndividualCustomerQuery(
         }
 
         @Override
+        @org.springframework.cache.annotation.Cacheable(value = "customers", key = "#query.id()")
         public IndividualCustomerResponse handle(GetByIdIndividualCustomerQuery query) {
             return uow.individualCustomers()
                     .findById(query.id())

@@ -42,6 +42,7 @@ public record UpdateIndividualCustomerCommand(
         }
 
         @Override
+        @org.springframework.cache.annotation.CacheEvict(value = "customers", key = "#command.id()")
         public UpdatedIndividualCustomerResponse handle(UpdateIndividualCustomerCommand command) {
             businessRules.customerShouldExistWhenRequested(command.id());
 

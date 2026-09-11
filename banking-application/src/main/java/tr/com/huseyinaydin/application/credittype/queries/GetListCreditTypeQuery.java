@@ -43,6 +43,7 @@ public record GetListCreditTypeQuery(
         }
 
         @Override
+        @org.springframework.cache.annotation.Cacheable("creditTypes")
         public Paginate<CreditTypeResponse> handle(GetListCreditTypeQuery query) {
             PaginationRequest pagination = new PaginationRequest(query.pageIndex(), query.pageSize());
 

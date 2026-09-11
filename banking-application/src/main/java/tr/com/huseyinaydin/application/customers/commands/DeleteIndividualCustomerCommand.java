@@ -33,6 +33,7 @@ public record DeleteIndividualCustomerCommand(
         }
 
         @Override
+        @org.springframework.cache.annotation.CacheEvict(value = "customers", key = "#command.id()")
         public DeletedIndividualCustomerResponse handle(DeleteIndividualCustomerCommand command) {
             businessRules.customerShouldExistWhenRequested(command.id());
 
