@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: banking-credit-system
+
+otel:
+  service:
+    name: ${spring.application.name}
+  exporter:
+    otlp:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4317}
+  sdk:
+    disabled: true

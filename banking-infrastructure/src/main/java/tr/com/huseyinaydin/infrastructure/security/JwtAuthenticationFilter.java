@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.micrometer.tracing.BaggageInScope;
+import io.micrometer.tracing.Tracer;
+
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String AUTH_HEADER = "Authorization";
@@ -23,9 +26,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String ROLES_CLAIM = "roles";
 
     private final IJwtService jwtService;
+    private final Tracer tracer;
 
-    public JwtAuthenticationFilter(IJwtService jwtService) {
+    public JwtAuthenticationFilter(IJwtService jwtService, Tracer tracer) {
         this.jwtService = jwtService;
+        this.tracer = tracer;
     }
 
     @Override
@@ -39,8 +44,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = header.substring(BEARER_PREFIX.length());
+        String userId = null;
         try {
             Claims claims = jwtService.validateToken(token);
+            userId = claims.getSubject();
 
             List<?> rawRoles = claims.get(ROLES_CLAIM, List.class);
             List<SimpleGrantedAuthority> authorities = rawRoles == null
@@ -50,12 +57,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .collect(Collectors.toList());
 
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
+                    new UsernamePasswordAuthenticationToken(userId, null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (ApplicationException ignored) {
         }
 
-        filterChain.doFilter(request, response);
+        if (tracer != null && userId != null) {
+            try (BaggageInScope bag = tracer.createBaggageInScope("userId", userId)) {
+                filterChain.doFilter(request, response);
+            }
+        } else {
+            filterChain.doFilter(request, response);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package tr.com.huseyinaydin.application.pipeline.behavior;
 
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -20,9 +22,11 @@ public class LoggingBehavior<TRequest, TResponse> implements IPipelineBehavior<T
     private static final String MDC_CORRELATION_ID = "correlationId";
 
     private final ICurrentUserService currentUserService;
+    private final Tracer tracer;
 
-    public LoggingBehavior(ICurrentUserService currentUserService) {
+    public LoggingBehavior(ICurrentUserService currentUserService, Tracer tracer) {
         this.currentUserService = currentUserService;
+        this.tracer = tracer;
     }
 
     @Override
@@ -31,6 +35,12 @@ public class LoggingBehavior<TRequest, TResponse> implements IPipelineBehavior<T
         String userId = resolveUserId();
         String commandType = request.getClass().getSimpleName();
         long startNs = System.nanoTime();
+        
+        Span currentSpan = tracer.currentSpan();
+        if (currentSpan != null) {
+            MDC.put("traceId", currentSpan.context().traceId());
+            MDC.put("spanId", currentSpan.context().spanId());
+        }
 
         try {
             TResponse response = next.proceed();
@@ -56,6 +66,9 @@ public class LoggingBehavior<TRequest, TResponse> implements IPipelineBehavior<T
                     .setCause(ex)
                     .log("command failed");
             throw ex;
+        } finally {
+            MDC.remove("traceId");
+            MDC.remove("spanId");
         }
     }
 

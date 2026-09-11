@@ -103,6 +103,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

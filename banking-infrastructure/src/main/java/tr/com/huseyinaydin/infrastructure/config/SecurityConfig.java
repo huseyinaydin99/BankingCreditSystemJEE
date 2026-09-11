@@ -15,9 +15,11 @@ import tr.com.huseyinaydin.infrastructure.security.JwtAuthenticationFilter;
 public class SecurityConfig {
 
     private final IJwtService jwtService;
+    private final io.micrometer.tracing.Tracer tracer;
 
-    public SecurityConfig(IJwtService jwtService) {
+    public SecurityConfig(IJwtService jwtService, @org.springframework.beans.factory.annotation.Autowired(required = false) io.micrometer.tracing.Tracer tracer) {
         this.jwtService = jwtService;
+        this.tracer = tracer;
     }
 
     @Bean
@@ -35,7 +37,7 @@ public class SecurityConfig {
                     .anyRequest().authenticated()
             )
             .addFilterBefore(
-                    new JwtAuthenticationFilter(jwtService),
+                    new JwtAuthenticationFilter(jwtService, tracer),
                     UsernamePasswordAuthenticationFilter.class
             );
 

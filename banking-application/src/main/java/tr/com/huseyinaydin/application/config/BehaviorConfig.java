@@ -43,6 +43,13 @@ public class BehaviorConfig {
 
     @Bean
     @Order(3)
+    public tr.com.huseyinaydin.application.pipeline.behavior.TracingBehavior<?, ?> tracingBehavior(
+            @Autowired(required = false) io.micrometer.tracing.Tracer tracer) {
+        return new tr.com.huseyinaydin.application.pipeline.behavior.TracingBehavior<>(tracer);
+    }
+
+    @Bean
+    @Order(4)
     public AuthorizationBehavior<?, ?> authorizationBehavior(
             @Autowired(required = false) ICurrentUserService currentUserService) {
         if (currentUserService == null) {
@@ -52,14 +59,15 @@ public class BehaviorConfig {
     }
 
     @Bean
-    @Order(4)
+    @Order(5)
     public LoggingBehavior<?, ?> loggingBehavior(
-            @Autowired(required = false) ICurrentUserService currentUserService) {
-        return new LoggingBehavior<>(currentUserService);
+            @Autowired(required = false) ICurrentUserService currentUserService,
+            @Autowired(required = false) io.micrometer.tracing.Tracer tracer) {
+        return new LoggingBehavior<>(currentUserService, tracer);
     }
 
     @Bean
-    @Order(5)
+    @Order(6)
     public PerformanceBehavior<?, ?> performanceBehavior() {
         return new PerformanceBehavior<>();
     }
