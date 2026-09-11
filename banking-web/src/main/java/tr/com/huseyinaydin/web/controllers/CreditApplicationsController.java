@@ -32,14 +32,19 @@ import tr.com.huseyinaydin.sharedkernel.pagination.Paginate;
 
 import java.util.UUID;
 
+import tr.com.huseyinaydin.application.ports.metrics.IMeterRegistry;
+
 @Tag(name = "Kredi Başvuruları", description = "Kredi başvurusu oluşturma ve müşteri bazlı sorgulama işlemleri")
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/credit-applications")
 public class CreditApplicationsController extends BaseController {
 
-    public CreditApplicationsController(Mediator mediator) {
+    private final IMeterRegistry meterRegistry;
+
+    public CreditApplicationsController(Mediator mediator, IMeterRegistry meterRegistry) {
         super(mediator);
+        this.meterRegistry = meterRegistry;
     }
 
     @Operation(summary = "Kredi başvurusu oluştur",
@@ -59,7 +64,10 @@ public class CreditApplicationsController extends BaseController {
     @PostMapping
     public ResponseEntity<CreateCreditApplicationCommand.Response> create(
             @RequestBody @Valid CreateCreditApplicationCommand command) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(mediator.send(command));
+        
+        CreateCreditApplicationCommand.Response response = mediator.send(command);
+        meterRegistry.incrementCounter("banking.credit_application.created");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Operation(summary = "Müşteriye ait kredi başvurularını listele",

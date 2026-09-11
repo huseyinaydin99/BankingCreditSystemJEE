@@ -36,6 +36,13 @@ public class BehaviorConfig {
 
     @Bean
     @Order(2)
+    public tr.com.huseyinaydin.application.pipeline.behavior.MetricsBehavior<?, ?> metricsBehavior(
+            tr.com.huseyinaydin.application.ports.metrics.IMeterRegistry meterRegistry) {
+        return new tr.com.huseyinaydin.application.pipeline.behavior.MetricsBehavior<>(meterRegistry);
+    }
+
+    @Bean
+    @Order(3)
     public AuthorizationBehavior<?, ?> authorizationBehavior(
             @Autowired(required = false) ICurrentUserService currentUserService) {
         if (currentUserService == null) {
@@ -45,14 +52,14 @@ public class BehaviorConfig {
     }
 
     @Bean
-    @Order(3)
+    @Order(4)
     public LoggingBehavior<?, ?> loggingBehavior(
             @Autowired(required = false) ICurrentUserService currentUserService) {
         return new LoggingBehavior<>(currentUserService);
     }
 
     @Bean
-    @Order(4)
+    @Order(5)
     public PerformanceBehavior<?, ?> performanceBehavior() {
         return new PerformanceBehavior<>();
     }
