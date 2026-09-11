@@ -7,3 +7,5 @@
 /banking-persistence/target/
 /banking-shared-kernel/target/
 /banking-web/target/*
+.idea/compiler.xml
+.idea/compiler.xml
