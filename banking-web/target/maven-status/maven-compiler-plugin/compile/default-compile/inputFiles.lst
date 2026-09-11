@@ -15,6 +15,7 @@
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/exception/GlobalExceptionHandler.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/filter/CorrelationIdFilter.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/filter/CorsFilter.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/filter/RateLimitFilter.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/health/CreditApplicationHealthIndicator.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/health/DatabaseHealthIndicator.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/info/BankingInfoContributor.java

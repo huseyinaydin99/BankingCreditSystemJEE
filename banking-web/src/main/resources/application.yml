@@ -10,3 +10,10 @@ otel:
       endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4317}
   sdk:
     disabled: true
+
+banking:
+  rate-limit:
+    credit-application:
+      authenticated: 10
+      anonymous: 3
+

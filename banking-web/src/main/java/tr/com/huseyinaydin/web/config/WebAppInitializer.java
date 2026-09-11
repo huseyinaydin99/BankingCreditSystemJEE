@@ -51,6 +51,12 @@ public class WebAppInitializer implements WebApplicationInitializer {
                 EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR),
                 false, "/*");
 
+        FilterRegistration.Dynamic rateLimit =
+                ctx.addFilter("rateLimitFilter", new tr.com.huseyinaydin.web.filter.RateLimitFilter(rootCtx.getEnvironment()));
+        rateLimit.addMappingForUrlPatterns(
+                EnumSet.of(DispatcherType.REQUEST),
+                false, "/api/*");
+
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter("UTF-8", true);
         FilterRegistration.Dynamic encoding = ctx.addFilter("encodingFilter", encodingFilter);
         encoding.addMappingForUrlPatterns(
