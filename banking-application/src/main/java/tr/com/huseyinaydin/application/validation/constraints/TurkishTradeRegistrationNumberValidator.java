@@ -8,8 +8,7 @@ public class TurkishTradeRegistrationNumberValidator
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null) return true; // null is handled by @NotNull / @NotBlank
-        // Ticaret Sicil No / MERSİS: standart checksum yoktur; biçim + uzunluk kontrolü.
+        if (value == null) return true; 
         return value.matches("\\d{4,16}");
     }
 }

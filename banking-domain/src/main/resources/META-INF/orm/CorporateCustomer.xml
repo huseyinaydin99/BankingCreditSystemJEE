@@ -6,11 +6,7 @@
                             https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
         version="3.1">
 
-    <!--
-        Kurumsal müşteri varlığı.
-        CUSTOMERS tablosuna JOINED stratejisiyle bağlanır; discriminator değeri "2".
-        taxNumber: 10 haneli vergi no — benzersizlik kısıtı (unique="true") uygulanır.
-    -->
+    
     <entity class="tr.com.huseyinaydin.domain.customer.CorporateCustomer" access="FIELD">
 
         <table name="CORPORATE_CUSTOMERS"/>

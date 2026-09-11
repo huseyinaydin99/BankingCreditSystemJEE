@@ -34,7 +34,6 @@ public class PersistenceConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         emf.setDataSource(dataSource);
-        // emf.setPackagesToScan("tr.com.huseyinaydin.domain");  — XML ORM mapping aktif; annotation tarama devre dışı.
         emf.setMappingResources(
             "META-INF/orm/BaseEntity.xml",
             "META-INF/orm/Entity.xml",

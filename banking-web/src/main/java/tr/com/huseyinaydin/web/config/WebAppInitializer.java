@@ -21,8 +21,6 @@ public class WebAppInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext ctx) throws ServletException {
 
-        // Root application context — loads application, infrastructure, persistence layers
-        // Using string-based config to avoid compile-time dependency on runtime-scope modules
         AnnotationConfigWebApplicationContext rootCtx = new AnnotationConfigWebApplicationContext();
         rootCtx.setConfigLocations(
                 "tr.com.huseyinaydin.application.config.BankingApplicationConfig",
@@ -31,45 +29,34 @@ public class WebAppInitializer implements WebApplicationInitializer {
         );
         ctx.addListener(new ContextLoaderListener(rootCtx));
 
-        // DispatcherServlet context — Spring MVC web layer only
         AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
         webCtx.register(BankingWebConfig.class);
 
         DispatcherServlet dispatcher = new DispatcherServlet(webCtx);
         ServletRegistration.Dynamic api = ctx.addServlet("apiServlet", dispatcher);
         api.setLoadOnStartup(1);
-        // /api/* → REST endpoint'leri
-        // /v3/*  → springdoc OpenAPI spec endpoint'i (/v3/api-docs)
-        // /swagger-ui/* ve /swagger-ui.html → Swagger UI
-        // /webjars/* → Swagger UI CSS/JS statik dosyaları
-        api.addMapping("/api/*", "/v3/*", "/swagger-ui/*", "/swagger-ui.html", "/webjars/*");
+        api.addMapping("/api/*", "/actuator/*", "/v3/*", "/swagger-ui/*", "/swagger-ui.html", "/webjars/*");
 
-        // PrimeFaces tema ayarı (saga: açık mavi tema)
         ctx.setInitParameter("primefaces.THEME", "saga");
 
-        // JSF/Facelets servlet
         ServletRegistration.Dynamic faces = ctx.addServlet("FacesServlet", "jakarta.faces.webapp.FacesServlet");
         faces.setLoadOnStartup(2);
         faces.addMapping("*.xhtml");
 
-        // Health check servlet
         ctx.addServlet("HealthServlet", HealthServlet.class).addMapping("/health");
 
-        // Correlation ID filter — MDC'yi en erken kuran ilk filtre (tüm istek boyunca log izlenir)
         FilterRegistration.Dynamic correlation =
                 ctx.addFilter("correlationIdFilter", new CorrelationIdFilter());
         correlation.addMappingForUrlPatterns(
                 EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR),
                 false, "/*");
 
-        // UTF-8 encoding filter for all requests
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter("UTF-8", true);
         FilterRegistration.Dynamic encoding = ctx.addFilter("encodingFilter", encodingFilter);
         encoding.addMappingForUrlPatterns(
                 EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE),
                 false, "/*");
 
-        // CORS filter for REST API
         FilterRegistration.Dynamic cors = ctx.addFilter("corsFilter", CorsFilter.class);
         cors.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/api/*");
     }

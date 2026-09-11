@@ -6,4 +6,4 @@
 /banking-infrastructure/target/
 /banking-persistence/target/
 /banking-shared-kernel/target/
-/banking-web/target/
+/banking-web/target/*

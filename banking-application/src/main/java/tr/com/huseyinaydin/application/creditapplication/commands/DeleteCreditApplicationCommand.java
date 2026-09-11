@@ -10,12 +10,7 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 
 import java.util.UUID;
 
-/**
- * Bir kredi başvurusunu soft delete ile siler. Yalnızca PENDING durumundakiler
- * silinebilir; UNDER_REVIEW/APPROVED (veya diğer) durumlarda {@code BusinessException},
- * yetkisiz erişimde {@code AuthorizationException} fırlatılır.
- * Mimari için {@code DeleteIndividualCustomerCommand} örnek alınmıştır.
- */
+
 public record DeleteCreditApplicationCommand(
         @NotNull UUID id,
         boolean permanent

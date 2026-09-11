@@ -22,7 +22,6 @@ public class CreditApplicationBean extends AbstractManagedBean {
     private UUID currentCustomerId;
     private List<CreditApplicationResponse> applications = new ArrayList<>();
 
-    // Create form fields
     private UUID creditTypeId;
     private BigDecimal requestedAmount;
     private int requestedTerm;
@@ -65,7 +64,6 @@ public class CreditApplicationBean extends AbstractManagedBean {
         requestedTerm = 0;
     }
 
-    // ── Getters / Setters ────────────────────────────────────────────────────
 
     public UUID getCurrentCustomerId() { return currentCustomerId; }
     public void setCurrentCustomerId(UUID currentCustomerId) {

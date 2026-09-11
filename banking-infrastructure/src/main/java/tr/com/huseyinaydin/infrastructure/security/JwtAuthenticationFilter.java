@@ -54,7 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (ApplicationException ignored) {
-            // Geçersiz/süresi dolmuş token — anonim devam; güvenlik filtresi reddeder
         }
 
         filterChain.doFilter(request, response);

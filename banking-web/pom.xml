@@ -23,59 +23,49 @@
         Tüm diğer modülleri bir araya getirir; yalnızca application ve shared-kernel'e doğrudan bağımlıdır.
     </description>
 
-    <!--
-        Bağımlılık kuralı:
-          banking-web → banking-application (use-case'leri tetikler, interface'lere bağımlıdır)
-          banking-web → banking-shared-kernel (exception/response tipleri)
-          banking-web → banking-infrastructure (runtime: Spring boot ederken context'e dahil edilir)
-          banking-web → banking-persistence  (runtime: DataSource/EntityManagerFactory)
-          banking-web → Spring WebMVC, Spring Security Web
-          banking-web → Jakarta Servlet API (provided — container tarafından sağlanır)
-          banking-web → Jakarta Faces API  (provided — container tarafından sağlanır)
-          banking-web → Jackson (JSON serializasyon)
-    -->
+    
 
     <dependencies>
 
-        <!-- Application katmanı (use-case interface'leri + DTO'lar) -->
+        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-application</artifactId>
         </dependency>
 
-        <!-- Shared kernel (exception/response tipleri) -->
+        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-shared-kernel</artifactId>
         </dependency>
 
-        <!-- Infrastructure (runtime: repository impl, security impl, mapper impl) -->
+        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-infrastructure</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Persistence (runtime: DataSource, EntityManagerFactory) -->
+        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-persistence</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Spring WebMVC (DispatcherServlet, @RestController, @ControllerAdvice vb.) -->
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
 
-        <!-- Spring Context -->
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
 
-        <!-- Spring Security Web (filter chain, SecurityContextPersistenceFilter vb.) -->
+        
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
@@ -85,33 +75,33 @@
             <artifactId>spring-security-config</artifactId>
         </dependency>
 
-        <!-- Jakarta Servlet API (provided — Tomcat/WildFly/GlassFish tarafından sağlanır) -->
+        
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Jakarta Faces API (provided — uygulama sunucusu tarafından sağlanır) -->
+        
         <dependency>
             <groupId>jakarta.faces</groupId>
             <artifactId>jakarta.faces-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Jakarta Annotation (@PostConstruct, @PreDestroy) -->
+        
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
         </dependency>
 
-        <!-- Jakarta Inject (JSF Managed Bean'ler için @Named, @Inject) -->
+        
         <dependency>
             <groupId>jakarta.inject</groupId>
             <artifactId>jakarta.inject-api</artifactId>
         </dependency>
 
-        <!-- PrimeFaces UI bileşen kütüphanesi (Jakarta EE 10 / JSF 4.0 uyumlu) -->
+        
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
@@ -119,13 +109,13 @@
             <classifier>jakarta</classifier>
         </dependency>
 
-        <!-- OpenAPI / Swagger UI (banking-web katmanına özel; iç katmanlara sızmaz) -->
+        
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
 
-        <!-- JSON serializasyon (REST yanıtları) -->
+        
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -135,14 +125,14 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
-        <!-- Logback runtime -->
+        
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Structured (JSON) logging encoder — prod profilinde LogstashEncoder ile kullanılır -->
+        
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
@@ -150,7 +140,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Janino — logback.xml içindeki <if> koşullu profil ayrımı için (Spring Boot yok) -->
+        
         <dependency>
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
@@ -158,7 +148,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Test -->
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -170,6 +160,22 @@
             <scope>test</scope>
         </dependency>
 
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
+
+        
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -179,7 +185,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warName>banking-credit-system</warName>
-                    <!-- web.xml opsiyonel; WebApplicationInitializer kullanıyoruz -->
+                    
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>

@@ -23,9 +23,6 @@ public abstract class AbstractManagedBean implements Serializable {
                 new FacesMessage(FacesMessage.SEVERITY_ERROR, message, null));
     }
 
-    /**
-     * Spring context'ten bean çözer — CDI yokken JSF bean'lerine Spring bean enjekte etmek için.
-     */
     protected <T> T getBean(Class<T> type) {
         FacesContext fc = FacesContext.getCurrentInstance();
         ServletContext sc = (ServletContext) fc.getExternalContext().getContext();

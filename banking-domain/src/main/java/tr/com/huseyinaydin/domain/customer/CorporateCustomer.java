@@ -1,38 +1,30 @@
 package tr.com.huseyinaydin.domain.customer;
 
-// import jakarta.persistence.Column;           — META-INF/orm/CorporateCustomer.xml ile eşleme sağlanmaktadır.
-// import jakarta.persistence.DiscriminatorValue;
-// import jakarta.persistence.Entity;
-// import jakarta.persistence.Table;
+
+
+
+
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-// @Entity
-// @Table(name = "CORPORATE_CUSTOMERS")
-// @DiscriminatorValue("2")
+
+
+
 public class CorporateCustomer extends Customer {
 
-    // @Column(name = "COMPANY_NAME", nullable = false, length = 100)
     private String companyName;
 
-    // @Column(name = "TAX_NUMBER", nullable = false, unique = true, length = 10)
     private String taxNumber;
 
-    // @Column(name = "TAX_OFFICE", length = 100)
     private String taxOffice;
 
-    // @Column(name = "COMPANY_REGISTRATION_NUMBER", length = 50)
     private String companyRegistrationNumber;
 
-    // @Column(name = "TRADE_REGISTRATION_NUMBER", nullable = false, unique = true, length = 20)
-    // Ticaret Sicil No — companyRegistrationNumber'dan farklı, benzersiz ve zorunlu alan.
     private String tradeRegistrationNumber;
 
-    // @Column(name = "AUTHORIZED_PERSON_NAME", length = 200)
     private String authorizedPersonName;
 
-    // @Column(name = "COMPANY_FOUNDATION_DATE")
     private LocalDate companyFoundationDate;
 
     protected CorporateCustomer() {

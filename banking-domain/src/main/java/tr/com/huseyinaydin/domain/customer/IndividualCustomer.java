@@ -1,34 +1,28 @@
 package tr.com.huseyinaydin.domain.customer;
 
-// import jakarta.persistence.Column;           — META-INF/orm/IndividualCustomer.xml ile eşleme sağlanmaktadır.
-// import jakarta.persistence.DiscriminatorValue;
-// import jakarta.persistence.Entity;
-// import jakarta.persistence.Table;
+
+
+
+
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-// @Entity
-// @Table(name = "INDIVIDUAL_CUSTOMERS")
-// @DiscriminatorValue("1")
+
+
+
 public class IndividualCustomer extends Customer {
 
-    // @Column(name = "FIRST_NAME", nullable = false, length = 50)
     private String firstName;
 
-    // @Column(name = "LAST_NAME", nullable = false, length = 50)
     private String lastName;
 
-    // @Column(name = "NATIONAL_ID", nullable = false, unique = true, length = 11)
     private String nationalId;
 
-    // @Column(name = "DATE_OF_BIRTH")
     private LocalDate dateOfBirth;
 
-    // @Column(name = "MOTHER_NAME", length = 100)
     private String motherName;
 
-    // @Column(name = "FATHER_NAME", length = 100)
     private String fatherName;
 
     protected IndividualCustomer() {

@@ -31,11 +31,6 @@ public class CreditApplicationBusinessRules {
     private final IApplicationUserRepository applicationUserRepository;
     private final ICurrentUserService currentUserService;
 
-    /*
-     * İzinli durum geçiş grafiği: PENDING → UNDER_REVIEW → APPROVED/REJECTED.
-     * CANCELLED, henüz sonuçlanmamış (PENDING/UNDER_REVIEW) başvurulardan erişilebilir.
-     * Terminal durumlar (APPROVED/REJECTED/CANCELLED) için giden geçiş yoktur.
-     */
     private static final Map<CreditApplicationStatus, Set<CreditApplicationStatus>> ALLOWED_TRANSITIONS =
             new EnumMap<>(CreditApplicationStatus.class);
 
@@ -70,11 +65,6 @@ public class CreditApplicationBusinessRules {
                 new NotFoundException("CREDIT_APPLICATION", id.toString()));
     }
 
-    /**
-     * Satır bazlı erişim yetkisi: OFFICER ve ADMIN tüm başvurulara erişebilir;
-     * CUSTOMER yalnızca kendi müşteri kaydına ait başvurulara erişebilir. Aksi hâlde
-     * {@link AuthorizationException} (HTTP 401/403) fırlatılır.
-     */
     public void userCanAccessApplication(CreditApplication application) {
         String currentUserId = currentUserService.getCurrentUserId();
         if (currentUserId == null || !currentUserService.isAuthenticated()) {
@@ -86,12 +76,10 @@ public class CreditApplicationBusinessRules {
                 .map(String::toUpperCase)
                 .collect(Collectors.toSet());
 
-        // Personel rolleri tüm başvurulara erişebilir.
         if (roles.contains(UserRole.OFFICER.name()) || roles.contains(UserRole.ADMIN.name())) {
             return;
         }
 
-        // CUSTOMER: yalnızca kendi başvuruları.
         UUID ownerCustomerId = resolveCurrentCustomerId(currentUserId);
         if (ownerCustomerId == null || !ownerCustomerId.equals(application.getCustomerId())) {
             throw new AuthorizationException("VIEW_CREDIT_APPLICATION",
@@ -111,7 +99,6 @@ public class CreditApplicationBusinessRules {
                 .orElse(null);
     }
 
-    /** Yalnızca PENDING durumundaki başvurular güncellenebilir/silinebilir. */
     public void onlyPendingCanBeModified(CreditApplication application) {
         if (application.getStatus() != CreditApplicationStatus.PENDING) {
             throw new BusinessException(
@@ -121,11 +108,6 @@ public class CreditApplicationBusinessRules {
         }
     }
 
-    /**
-     * Onay iş akışının durum geçişini doğrular. Yalnızca
-     * PENDING → UNDER_REVIEW → APPROVED/REJECTED (ve iptal) çizgisine izin verilir;
-     * geçersiz geçişte {@link BusinessException} fırlatılır.
-     */
     public void statusTransitionMustBeValid(CreditApplicationStatus current,
                                             CreditApplicationStatus target) {
         Set<CreditApplicationStatus> allowed =

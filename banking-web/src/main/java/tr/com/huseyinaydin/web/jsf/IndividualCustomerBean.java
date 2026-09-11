@@ -24,7 +24,6 @@ public class IndividualCustomerBean extends AbstractManagedBean {
     private IndividualCustomerResponse selected;
     private String searchNationalId;
 
-    // Create form fields
     private String firstName;
     private String lastName;
     private String nationalId;
@@ -100,7 +99,6 @@ public class IndividualCustomerBean extends AbstractManagedBean {
         dateOfBirth = null;
     }
 
-    // ── Getters / Setters ────────────────────────────────────────────────────
 
     public List<IndividualCustomerResponse> getCustomers() { return customers; }
     public IndividualCustomerResponse getSelected() { return selected; }

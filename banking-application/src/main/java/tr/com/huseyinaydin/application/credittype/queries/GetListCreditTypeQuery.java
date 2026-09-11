@@ -18,12 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Kredi türlerini sayfalı listeler. Hiyerarşi filtresi:
- * {@code parentCreditTypeId == null} → yalnızca kök türler (ebeveyni olmayanlar);
- * değer verilirse → belirtilen ebeveynin alt türleri. İsteğe bağlı {@code customerType}
- * filtresiyle birlikte uygulanabilir.
- */
+
 public record GetListCreditTypeQuery(
         CustomerType customerType,
         UUID parentCreditTypeId,
@@ -51,7 +46,6 @@ public record GetListCreditTypeQuery(
         public Paginate<CreditTypeResponse> handle(GetListCreditTypeQuery query) {
             PaginationRequest pagination = new PaginationRequest(query.pageIndex(), query.pageSize());
 
-            // deletedDate filtresi findAll tarafından otomatik uygulanır.
             Specification<CreditType> spec = (root, cq, cb) -> {
                 List<Predicate> predicates = new ArrayList<>();
 

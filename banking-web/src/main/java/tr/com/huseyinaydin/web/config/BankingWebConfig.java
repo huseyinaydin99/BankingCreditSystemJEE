@@ -36,7 +36,6 @@ public class BankingWebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**")
                 .addResourceLocations("/WEB-INF/resources/");
-        // Swagger UI statik dosyaları (CSS, JS) — springdoc jar'ından webjars olarak sunulur
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
         registry.addResourceHandler("/swagger-ui/**")

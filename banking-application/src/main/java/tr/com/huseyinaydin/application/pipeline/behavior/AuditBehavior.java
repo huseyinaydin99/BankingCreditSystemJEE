@@ -22,24 +22,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-/**
- * Denetim izi behavior'ı. Yalnızca {@link ICommand} isteklerinde çalışır ve komut
- * başarıyla tamamlandıktan (transaction commit) SONRA bir denetim kaydı yazar.
- *
- * Sıralama: {@code @Order(6)} — TransactionBehavior ({@code @Order(10)}) daha içte kaldığı
- * için {@code next.proceed()} tx commit olduktan sonra döner; böylece yalnızca başarılı
- * komutlar denetlenir. Denetim yazımı best-effort'tur; hatası asıl sonucu etkilemez.
- *
- * NOT: Bu jenerik katman entity'nin DB'deki önceki halini bilemez. "before/after"
- * yaklaşımı olarak komut yükü serialize edilir: CREATE/UPDATE → newValue, DELETE → oldValue.
- * Gerçek eski-değer yakalama entity-bazlı hook gerektirir (kapsam dışı).
- */
+
 @Order(6)
 public class AuditBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private static final Logger log = LoggerFactory.getLogger(AuditBehavior.class);
 
-    // Adı bu deseni içeren alanlar JSON'da maskelenir (parola vb. denetime sızmasın).
     private static final Pattern SENSITIVE_FIELD =
             Pattern.compile("(?i)(password|secret|token|otp|hash)");
     private static final String REDACTED = "***";
@@ -56,7 +44,7 @@ public class AuditBehavior<TRequest, TResponse> implements IPipelineBehavior<TRe
         this.ipAddressProvider = ipAddressProvider;
         this.currentUserService = currentUserService;
         this.objectMapper = new ObjectMapper();
-        this.objectMapper.findAndRegisterModules(); // jsr310 vb.
+        this.objectMapper.findAndRegisterModules(); 
     }
 
     @Override
@@ -65,7 +53,6 @@ public class AuditBehavior<TRequest, TResponse> implements IPipelineBehavior<TRe
             return next.proceed();
         }
 
-        // Önce asıl işlem (ve iç transaction) tamamlanır; hata olursa audit yazılmaz.
         TResponse response = next.proceed();
 
         try {
@@ -106,7 +93,7 @@ public class AuditBehavior<TRequest, TResponse> implements IPipelineBehavior<TRe
     private static AuditAction resolveAction(String commandName) {
         if (commandName.startsWith("Create")) return AuditAction.CREATE;
         if (commandName.startsWith("Delete")) return AuditAction.DELETE;
-        return AuditAction.UPDATE; // Update/Approve/Reject/MoveToReview... hepsi state değiştirir
+        return AuditAction.UPDATE; 
     }
 
     private static String resolveEntityType(String commandName) {
@@ -130,7 +117,7 @@ public class AuditBehavior<TRequest, TResponse> implements IPipelineBehavior<TRe
         try {
             return UUID.fromString(userId);
         } catch (IllegalArgumentException ex) {
-            return null; // "anonymous" gibi UUID olmayan değerler
+            return null; 
         }
     }
 
@@ -143,7 +130,6 @@ public class AuditBehavior<TRequest, TResponse> implements IPipelineBehavior<TRe
         }
     }
 
-    /** Response ya da command üzerinden id() / getId() ile kimlik çıkarır. */
     private static String extractId(Object target) {
         if (target == null) return null;
         for (String methodName : new String[]{"id", "getId"}) {
@@ -152,7 +138,6 @@ public class AuditBehavior<TRequest, TResponse> implements IPipelineBehavior<TRe
                 Object value = m.invoke(target);
                 if (value != null) return String.valueOf(value);
             } catch (ReflectiveOperationException ignored) {
-                // metot yok/erişilemez — diğerini dene
             }
         }
         return null;

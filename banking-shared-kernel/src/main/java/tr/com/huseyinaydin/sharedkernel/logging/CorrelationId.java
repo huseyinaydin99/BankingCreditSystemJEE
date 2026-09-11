@@ -3,12 +3,7 @@ package tr.com.huseyinaydin.sharedkernel.logging;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * İstek bazlı izleme kimliği (correlation id) için değişmez değer nesnesi — UUID sarmalayıcı.
- *
- * {@link #asString()} tam UUID'yi (yayılım/propagation ve MDC için) döner; {@link #toString()}
- * ise loglarda okunabilirlik için kısa (ilk 8 hane) formatı döner.
- */
+
 public final class CorrelationId {
 
     private final UUID value;
@@ -17,15 +12,10 @@ public final class CorrelationId {
         this.value = Objects.requireNonNull(value, "correlation id null olamaz");
     }
 
-    /** Yeni rastgele bir correlation id üretir. */
     public static CorrelationId newId() {
         return new CorrelationId(UUID.randomUUID());
     }
 
-    /**
-     * Verilen metinden bir correlation id üretir. Metin geçerli bir UUID değilse (null/boş/hatalı),
-     * yeni rastgele bir id üretilir.
-     */
     public static CorrelationId of(String raw) {
         if (raw == null || raw.isBlank()) {
             return newId();
@@ -41,12 +31,10 @@ public final class CorrelationId {
         return value;
     }
 
-    /** Tam UUID metni — MDC ve X-Correlation-ID header'ı için. */
     public String asString() {
         return value.toString();
     }
 
-    /** Kısa gösterim — UUID'nin ilk 8 hanesi. */
     @Override
     public String toString() {
         return value.toString().substring(0, 8);

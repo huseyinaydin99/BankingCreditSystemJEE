@@ -6,11 +6,7 @@
               version="4.0">
 
     <application>
-        <!--
-            Spring bean'lerini JSF EL ortamına açar.
-            #{mediator}, #{commandBus} gibi Spring bean'leri Facelets sayfalarında
-            ve @ManagedProperty aracılığıyla kullanılabilir hale gelir.
-        -->
+        
         <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
 
         <locale-config>
@@ -19,7 +15,7 @@
         </locale-config>
     </application>
 
-    <!-- Navigation rules -->
+    
     <navigation-rule>
         <from-view-id>/customers/list.xhtml</from-view-id>
         <navigation-case>

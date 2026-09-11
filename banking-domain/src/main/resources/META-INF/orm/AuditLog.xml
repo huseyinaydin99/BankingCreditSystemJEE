@@ -6,12 +6,7 @@
                             https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
         version="3.1">
 
-    <!--
-        Denetim izi kaydı. id ve denetim sütunları (createdDate/updatedDate/deletedDate)
-        BaseEntity mapped-superclass'tan gelir. action STRING olarak, oldValue/newValue
-        JSON gövdeleri CLOB (<lob>) olarak saklanır. performedBy kullanıcı UUID'sidir.
-        Soft delete kullanılmaz.
-    -->
+    
     <entity class="tr.com.huseyinaydin.domain.audit.AuditLog" access="FIELD">
 
         <table name="AUDIT_LOGS"/>

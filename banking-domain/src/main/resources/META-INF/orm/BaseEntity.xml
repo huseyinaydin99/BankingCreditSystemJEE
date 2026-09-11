@@ -6,11 +6,7 @@
                             https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
         version="3.1">
 
-    <!--
-        Ortak baz sınıf — tüm entity'lerin paylaştığı birincil anahtar,
-        denetim sütunları (createdDate, updatedDate) ve yumuşak silme sütunu (deletedDate).
-        Lifecycle callback'ler: onPrePersist (@PrePersist) ve onPreUpdate (@PreUpdate).
-    -->
+    
     <mapped-superclass class="tr.com.huseyinaydin.domain.common.BaseEntity" access="FIELD">
 
         <pre-persist method-name="onPrePersist"/>

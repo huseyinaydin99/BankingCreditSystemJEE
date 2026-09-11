@@ -22,70 +22,59 @@
         Spring CQRS Mediator/Bus implementasyonu.
     </description>
 
-    <!--
-        Bağımlılık kuralı:
-          banking-infrastructure → banking-application (interface'leri implement eder)
-          banking-infrastructure → banking-domain
-          banking-infrastructure → banking-shared-kernel
-          banking-infrastructure → Hibernate Core (JPA implementasyonu)
-          banking-infrastructure → Spring ORM, Spring TX (JPA entegrasyonu)
-          banking-infrastructure → Spring Security (JWT filter, AuthenticationManager)
-          banking-infrastructure → JJWT (JWT üretim/doğrulama)
-          banking-infrastructure → MapStruct (mapper implement eder)
-          banking-infrastructure → Hibernate Validator (validation runtime)
-    -->
+    
 
     <dependencies>
 
-        <!-- Application layer interface'leri -->
+        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-application</artifactId>
         </dependency>
 
-        <!-- Domain modeli -->
+        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-domain</artifactId>
         </dependency>
 
-        <!-- Shared kernel -->
+        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-shared-kernel</artifactId>
         </dependency>
 
-        <!-- JPA API -->
+        
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
         </dependency>
 
-        <!-- Hibernate ORM (JPA implementasyonu) -->
+        
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
 
-        <!-- Spring ORM: LocalContainerEntityManagerFactoryBean, HibernateJpaVendorAdapter -->
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
         </dependency>
 
-        <!-- Spring TX: PlatformTransactionManager, JpaTransactionManager -->
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
         </dependency>
 
-        <!-- Spring Context: @Component, @Repository, ApplicationContext -->
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
 
-        <!-- Spring Security: OncePerRequestFilter, SecurityContext, AuthenticationManager -->
+        
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
@@ -99,7 +88,7 @@
             <artifactId>spring-security-config</artifactId>
         </dependency>
 
-        <!-- JWT -->
+        
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -115,7 +104,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- MapStruct (implementasyon üretimi) -->
+        
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -126,7 +115,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Hibernate Validator (validation runtime) -->
+        
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -136,27 +125,27 @@
             <artifactId>expressly</artifactId>
         </dependency>
 
-        <!-- Jakarta Servlet API: OncePerRequestFilter, HttpServletRequest/Response -->
+        
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Jakarta Inject -->
+        
         <dependency>
             <groupId>jakarta.inject</groupId>
             <artifactId>jakarta.inject-api</artifactId>
         </dependency>
 
-        <!-- Logback runtime -->
+        
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Test -->
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>

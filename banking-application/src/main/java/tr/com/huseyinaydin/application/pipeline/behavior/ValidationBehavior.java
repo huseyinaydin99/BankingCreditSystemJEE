@@ -33,7 +33,6 @@ public class ValidationBehavior<TRequest, TResponse> implements IPipelineBehavio
     public TResponse handle(TRequest request, PipelineDelegate<TResponse> next) {
         List<ValidationError> allErrors = new ArrayList<>();
 
-        // Layer 1: Jakarta Bean Validation (annotation-driven)
         if (beanValidator != null) {
             Set<ConstraintViolation<TRequest>> violations = beanValidator.validate(request);
             for (ConstraintViolation<TRequest> v : violations) {
@@ -42,7 +41,6 @@ public class ValidationBehavior<TRequest, TResponse> implements IPipelineBehavio
             }
         }
 
-        // Layer 2: IValidator implementations (imperative rules)
         Map<String, IValidator> allValidators = context.getBeansOfType(IValidator.class);
         for (IValidator validator : allValidators.values()) {
             ResolvableType validatorType = ResolvableType.forClass(validator.getClass())

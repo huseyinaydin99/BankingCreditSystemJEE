@@ -63,7 +63,6 @@ public class BehaviorConfig {
             @Autowired(required = false) IAuditService auditService,
             @Autowired(required = false) IpAddressProvider ipAddressProvider,
             @Autowired(required = false) ICurrentUserService currentUserService) {
-        // auditService yoksa (ör. infra bağlı değilse) behavior no-op'tur — bkz. AuditBehavior.handle
         return new AuditBehavior<>(auditService, ipAddressProvider, currentUserService);
     }
 

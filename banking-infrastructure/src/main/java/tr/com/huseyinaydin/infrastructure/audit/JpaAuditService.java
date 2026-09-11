@@ -8,11 +8,7 @@ import tr.com.huseyinaydin.application.ports.IAuditService;
 import tr.com.huseyinaydin.domain.audit.AuditLog;
 import tr.com.huseyinaydin.sharedkernel.audit.AuditEntry;
 
-/**
- * {@link IAuditService} JPA implementasyonu. Denetim kaydı, asıl komut transaction'ı commit
- * olduktan SONRA (AuditBehavior, @Order(6)) yazıldığından, kendi kısa ömürlü EntityManager'ı
- * ve transaction'ı ile bağımsız olarak kalıcılaştırılır (JpaUnitOfWork ile aynı yaklaşım).
- */
+
 @Service
 public class JpaAuditService implements IAuditService {
 

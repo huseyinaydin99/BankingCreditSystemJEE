@@ -1,8 +1,10 @@
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/audit/WebIpAddressProvider.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/config/ActuatorConfig.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/config/BankingWebConfig.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/config/OpenApiConfig.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/config/SecurityWebAppInitializer.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/config/WebAppInitializer.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/ActuatorController.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/ApproveCreditApplicationsController.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/BaseController.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/controllers/CorporateCustomersController.java
@@ -12,6 +14,9 @@
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/exception/GlobalExceptionHandler.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/filter/CorrelationIdFilter.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/filter/CorsFilter.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/health/CreditApplicationHealthIndicator.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/health/DatabaseHealthIndicator.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/info/BankingInfoContributor.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/jsf/AbstractManagedBean.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/jsf/CreditApplicationBean.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-web/src/main/java/tr/com/huseyinaydin/web/jsf/IndividualCustomerBean.java

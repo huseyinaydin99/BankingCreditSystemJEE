@@ -13,16 +13,12 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 
 import java.util.UUID;
 
-/**
- * Kredi başvurusunu reddeder (UNDER_REVIEW → REJECTED). {@code id} yol değişkeninden,
- * {@code rejectionReason} istek gövdesinden ({@link Request}) gelir.
- */
+
 public record RejectCreditApplicationCommand(
         @NotNull UUID id,
         @NotBlank @Size(max = 500) String rejectionReason
 ) implements ICommand<RejectCreditApplicationCommand.Response> {
 
-    /** HTTP istek gövdesi (id yol değişkeninden alınır, gövdede yer almaz). */
     public record Request(
             @NotBlank @Size(max = 500) String rejectionReason
     ) {}

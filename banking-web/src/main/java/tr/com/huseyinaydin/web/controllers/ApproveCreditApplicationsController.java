@@ -23,11 +23,7 @@ import tr.com.huseyinaydin.application.creditapplication.commands.RejectCreditAp
 
 import java.util.UUID;
 
-/**
- * Kredi başvurusu onay iş akışı endpoint'leri: incele → onayla / reddet.
- * Durum makinesi PENDING → UNDER_REVIEW → APPROVED/REJECTED çizgisinde ilerler;
- * geçersiz geçişler RFC 7807 "business-rule-violation" olarak döner.
- */
+
 @Tag(name = "Kredi Başvuru Onayı", description = "Kredi başvurusu inceleme, onay ve ret iş akışı")
 @SecurityRequirement(name = "bearerAuth")
 @RestController

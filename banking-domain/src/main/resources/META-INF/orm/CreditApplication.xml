@@ -6,18 +6,7 @@
                             https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
         version="3.1">
 
-    <!--
-        Kredi başvurusu varlığı.
-        customer: ManyToOne (FK: FK_CREDIT_APP_CUSTOMER) — nullable=false, fetch=LAZY.
-        creditTypeId: CreditType'a UUID referansı; şemada FK olarak tanımlanmıştır
-                      ancak JPA ilişkisi kurulmamıştır (çapraz aggregate referans).
-        status: ORDINAL olarak saklanır — CreditApplicationStatus.ordinal() değeri kullanılır.
-        Finansal alanlar (amount, payment) 18,2 hassasiyetinde BigDecimal.
-
-        NOT: JPA ORM XML şeması <attributes> içinde kesin sıra gerektirir:
-             basic → version → many-to-one → one-to-many → ...
-             many-to-one her zaman basic bloklarından SONRA gelmelidir.
-    -->
+    
     <entity class="tr.com.huseyinaydin.domain.creditapplication.CreditApplication" access="FIELD">
 
         <table name="CREDIT_APPLICATIONS"/>
@@ -52,13 +41,7 @@
                 <join-column name="CUSTOMER_ID" nullable="false"/>
                 <foreign-key name="FK_CREDIT_APP_CUSTOMER"/>
             </many-to-one>
-            <!--
-                Finansal tutarlar Money value object olarak embedded eşlenir. Money embeddable
-                tanımı CreditType.xml içinde global olarak mevcuttur; burada yeniden tanımlanmaz,
-                yalnızca <attribute-override> ile gerçek kolonlara bağlanır.
-                Tümü nullable'dır (yalnızca onayda dolar).
-                XSD sırası gereği <embedded> öğeleri many-to-one'dan SONRA gelir.
-            -->
+            
             <embedded name="approvedAmount">
                 <attribute-override name="amount">
                     <column name="APPROVED_AMOUNT" nullable="true" precision="18" scale="2"/>

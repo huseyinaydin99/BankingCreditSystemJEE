@@ -19,11 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Var olan bir kredi türünü günceller. {@code id} yol değişkeninden, geri kalan alanlar
- * istek gövdesinden ({@link Request}) gelir. {@code customerType} güncellenmez (Create'te
- * belirlenir). Mimari için {@link CreateCreditTypeCommand} örnek alınmıştır.
- */
+
 public record UpdateCreditTypeCommand(
         @NotNull UUID id,
         @NotBlank String name,
@@ -38,7 +34,6 @@ public record UpdateCreditTypeCommand(
 
     private static final String DEFAULT_CURRENCY = "TRY";
 
-    /** HTTP istek gövdesi (id yol değişkeninden alınır, gövdede yer almaz). */
     public record Request(
             @NotBlank String name,
             String description,

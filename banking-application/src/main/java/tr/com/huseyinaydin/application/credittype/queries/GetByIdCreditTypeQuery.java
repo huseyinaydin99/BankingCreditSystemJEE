@@ -10,10 +10,7 @@ import tr.com.huseyinaydin.sharedkernel.messaging.IQueryHandler;
 
 import java.util.UUID;
 
-/**
- * Tek bir kredi türünü id ile getirir; bulunamazsa {@link NotFoundException}.
- * Mimari için {@code GetByIdIndividualCustomerQuery} örnek alınmıştır.
- */
+
 public record GetByIdCreditTypeQuery(
         UUID id
 ) implements IQuery<CreditTypeResponse> {

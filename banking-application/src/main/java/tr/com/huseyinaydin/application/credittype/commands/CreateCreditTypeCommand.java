@@ -32,7 +32,6 @@ public record CreateCreditTypeCommand(
         UUID parentCreditTypeId
 ) implements ICommand<CreateCreditTypeCommand.Response> {
 
-    // Money'nin para birimi API sözleşmesine dahil değildir; sistem geneli varsayılan.
     private static final String DEFAULT_CURRENCY = "TRY";
 
     public record Response(
@@ -66,7 +65,6 @@ public record CreateCreditTypeCommand(
             Money minimumAmount = Money.of(command.minimumAmount(), DEFAULT_CURRENCY);
             Money maximumAmount = Money.of(command.maximumAmount(), DEFAULT_CURRENCY);
 
-            // Domain iş kuralları: tutar/vade/faiz tutarlılığı kaydetmeden önce garanti edilir.
             rules.validateFinancialConstraints(
                     minimumAmount, maximumAmount,
                     command.minimumTermMonths(), command.maximumTermMonths(),

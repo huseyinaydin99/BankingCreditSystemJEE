@@ -6,10 +6,7 @@
                             https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
         version="3.1">
 
-    <!--
-        Domain event destekli baz sınıf.
-        domainEvents alanı yalnızca bellek içi kullanım içindir; veritabanına yansıtılmaz (transient).
-    -->
+    
     <mapped-superclass class="tr.com.huseyinaydin.domain.common.Entity" access="FIELD">
 
         <attributes>

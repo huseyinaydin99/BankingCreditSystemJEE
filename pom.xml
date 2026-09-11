@@ -26,60 +26,66 @@
     </modules>
 
     <properties>
-        <!-- Java -->
+        
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- Spring Framework -->
+        
         <spring.version>6.1.8</spring.version>
         <spring-security.version>6.3.1</spring-security.version>
 
-        <!-- ORM / JPA -->
+        
         <hibernate.version>6.4.4.Final</hibernate.version>
         <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
 
-        <!-- Web -->
+        
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
         <jakarta.faces.version>4.0.1</jakarta.faces.version>
 
-        <!-- Database -->
+        
         <oracle.jdbc.version>23.3.0.23.09</oracle.jdbc.version>
         <hikaricp.version>5.1.0</hikaricp.version>
 
-        <!-- Security -->
+        
         <jjwt.version>0.12.5</jjwt.version>
 
-        <!-- Mapping -->
+        
         <mapstruct.version>1.5.5.Final</mapstruct.version>
 
-        <!-- Validation -->
+        
         <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
         <jakarta.validation.version>3.0.2</jakarta.validation.version>
         <jakarta.el.version>5.0.0</jakarta.el.version>
 
-        <!-- Logging -->
+        
         <slf4j.version>2.0.12</slf4j.version>
         <logback.version>1.4.14</logback.version>
 
-        <!-- DI -->
+        
         <jakarta.inject.version>2.0.1</jakarta.inject.version>
 
-        <!-- JSON -->
+        
         <jackson.version>2.17.1</jackson.version>
 
-        <!-- Testing -->
+        
         <junit.version>5.10.2</junit.version>
         <mockito.version>5.11.0</mockito.version>
         <assertj.version>3.25.3</assertj.version>
         <h2.version>2.2.224</h2.version>
 
-        <!-- API Documentation -->
+        
         <springdoc.version>2.5.0</springdoc.version>
 
-        <!-- Maven Plugins -->
+        
+        
+        
+        <spring-boot-actuator.version>3.3.0</spring-boot-actuator.version>
+        <micrometer.version>1.13.0</micrometer.version>
+
+        
         <maven-compiler.version>3.13.0</maven-compiler.version>
         <maven-war.version>3.4.0</maven-war.version>
         <maven-surefire.version>3.2.5</maven-surefire.version>
@@ -89,9 +95,7 @@
     <dependencyManagement>
         <dependencies>
 
-            <!-- ================================================================
-                 INTERNAL MODULES
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>tr.com.huseyinaydin</groupId>
                 <artifactId>banking-shared-kernel</artifactId>
@@ -118,9 +122,7 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- ================================================================
-                 SPRING FRAMEWORK
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
@@ -168,7 +170,7 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- Spring Security -->
+            
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
@@ -185,9 +187,7 @@
                 <version>${spring-security.version}</version>
             </dependency>
 
-            <!-- ================================================================
-                 JPA / HIBERNATE
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>jakarta.persistence</groupId>
                 <artifactId>jakarta.persistence-api</artifactId>
@@ -199,9 +199,7 @@
                 <version>${hibernate.version}</version>
             </dependency>
 
-            <!-- ================================================================
-                 DATABASE
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>com.oracle.database.jdbc</groupId>
                 <artifactId>ojdbc11</artifactId>
@@ -213,9 +211,7 @@
                 <version>${hikaricp.version}</version>
             </dependency>
 
-            <!-- ================================================================
-                 SECURITY - JWT
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
@@ -234,9 +230,7 @@
                 <scope>runtime</scope>
             </dependency>
 
-            <!-- ================================================================
-                 MAPPING - MAPSTRUCT
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
@@ -249,9 +243,7 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- ================================================================
-                 VALIDATION
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>jakarta.validation</groupId>
                 <artifactId>jakarta.validation-api</artifactId>
@@ -263,15 +255,13 @@
                 <version>${hibernate-validator.version}</version>
             </dependency>
             <dependency>
-                <!-- EL implementation required by Hibernate Validator for constraint messages -->
+                
                 <groupId>org.glassfish.expressly</groupId>
                 <artifactId>expressly</artifactId>
                 <version>${jakarta.el.version}</version>
             </dependency>
 
-            <!-- ================================================================
-                 WEB - SERVLET / JSF
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>jakarta.servlet</groupId>
                 <artifactId>jakarta.servlet-api</artifactId>
@@ -285,27 +275,21 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- ================================================================
-                 JAKARTA ANNOTATION (@PostConstruct, @PreDestroy vb.)
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>jakarta.annotation</groupId>
                 <artifactId>jakarta.annotation-api</artifactId>
                 <version>2.1.1</version>
             </dependency>
 
-            <!-- ================================================================
-                 DEPENDENCY INJECTION
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>jakarta.inject</groupId>
                 <artifactId>jakarta.inject-api</artifactId>
                 <version>${jakarta.inject.version}</version>
             </dependency>
 
-            <!-- ================================================================
-                 LOGGING
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -317,9 +301,7 @@
                 <version>${logback.version}</version>
             </dependency>
 
-            <!-- ================================================================
-                 JSON
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
@@ -336,18 +318,26 @@
                 <version>${jackson.version}</version>
             </dependency>
 
-            <!-- ================================================================
-                 API DOCUMENTATION
-                 ================================================================ -->
+            
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
 
-            <!-- ================================================================
-                 TESTING
-                 ================================================================ -->
+            
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-actuator</artifactId>
+                <version>${spring-boot-actuator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+
+            
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
@@ -382,7 +372,7 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- Tüm modüllerin paylaştığı ortak bağımlılıklar -->
+    
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -10,12 +10,7 @@ import tr.com.huseyinaydin.sharedkernel.logging.CorrelationId;
 
 import java.io.IOException;
 
-/**
- * Her istek için bir correlation id sağlar: gelen {@code X-Correlation-ID} header'ı geçerliyse
- * onu kullanır, yoksa yeni bir UUID üretir. Değeri MDC'ye ({@code correlationId}) koyar ve
- * response header'ına yazar; böylece tüm loglar ve istemci aynı iz kimliğini paylaşır.
- * MDC, isteğin sonunda temizlenir (thread-pool sızıntısını önlemek için).
- */
+
 public class CorrelationIdFilter extends OncePerRequestFilter {
 
     public static final String HEADER_NAME = "X-Correlation-ID";

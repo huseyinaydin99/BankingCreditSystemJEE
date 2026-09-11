@@ -6,12 +6,7 @@
                             https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
         version="3.1">
 
-    <!--
-        Yenileme token'ı varlığı.
-        BaseEntity'den türemez; kendi @Id alanını doğrudan tanımlar.
-        token: benzersiz (unique="true") — tekrar kullanım önleme.
-        isRevoked: token iptal durumu — false ile başlar, revoke() ile true'ya döner.
-    -->
+    
     <entity class="tr.com.huseyinaydin.domain.token.RefreshToken" access="FIELD">
 
         <table name="REFRESH_TOKENS"/>

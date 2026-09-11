@@ -11,10 +11,7 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 
 import java.util.UUID;
 
-/**
- * Kredi başvurusunu incelemeye alır (PENDING → UNDER_REVIEW). Onay/ret adımları yalnızca
- * UNDER_REVIEW durumundan yapılabildiği için iş akışının ilk adımıdır.
- */
+
 public record MoveCreditApplicationToReviewCommand(
         @NotNull UUID id
 ) implements ICommand<MoveCreditApplicationToReviewCommand.Response> {

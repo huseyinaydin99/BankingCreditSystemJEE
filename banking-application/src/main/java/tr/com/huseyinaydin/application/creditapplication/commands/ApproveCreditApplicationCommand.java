@@ -18,11 +18,7 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-/**
- * Kredi başvurusunu onaylar (UNDER_REVIEW → APPROVED). Onaylanan tutar/vade/faiz ile
- * anüite ödeme planı hesaplanır. {@code id} yol değişkeninden, geri kalan alanlar istek
- * gövdesinden ({@link Request}) gelir.
- */
+
 public record ApproveCreditApplicationCommand(
         @NotNull UUID id,
         @NotNull @Positive @DecimalMax("10000000") BigDecimal approvedAmount,
@@ -32,7 +28,6 @@ public record ApproveCreditApplicationCommand(
 
     private static final String DEFAULT_CURRENCY = "TRY";
 
-    /** HTTP istek gövdesi (id yol değişkeninden alınır, gövdede yer almaz). */
     public record Request(
             @NotNull @Positive @DecimalMax("10000000") BigDecimal approvedAmount,
             @NotNull @Min(1) @Max(360) Integer approvedTerm,

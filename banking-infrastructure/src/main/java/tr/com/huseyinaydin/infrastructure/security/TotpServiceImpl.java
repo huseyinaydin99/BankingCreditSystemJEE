@@ -8,11 +8,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 import java.time.Instant;
 
-/**
- * RFC 6238 TOTP (Time-based One-Time Password) implementasyonu.
- * HMAC-SHA1 kullanır; dış kütüphane gerektirmez.
- * Secret, RFC 4648 Base32 formatında saklanır (TOTP authenticator uyumluluğu için).
- */
+
 @Service
 public class TotpServiceImpl implements IOtpService {
 

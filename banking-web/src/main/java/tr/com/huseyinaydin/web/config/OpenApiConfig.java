@@ -21,16 +21,7 @@ import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
-/*
- * Spring Boot olmayan (pure Spring MVC 6) bir uygulamada springdoc entegrasyonu.
- * @Import ile springdoc'un @Configuration sınıfları manuel olarak yüklenir;
- * springdoc-openapi-starter-webmvc-ui bağımlılığı spring-boot-autoconfigure'ı
- * transitif olarak getirir — @EnableConfigurationProperties dolayısıyla çalışır.
- *
- * RFC 7807 Problem Details şemaları (ProblemDetail / BusinessProblemDetail /
- * ValidationProblemDetail) programatik olarak tanımlanır;
- * bu sayede shared-kernel modülü dokümantasyon bağımlılıklarından temiz kalır.
- */
+
 @Configuration
 @Import({
         SpringDocConfiguration.class,
@@ -65,16 +56,6 @@ public class OpenApiConfig {
                                 .description("JWT erişim tokenı. Örnek: Bearer eyJhbGciOiJIUzUxMiJ9...")));
     }
 
-    /*
-     * RFC 7807 "Problem Details" şemaları burada programatik olarak tanımlanır.
-     * Bu sayede shared-kernel modülüne swagger-annotations bağımlılığı girmez;
-     * @Schema yerine OpenApiCustomizer kullanımı katman sınırını korur.
-     *
-     * Yayınlanan tipler:
-     *   - ProblemDetail            : RFC 7807 temel modeli (type/title/status/detail/instance)
-     *   - BusinessProblemDetail    : ProblemDetail + errorCode (400/401/404/409/500)
-     *   - ValidationProblemDetail  : ProblemDetail + errors (alan → mesaj listesi)
-     */
     @Bean
     public OpenApiCustomizer errorSchemaCustomizer() {
         return openApi -> {

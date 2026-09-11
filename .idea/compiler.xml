@@ -16,10 +16,10 @@
         </processorPath>
         <module name="banking-persistence" />
         <module name="banking-infrastructure" />
+        <module name="banking-web" />
         <module name="banking-application" />
         <module name="banking-domain" />
         <module name="banking-shared-kernel" />
-        <module name="banking-web" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

@@ -6,13 +6,7 @@
                             https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
         version="3.1">
 
-    <!--
-        Uygulama kullanıcısı varlığı (kimlik doğrulama ve yetkilendirme).
-        customerId: Customer aggregate'e UUID referansı (JPA ilişkisi yok — çapraz aggregate).
-        email: benzersiz (unique="true") — oturum açma kimliği.
-        passwordHash / passwordSalt: Oracle RAW(64) — 64 baytlık HMAC-SHA512 değerleri.
-        role: STRING enum — UserRole (CUSTOMER, ADMIN, OFFICER).
-    -->
+    
     <entity class="tr.com.huseyinaydin.domain.user.ApplicationUser" access="FIELD">
 
         <table name="APPLICATION_USERS"/>

@@ -14,13 +14,9 @@ import java.util.stream.Collectors;
 @Mapper(config = MapStructConfig.class)
 public interface IndividualCustomerMapper {
 
-    // entity.isActive() getter maps to boolean property "active";
-    // record parameter is "isActive" — explicit mapping needed
     @Mapping(target = "isActive", source = "active")
     IndividualCustomerResponse toResponse(IndividualCustomer entity);
 
-    // Uses @ObjectFactory below — MapStruct calls public constructor,
-    // then sets remaining fields via setters
     @Mapping(target = "active", ignore = true)
     IndividualCustomer toEntity(CreateIndividualCustomerCommand command);
 

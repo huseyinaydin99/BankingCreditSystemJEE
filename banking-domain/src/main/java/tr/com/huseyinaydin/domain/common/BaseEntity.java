@@ -1,38 +1,32 @@
 package tr.com.huseyinaydin.domain.common;
 
-// import jakarta.persistence.Column;       — META-INF/orm/BaseEntity.xml ile eşleme sağlanmaktadır.
-// import jakarta.persistence.Id;
-// import jakarta.persistence.MappedSuperclass;
-// import jakarta.persistence.PrePersist;
-// import jakarta.persistence.PreUpdate;
+
+
+
+
+
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-// @MappedSuperclass
+
 public abstract class BaseEntity<TId> implements ITimestamp {
 
-    // @Id
     protected TId id;
 
-    // @Column(name = "CREATED_DATE", nullable = false, updatable = false)
     protected LocalDateTime createdDate;
 
-    // @Column(name = "UPDATED_DATE")
     protected LocalDateTime updatedDate;
 
-    // @Column(name = "DELETED_DATE")
     protected LocalDateTime deletedDate;
 
     protected BaseEntity() {
     }
 
-    // @PrePersist
     protected void onPrePersist() {
         this.createdDate = LocalDateTime.now();
     }
 
-    // @PreUpdate
     protected void onPreUpdate() {
         this.updatedDate = LocalDateTime.now();
     }

@@ -13,11 +13,7 @@ import tr.com.huseyinaydin.sharedkernel.messaging.IQueryHandler;
 
 import java.util.UUID;
 
-/**
- * Tek bir kredi başvurusunu id ile getirir. Bulunamazsa {@link NotFoundException};
- * kullanıcı başvuruya yetkili değilse {@code AuthorizationException} (yetki kontrolü
- * {@link CreditApplicationBusinessRules#userCanAccessApplication} üzerinden).
- */
+
 public record GetByIdCreditApplicationQuery(
         UUID id
 ) implements IQuery<CreditApplicationResponse> {

@@ -11,16 +11,7 @@ import tr.com.huseyinaydin.application.pipeline.ICurrentUserService;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Her command/request için yapılandırılmış (structured) log üretir. Alanlar SLF4J 2.0
- * key-value API'siyle ({@code addKeyValue}) eklenir; LogstashEncoder bunları JSON alanı
- * olarak (tip korunarak) render eder. correlationId, MDC'den ({@code CorrelationIdFilter}
- * tarafından set edilir) okunur.
- *
- * Alanlar: correlationId, userId, commandType, durationMs, success, errorType (hata varsa).
- * Hata durumunda maskelenmiş istek payload'ı da {@code request} alanına yazılır
- * ({@link MaskingSerializer} ile gizli alanlar gizlenir).
- */
+
 @Order(3)
 public class LoggingBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 

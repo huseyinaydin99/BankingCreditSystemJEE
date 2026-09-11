@@ -10,11 +10,7 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 
 import java.util.UUID;
 
-/**
- * Bir kredi türünü siler. Alt kredi türü bulunan tür silinemez (BusinessException);
- * aksi hâlde soft delete uygulanır ({@code deletedDate} işaretlenir).
- * Mimari için {@code DeleteIndividualCustomerCommand} örnek alınmıştır.
- */
+
 public record DeleteCreditTypeCommand(
         @NotNull UUID id,
         boolean permanent

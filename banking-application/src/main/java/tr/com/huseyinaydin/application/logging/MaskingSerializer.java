@@ -3,15 +3,7 @@ package tr.com.huseyinaydin.application.logging;
 import java.lang.reflect.Field;
 import java.util.Set;
 
-/**
- * Bir nesneyi (genellikle command request) loglama için kompakt JSON string'e çeviren,
- * reflection tabanlı serileştirici. Adı gizli anahtar sözcük içeren alanlar ("password",
- * "passwordHash", "passwordSalt", "token" ve benzeri) değerini {@code "***"} ile maskeler,
- * böylece hassas veriler loglara sızmaz.
- *
- * Sığ (shallow) serileştirme yapar: alan değerleri {@code String.valueOf} ile yazılır
- * (iç içe nesnelerin kendi toString'i kullanılır). Salt loglama amaçlıdır.
- */
+
 public final class MaskingSerializer {
 
     private static final Set<String> SENSITIVE_KEYWORDS =

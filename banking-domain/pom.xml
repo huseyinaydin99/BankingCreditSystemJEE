@@ -22,23 +22,17 @@
         Spring ve Hibernate bağımlılığı yoktur — sadece JPA annotation API ve shared-kernel.
     </description>
 
-    <!--
-        Bağımlılık kuralı (Clean Architecture — Dependency Rule):
-          banking-domain → banking-shared-kernel (tek dış bağımlılık)
-          banking-domain → Jakarta Persistence API (sadece @Entity, @Column vb. annotation'lar)
-          banking-domain → Spring, Hibernate, veritabanı sürücüleri GİRMEZ.
-    -->
+    
 
     <dependencies>
 
-        <!-- Shared kernel: Result<T>, exception'lar, CQRS contract'ları -->
+        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-shared-kernel</artifactId>
         </dependency>
 
-        <!-- JPA Annotations — sadece @Entity, @MappedSuperclass, @Column vb. için.
-             Hibernate implementasyonu persistence katmanında kalır. -->
+        
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>

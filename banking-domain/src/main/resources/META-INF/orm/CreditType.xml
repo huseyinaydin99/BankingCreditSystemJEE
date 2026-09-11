@@ -6,15 +6,7 @@
                             https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
         version="3.1">
 
-    <!--
-        Kredi türü varlığı.
-        customerType enum alanı STRING olarak saklanır (okunabilirlik ve şema esnekliği).
-        parentCreditType: öz-referanslı ManyToOne ilişkisi — sahip (owning) taraf, PARENT_CREDIT_TYPE_ID kolonuna yazar.
-        subCreditTypes: ters OneToMany — aynı PARENT_CREDIT_TYPE_ID kolonu üzerinden OKUR;
-                        insertable/updatable=false ile yazma yetkisi parentCreditType'a bırakılır.
-                        mapped-by yerine bu yaklaşım kullanılır: öz-referanslı XML mapping'de
-                        IntelliJ mapped-by sembol çözümlemesi yapamaz; davranış tamamen eşdeğerdir.
-    -->
+    
     <entity class="tr.com.huseyinaydin.domain.credittype.CreditType" access="FIELD">
 
         <table name="CREDIT_TYPES"/>
@@ -52,13 +44,7 @@
                              insertable="false"
                              updatable="false"/>
             </one-to-many>
-            <!--
-                minimumAmount / maximumAmount: Money value object embedded olarak eşlenir.
-                Money.amount → MIN_AMOUNT/MAX_AMOUNT, Money.currency → MIN_CURRENCY/MAX_CURRENCY.
-                Embeddable'ın kendi kolon adları attribute-override ile geçersiz kılınır.
-                NOT: JPA orm_3_1.xsd 'attributes' sıralaması gereği <embedded> öğeleri
-                basic/many-to-one/one-to-many öğelerinden SONRA gelmek zorundadır.
-            -->
+            
             <embedded name="minimumAmount">
                 <attribute-override name="amount">
                     <column name="MIN_AMOUNT" nullable="false" precision="18" scale="2"/>
@@ -79,12 +65,7 @@
 
     </entity>
 
-    <!--
-        Money value object'inin embeddable eşlemesi. Kolon adları burada nötr bırakılır
-        (AMOUNT / CURRENCY) ve her kullanım yerinde <attribute-override> ile gerçek kolonlara
-        bağlanır. Bu embeddable yalnızca CreditType tarafından kullanıldığından tanımı bu
-        dosyada tutulur; ayrı bir mapping dosyası ve PersistenceConfig değişikliği gerekmez.
-    -->
+    
     <embeddable class="tr.com.huseyinaydin.domain.valueobjects.Money" access="FIELD">
         <attributes>
             <basic name="amount">

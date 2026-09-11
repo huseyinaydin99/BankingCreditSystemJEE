@@ -16,12 +16,7 @@ import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-/**
- * PENDING durumundaki bir kredi başvurusunun talep bilgilerini günceller. Diğer
- * durumlarda {@code BusinessException}, yetkisiz erişimde {@code AuthorizationException}.
- * {@code id} yol değişkeninden, geri kalan alanlar {@link Request} gövdesinden gelir.
- * Mimari için {@code CreateCreditApplicationCommand} örnek alınmıştır.
- */
+
 public record UpdateCreditApplicationCommand(
         @NotNull UUID id,
         @NotNull UUID creditTypeId,
@@ -31,7 +26,6 @@ public record UpdateCreditApplicationCommand(
 
     private static final String DEFAULT_CURRENCY = "TRY";
 
-    /** HTTP istek gövdesi (id yol değişkeninden alınır, gövdede yer almaz). */
     public record Request(
             @NotNull UUID creditTypeId,
             @NotNull @Positive @DecimalMax("10000000") BigDecimal requestedAmount,

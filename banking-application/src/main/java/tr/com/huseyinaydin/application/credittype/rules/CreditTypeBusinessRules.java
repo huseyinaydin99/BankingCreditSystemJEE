@@ -11,14 +11,7 @@ import tr.com.huseyinaydin.sharedkernel.exception.NotFoundException;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-/**
- * CreditType için finansal tutarlılık ve yaşam döngüsü kurallarını uygulayan
- * domain iş kuralı bileşeni.
- *
- * Kurallar, ilgili command handler'ları içinde çağrılır ve ihlal durumunda
- * {@link BusinessException}/{@link NotFoundException} fırlatır (HTTP katmanında
- * RFC 7807 problem tiplerine eşlenir).
- */
+
 @Component
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class CreditTypeBusinessRules {
@@ -29,13 +22,11 @@ public class CreditTypeBusinessRules {
         this.creditTypeRepository = creditTypeRepository;
     }
 
-    /** İstenen kredi türü var olmalı; yoksa {@link NotFoundException}. */
     public CreditType creditTypeMustExist(UUID id) {
         return creditTypeRepository.findById(id).orElseThrow(() ->
                 new NotFoundException("CREDIT_TYPE", id.toString()));
     }
 
-    /** Alt kredi türü bulunan bir tür silinemez. */
     public void subCreditTypesMustBeEmpty(CreditType creditType) {
         if (creditType.getSubCreditTypes() != null && !creditType.getSubCreditTypes().isEmpty()) {
             throw new BusinessException(
@@ -44,10 +35,6 @@ public class CreditTypeBusinessRules {
         }
     }
 
-    /**
-     * Alt/üst tutar, alt/üst vade ve yıllık faiz oranının kendi içinde tutarlı
-     * olduğunu topluca doğrular.
-     */
     public void validateFinancialConstraints(Money minimumAmount,
                                              Money maximumAmount,
                                              int minimumTermMonths,

@@ -26,7 +26,6 @@ public record CreateCreditApplicationCommand(
         @Min(1) @Max(360) int requestedTerm
 ) implements ICommand<CreateCreditApplicationCommand.Response> {
 
-    // Money'nin para birimi API sözleşmesine dahil değildir; sistem geneli varsayılan.
     private static final String DEFAULT_CURRENCY = "TRY";
 
     public record Response(
