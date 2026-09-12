@@ -66,7 +66,7 @@ public class IndividualCustomersControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/individual-customers başarılı - 201 Created")
+    @DisplayName("POST /api/v1/individual-customers başarılı - 201 Created")
     void testCreateSuccess() throws Exception {
         CreateIndividualCustomerCommand command = new CreateIndividualCustomerCommand(
                 "Ali", "Veli", "12345678901", LocalDate.of(1990, 1, 1),
@@ -81,7 +81,7 @@ public class IndividualCustomersControllerTest {
 
         String token = TestJwtTokenFactory.generateOfficerToken();
 
-        mockMvc.perform(post("/api/individual-customers")
+        mockMvc.perform(post("/api/v1/individual-customers")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(command)))
@@ -92,7 +92,7 @@ public class IndividualCustomersControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/individual-customers geçersiz body - 400 Bad Request")
+    @DisplayName("POST /api/v1/individual-customers geçersiz body - 400 Bad Request")
     void testCreateInvalidBody() throws Exception {
         // Missing firstName, lastName, nationalId
         CreateIndividualCustomerCommand command = new CreateIndividualCustomerCommand(
@@ -102,7 +102,7 @@ public class IndividualCustomersControllerTest {
 
         String token = TestJwtTokenFactory.generateOfficerToken();
 
-        mockMvc.perform(post("/api/individual-customers")
+        mockMvc.perform(post("/api/v1/individual-customers")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(command)))
@@ -113,7 +113,7 @@ public class IndividualCustomersControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/individual-customers tc kimlik tekrarı - 409 Conflict")
+    @DisplayName("POST /api/v1/individual-customers tc kimlik tekrarı - 409 Conflict")
     void testCreateDuplicateNationalId() throws Exception {
         CreateIndividualCustomerCommand command = new CreateIndividualCustomerCommand(
                 "Ali", "Veli", "12345678901", LocalDate.of(1990, 1, 1),
@@ -125,7 +125,7 @@ public class IndividualCustomersControllerTest {
 
         String token = TestJwtTokenFactory.generateOfficerToken();
 
-        mockMvc.perform(post("/api/individual-customers")
+        mockMvc.perform(post("/api/v1/individual-customers")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(command)))
@@ -136,7 +136,7 @@ public class IndividualCustomersControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/individual-customers/{id} mevcut kayıt - 200 OK")
+    @DisplayName("GET /api/v1/individual-customers/{id} mevcut kayıt - 200 OK")
     void testGetByIdSuccess() throws Exception {
         UUID id = UUID.randomUUID();
         IndividualCustomerResponse response = new IndividualCustomerResponse(
@@ -148,7 +148,7 @@ public class IndividualCustomersControllerTest {
 
         String token = TestJwtTokenFactory.generateOfficerToken();
 
-        mockMvc.perform(get("/api/individual-customers/{id}", id)
+        mockMvc.perform(get("/api/v1/individual-customers/{id}", id)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id.toString()))
@@ -156,7 +156,7 @@ public class IndividualCustomersControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/individual-customers/{id} bulunamadı - 404 Not Found")
+    @DisplayName("GET /api/v1/individual-customers/{id} bulunamadı - 404 Not Found")
     void testGetByIdNotFound() throws Exception {
         UUID id = UUID.randomUUID();
         given(mediator.query(any(GetByIdIndividualCustomerQuery.class)))
@@ -164,7 +164,7 @@ public class IndividualCustomersControllerTest {
 
         String token = TestJwtTokenFactory.generateOfficerToken();
 
-        mockMvc.perform(get("/api/individual-customers/{id}", id)
+        mockMvc.perform(get("/api/v1/individual-customers/{id}", id)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value("Not Found"))
@@ -175,7 +175,7 @@ public class IndividualCustomersControllerTest {
     @Test
     @DisplayName("Yetkilendirilmemiş (tokensiz) istek - 401 Unauthorized")
     void testUnauthorizedRequest() throws Exception {
-        mockMvc.perform(get("/api/individual-customers/{id}", UUID.randomUUID()))
+        mockMvc.perform(get("/api/v1/individual-customers/{id}", UUID.randomUUID()))
                 .andExpect(status().isUnauthorized());
     }
 }

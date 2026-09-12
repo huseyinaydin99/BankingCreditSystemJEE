@@ -18,10 +18,10 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import java.util.List;
 
 @Configuration
-@EnableWebMvc
+
 @ComponentScan("tr.com.huseyinaydin.web")
 @Import(OpenApiConfig.class)
-public class BankingWebConfig implements WebMvcConfigurer {
+public class BankingWebConfig extends org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport {
 
     @Bean
     public ViewResolver viewResolver() {
@@ -48,5 +48,11 @@ public class BankingWebConfig implements WebMvcConfigurer {
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         converters.add(new MappingJackson2HttpMessageConverter(mapper));
+    }
+
+
+    @Override
+    protected org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
+        return new ApiVersionRequestMappingHandlerMapping();
     }
 }

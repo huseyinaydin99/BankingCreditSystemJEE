@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import tr.com.huseyinaydin.web.annotation.ApiVersion;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tr.com.huseyinaydin.application.cqrs.Mediator;
@@ -38,7 +39,8 @@ import java.util.UUID;
 @Tag(name = "Bireysel Müşteriler", description = "Bireysel müşteri oluşturma, güncelleme, silme ve listeleme işlemleri")
 @SecurityRequirement(name = "bearerAuth")
 @RestController
-@RequestMapping("/api/individual-customers")
+@ApiVersion(1)
+@RequestMapping("/api/v1/individual-customers")
 public class IndividualCustomersController extends BaseController {
 
     public IndividualCustomersController(Mediator mediator) {

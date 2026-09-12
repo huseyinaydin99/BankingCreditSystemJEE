@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import tr.com.huseyinaydin.web.annotation.ApiVersion;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tr.com.huseyinaydin.application.cqrs.Mediator;
@@ -37,7 +38,8 @@ import tr.com.huseyinaydin.application.ports.metrics.IMeterRegistry;
 @Tag(name = "Kredi Başvuruları", description = "Kredi başvurusu oluşturma ve müşteri bazlı sorgulama işlemleri")
 @SecurityRequirement(name = "bearerAuth")
 @RestController
-@RequestMapping("/api/credit-applications")
+@ApiVersion(1)
+@RequestMapping("/api/v1/credit-applications")
 public class CreditApplicationsController extends BaseController {
 
     private final IMeterRegistry meterRegistry;

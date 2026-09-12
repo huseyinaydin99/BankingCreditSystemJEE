@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import tr.com.huseyinaydin.web.annotation.ApiVersion;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tr.com.huseyinaydin.application.cqrs.Mediator;
@@ -36,7 +37,8 @@ import java.util.UUID;
 @Tag(name = "Kredi Türleri", description = "Kredi ürün türü tanımlama, güncelleme, silme ve sorgulama işlemleri")
 @SecurityRequirement(name = "bearerAuth")
 @RestController
-@RequestMapping("/api/credit-types")
+@ApiVersion(1)
+@RequestMapping("/api/v1/credit-types")
 public class CreditTypesController extends BaseController {
 
     public CreditTypesController(Mediator mediator) {

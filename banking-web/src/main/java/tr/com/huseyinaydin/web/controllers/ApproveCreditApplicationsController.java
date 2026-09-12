@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import tr.com.huseyinaydin.web.annotation.ApiVersion;
 import org.springframework.web.bind.annotation.RestController;
 import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.application.creditapplication.commands.ApproveCreditApplicationCommand;
@@ -27,7 +28,8 @@ import java.util.UUID;
 @Tag(name = "Kredi Başvuru Onayı", description = "Kredi başvurusu inceleme, onay ve ret iş akışı")
 @SecurityRequirement(name = "bearerAuth")
 @RestController
-@RequestMapping("/api/credit-applications")
+@ApiVersion(1)
+@RequestMapping("/api/v1/credit-applications")
 public class ApproveCreditApplicationsController extends BaseController {
 
     public ApproveCreditApplicationsController(Mediator mediator) {

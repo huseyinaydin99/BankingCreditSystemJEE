@@ -17,6 +17,8 @@ import org.springdoc.webmvc.core.configuration.SpringDocWebMvcConfiguration;
 import org.springdoc.webmvc.ui.SwaggerConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springdoc.core.models.GroupedOpenApi;
+
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
@@ -110,4 +112,14 @@ public class OpenApiConfig {
                     .addSchemas("ValidationProblemDetail", validationProblemDetailSchema);
         };
     }
+
+
+    @Bean
+    public GroupedOpenApi v1Api() {
+        return GroupedOpenApi.builder()
+                .group("v1")
+                .pathsToMatch("/api/v1/**")
+                .build();
+    }
+
 }
