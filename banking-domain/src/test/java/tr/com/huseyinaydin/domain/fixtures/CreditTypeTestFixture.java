@@ -18,6 +18,11 @@ public class CreditTypeTestFixture {
 
     public CreditTypeTestFixture withName(String name) { this.name = name; return this; }
     public CreditTypeTestFixture withCustomerType(CustomerType customerType) { this.customerType = customerType; return this; }
+    public CreditTypeTestFixture withMinimumAmount(Money minimumAmount) { this.minimumAmount = minimumAmount; return this; }
+    public CreditTypeTestFixture withMaximumAmount(Money maximumAmount) { this.maximumAmount = maximumAmount; return this; }
+    public CreditTypeTestFixture withMinimumTermMonths(int minimumTermMonths) { this.minimumTermMonths = minimumTermMonths; return this; }
+    public CreditTypeTestFixture withMaximumTermMonths(int maximumTermMonths) { this.maximumTermMonths = maximumTermMonths; return this; }
+
 
     public CreditType build() {
         return new CreditType(name, customerType, minimumAmount, maximumAmount, minimumTermMonths, maximumTermMonths, annualInterestRate);
