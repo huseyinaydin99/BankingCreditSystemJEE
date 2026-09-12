@@ -1,19 +1,13 @@
 package tr.com.huseyinaydin.domain.customer;
 
 import tr.com.huseyinaydin.domain.common.Entity;
+import tr.com.huseyinaydin.sharedkernel.events.DomainEvent;
 
-
-
-
-
-
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
-
-
-
-
 
 public abstract class Customer extends Entity<UUID> {
 
@@ -21,12 +15,11 @@ public abstract class Customer extends Entity<UUID> {
             Pattern.compile("^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$");
 
     private String phoneNumber;
-
     private String email;
-
     private String address;
-
     private boolean isActive;
+
+    private final List<DomainEvent> domainEvents = new ArrayList<>();
 
     protected Customer() {
         super();
@@ -52,4 +45,14 @@ public abstract class Customer extends Entity<UUID> {
     public void setActive(boolean active) { this.isActive = active; }
 
     public abstract String getFullName();
+
+    protected void addDomainEvent(DomainEvent event) {
+        this.domainEvents.add(event);
+    }
+
+    public List<DomainEvent> pullDomainEvents() {
+        List<DomainEvent> events = new ArrayList<>(this.domainEvents);
+        this.domainEvents.clear();
+        return Collections.unmodifiableList(events);
+    }
 }

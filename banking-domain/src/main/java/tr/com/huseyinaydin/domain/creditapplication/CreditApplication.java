@@ -4,46 +4,34 @@ import tr.com.huseyinaydin.domain.common.Entity;
 import tr.com.huseyinaydin.domain.customer.Customer;
 import tr.com.huseyinaydin.domain.enums.CreditApplicationStatus;
 import tr.com.huseyinaydin.domain.valueobjects.Money;
-
-
-
-
-
-
-
-
-
+import tr.com.huseyinaydin.sharedkernel.events.DomainEvent;
+import tr.com.huseyinaydin.domain.events.CreditApplicationCreatedEvent;
+import tr.com.huseyinaydin.domain.events.CreditApplicationApprovedEvent;
+import tr.com.huseyinaydin.domain.events.CreditApplicationRejectedEvent;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
-
-
 
 public class CreditApplication extends Entity<UUID> {
 
     private Customer customer;
-
     private UUID creditTypeId;
-
     private BigDecimal requestedAmount;
-
     private int requestedTerm;
-
     private Money approvedAmount;
-
     private Integer approvedTerm;
-
     private BigDecimal interestRate;
-
     private Money monthlyPayment;
-
     private Money totalPayment;
-
     private CreditApplicationStatus status;
-
     private String rejectionReason;
+
+    private final List<DomainEvent> domainEvents = new ArrayList<>();
 
     protected CreditApplication() {
         super();
@@ -58,8 +46,8 @@ public class CreditApplication extends Entity<UUID> {
         this.requestedAmount = requestedAmount;
         this.requestedTerm = requestedTerm;
         this.status = CreditApplicationStatus.PENDING;
+        addDomainEvent(new CreditApplicationCreatedEvent(this.id, customer.getId(), creditTypeId, requestedAmount, requestedTerm));
     }
-
 
     public void moveToReview() {
         this.status = CreditApplicationStatus.UNDER_REVIEW;
@@ -78,11 +66,13 @@ public class CreditApplication extends Entity<UUID> {
         calculatePayments(approvedAmount.getAmount(), approvedTerm, annualInterestRate,
                 approvedAmount.getCurrency());
         this.status = CreditApplicationStatus.APPROVED;
+        addDomainEvent(new CreditApplicationApprovedEvent(this.id, approvedAmount, approvedTerm, annualInterestRate));
     }
 
     public void reject(String reason) {
         this.rejectionReason = reason;
         this.status = CreditApplicationStatus.REJECTED;
+        addDomainEvent(new CreditApplicationRejectedEvent(this.id, reason));
     }
 
     public void cancel() {
@@ -115,4 +105,14 @@ public class CreditApplication extends Entity<UUID> {
     public Money getTotalPayment() { return totalPayment; }
     public CreditApplicationStatus getStatus() { return status; }
     public String getRejectionReason() { return rejectionReason; }
+
+    protected void addDomainEvent(DomainEvent event) {
+        this.domainEvents.add(event);
+    }
+
+    public List<DomainEvent> pullDomainEvents() {
+        List<DomainEvent> events = new ArrayList<>(this.domainEvents);
+        this.domainEvents.clear();
+        return Collections.unmodifiableList(events);
+    }
 }

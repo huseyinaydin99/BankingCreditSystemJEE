@@ -1,30 +1,17 @@
 package tr.com.huseyinaydin.domain.customer;
 
-
-
-
-
-
 import java.time.LocalDate;
 import java.util.UUID;
-
-
-
+import tr.com.huseyinaydin.domain.events.CorporateCustomerCreatedEvent;
 
 public class CorporateCustomer extends Customer {
 
     private String companyName;
-
     private String taxNumber;
-
     private String taxOffice;
-
     private String companyRegistrationNumber;
-
     private String tradeRegistrationNumber;
-
     private String authorizedPersonName;
-
     private LocalDate companyFoundationDate;
 
     protected CorporateCustomer() {
@@ -37,6 +24,7 @@ public class CorporateCustomer extends Customer {
         setCompanyName(companyName);
         setTaxNumber(taxNumber);
         setEmail(email);
+        addDomainEvent(new CorporateCustomerCreatedEvent(this.id, this.companyName, this.taxNumber, this.getEmail()));
     }
 
     public String getCompanyName() { return companyName; }

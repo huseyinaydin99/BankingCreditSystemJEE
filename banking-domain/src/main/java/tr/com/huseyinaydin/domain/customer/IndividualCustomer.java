@@ -1,28 +1,16 @@
 package tr.com.huseyinaydin.domain.customer;
 
-
-
-
-
-
 import java.time.LocalDate;
 import java.util.UUID;
-
-
-
+import tr.com.huseyinaydin.domain.events.IndividualCustomerCreatedEvent;
 
 public class IndividualCustomer extends Customer {
 
     private String firstName;
-
     private String lastName;
-
     private String nationalId;
-
     private LocalDate dateOfBirth;
-
     private String motherName;
-
     private String fatherName;
 
     protected IndividualCustomer() {
@@ -36,6 +24,7 @@ public class IndividualCustomer extends Customer {
         setLastName(lastName);
         setNationalId(nationalId);
         setEmail(email);
+        addDomainEvent(new IndividualCustomerCreatedEvent(this.id, this.firstName, this.lastName, this.nationalId, this.getEmail()));
     }
 
     public String getFirstName() { return firstName; }
