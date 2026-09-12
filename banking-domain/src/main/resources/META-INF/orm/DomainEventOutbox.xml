@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                                     https://jakarta.ee/xml/ns/persistence/orm_3_0.xsd"
+                 version="3.0">
+
+    <entity class="tr.com.huseyinaydin.domain.outbox.DomainEventOutbox" name="DomainEventOutbox">
+        <table name="domain_event_outbox"/>
+        <attributes>
+            <id name="id">
+                <column name="id" column-definition="UUID"/>
+            </id>
+            <basic name="aggregateType">
+                <column name="aggregate_type" nullable="false"/>
+            </basic>
+            <basic name="aggregateId">
+                <column name="aggregate_id" nullable="false"/>
+            </basic>
+            <basic name="eventType">
+                <column name="event_type" nullable="false"/>
+            </basic>
+            <basic name="payload">
+                <column name="payload" column-definition="TEXT" nullable="false"/>
+            </basic>
+            <basic name="occurredAt">
+                <column name="occurred_at" nullable="false"/>
+            </basic>
+            <basic name="processedAt">
+                <column name="processed_at"/>
+            </basic>
+            <basic name="retryCount">
+                <column name="retry_count" nullable="false"/>
+            </basic>
+            <basic name="lastError">
+                <column name="last_error" column-definition="TEXT"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>
