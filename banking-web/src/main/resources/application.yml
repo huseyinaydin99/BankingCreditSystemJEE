@@ -9,6 +9,13 @@ spring:
     password: ${BANKING_SMTP_PASSWORD:secret}
 
 banking:
+  jobs:
+    pending-reminder:
+      cron: "0 0 2 * * ?"
+    expired:
+      cron: "0 0 3 * * ?"
+    audit-cleanup:
+      cron: "0 0 0 1 * ?"
   security:
     token-options:
       audience: "banking-api"

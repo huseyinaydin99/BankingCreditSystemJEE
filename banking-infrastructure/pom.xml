@@ -222,6 +222,14 @@
             <scope>test</scope>
         </dependency>
 
+
+        <!-- Quartz and Scheduling -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

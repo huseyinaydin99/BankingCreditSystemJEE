@@ -140,4 +140,13 @@ public class CreditApplicationBusinessRules {
             );
         }
     }
+
+    public void canBeExpired(CreditApplication application) {
+        if (application.getStatus() != CreditApplicationStatus.PENDING) {
+            throw new BusinessException(
+                    "Yalnızca PENDING durumundaki başvurular zaman aşımına uğrayabilir. "
+                            + "Mevcut durum: " + application.getStatus(),
+                    BankingErrorCodes.CREDIT_APPLICATION_NOT_PENDING);
+        }
+    }
 }
