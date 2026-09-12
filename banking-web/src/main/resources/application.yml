@@ -1,38 +1,24 @@
 spring:
-  application:
-    name: banking-credit-system
-
-otel:
-  service:
-    name: ${spring.application.name}
-  exporter:
-    otlp:
-      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4317}
-  sdk:
-    disabled: true
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  datasource:
+    url: ${BANKING_DB_URL:jdbc:h2:mem:bankingdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${BANKING_DB_USERNAME:sa}
+    password: ${BANKING_DB_PASSWORD:password}
+  mail:
+    password: ${BANKING_SMTP_PASSWORD:secret}
 
 banking:
-  rate-limit:
-    credit-application:
-      authenticated: 10
-      anonymous: 3
+  security:
+    token-options:
+      audience: "banking-api"
+      issuer: "banking-system"
+      accessTokenExpiration: 15
+      refreshTokenExpiration: 1440
+      securityKey: ${BANKING_JWT_SECRET_KEY:ThisIsAVerySecretDefaultKeyForDevOnly123!}
 
-
-  mail:
-    host: ${SMTP_HOST:smtp.example.com}
-    port: ${SMTP_PORT:587}
-    username: ${SMTP_USERNAME:user}
-    password: ${SMTP_PASSWORD:secret}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-resilience4j:
-  retry:
-    instances:
-      emailRetry:
-        maxAttempts: 3
-        waitDuration: 1s
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

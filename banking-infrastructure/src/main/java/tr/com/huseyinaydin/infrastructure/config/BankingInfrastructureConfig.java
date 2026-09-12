@@ -7,10 +7,13 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import tr.com.huseyinaydin.infrastructure.security.TokenOptions;
 
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@EnableConfigurationProperties(TokenOptions.class)
 @EnableCaching
 @ComponentScan(basePackages = "tr.com.huseyinaydin.infrastructure")
 public class BankingInfrastructureConfig {

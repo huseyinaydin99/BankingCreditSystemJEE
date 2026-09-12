@@ -3,12 +3,17 @@ package tr.com.huseyinaydin.persistence.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -16,11 +21,37 @@ import java.util.Properties;
 @Configuration
 public class PersistenceConfig {
 
+    @Autowired
+    private Environment env;
+
+    @Value("${spring.datasource.url}")
+    private String dbUrl;
+
+    @Value("${spring.datasource.username}")
+    private String dbUsername;
+
+    @Value("${spring.datasource.password}")
+    private String dbPassword;
+
     @Bean
-    public DataSource dataSource() {
+    @Profile({"dev", "test"})
+    public DataSource devDataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.h2.Driver");
+        dataSource.setUrl(dbUrl);
+        dataSource.setUsername(dbUsername);
+        dataSource.setPassword(dbPassword);
+        return dataSource;
+    }
+
+    @Bean
+    @Profile("prod")
+    public DataSource prodDataSource() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:oracle:thin:@localhost:1521/FREEPDB1");
+        config.setJdbcUrl(dbUrl);
         config.setDriverClassName("oracle.jdbc.OracleDriver");
+        config.setUsername(dbUsername);
+        config.setPassword(dbPassword);
         config.setMaximumPoolSize(20);
         config.setMinimumIdle(5);
         config.setConnectionTimeout(30_000);
@@ -60,9 +91,17 @@ public class PersistenceConfig {
 
     private Properties hibernateProperties() {
         Properties props = new Properties();
-        props.setProperty("hibernate.dialect", "org.hibernate.dialect.OracleDialect");
-        props.setProperty("hibernate.hbm2ddl.auto", "validate");
-        props.setProperty("hibernate.show_sql", "false");
+        
+        if (env.acceptsProfiles(org.springframework.core.env.Profiles.of("prod"))) {
+            props.setProperty("hibernate.dialect", "org.hibernate.dialect.OracleDialect");
+            props.setProperty("hibernate.hbm2ddl.auto", "validate");
+            props.setProperty("hibernate.show_sql", "false");
+        } else {
+            props.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+            props.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+            props.setProperty("hibernate.show_sql", "true");
+        }
+        
         props.setProperty("hibernate.format_sql", "true");
         props.setProperty("hibernate.jdbc.batch_size", "50");
         props.setProperty("hibernate.order_inserts", "true");

@@ -1,29 +1,30 @@
 package tr.com.huseyinaydin.infrastructure.security;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConfigurationProperties(prefix = "banking.security.token-options")
 public class TokenOptions {
 
-    @Value("${security.token.secret-key}")
-    private String secretKey;
-
-    @Value("${security.token.issuer}")
+    private String securityKey;
     private String issuer;
-
-    @Value("${security.token.audience}")
     private String audience;
-
-    @Value("${security.token.access-token-expiration:30}")
     private int accessTokenExpiration;
-
-    @Value("${security.token.refresh-token-expiration:7}")
     private int refreshTokenExpiration;
 
-    public String getSecretKey() { return secretKey; }
+    public String getSecurityKey() { return securityKey; }
+    public void setSecurityKey(String securityKey) { this.securityKey = securityKey; }
+
     public String getIssuer() { return issuer; }
+    public void setIssuer(String issuer) { this.issuer = issuer; }
+
     public String getAudience() { return audience; }
+    public void setAudience(String audience) { this.audience = audience; }
+
     public int getAccessTokenExpiration() { return accessTokenExpiration; }
+    public void setAccessTokenExpiration(int accessTokenExpiration) { this.accessTokenExpiration = accessTokenExpiration; }
+
     public int getRefreshTokenExpiration() { return refreshTokenExpiration; }
+    public void setRefreshTokenExpiration(int refreshTokenExpiration) { this.refreshTokenExpiration = refreshTokenExpiration; }
 }

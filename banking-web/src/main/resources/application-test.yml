@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+logging:
+  level:
+    root: INFO
+    tr.com.huseyinaydin: TRACE
+    org.hibernate.SQL: TRACE
+
+cors:
+  allowed-origins: "*"

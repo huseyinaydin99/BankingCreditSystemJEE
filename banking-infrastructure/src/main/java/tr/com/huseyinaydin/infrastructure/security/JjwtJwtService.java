@@ -31,7 +31,7 @@ public class JjwtJwtService implements IJwtService {
 
     public JjwtJwtService(TokenOptions tokenOptions) {
         this.tokenOptions = tokenOptions;
-        this.signingKey = Keys.hmacShaKeyFor(tokenOptions.getSecretKey().getBytes(UTF_8));
+        this.signingKey = Keys.hmacShaKeyFor(tokenOptions.getSecurityKey().getBytes(UTF_8));
     }
 
     @Override
