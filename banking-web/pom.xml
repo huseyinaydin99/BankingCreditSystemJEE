@@ -191,6 +191,22 @@
             <version>8.10.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>tr.com.huseyinaydin</groupId>
+            <artifactId>banking-domain</artifactId>
+            <version>1.0.0</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>tr.com.huseyinaydin</groupId>
+            <artifactId>banking-application</artifactId>
+            <version>1.0.0</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
