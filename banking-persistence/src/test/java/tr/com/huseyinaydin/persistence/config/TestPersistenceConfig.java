@@ -51,6 +51,8 @@ public class TestPersistenceConfig {
         em.setMappingResources(
             "META-INF/orm/ApplicationUser.xml",
             "META-INF/orm/AuditLog.xml",
+            "META-INF/orm/OperationClaim.xml",
+            "META-INF/orm/UserOperationClaim.xml",
             "META-INF/orm/BaseEntity.xml",
             "META-INF/orm/CorporateCustomer.xml",
             "META-INF/orm/CreditApplication.xml",

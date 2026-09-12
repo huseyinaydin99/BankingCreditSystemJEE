@@ -30,19 +30,21 @@ class AuthorizationBehaviorTest {
 
     static class UnsecuredCommand {}
 
-    static class SecuredCommand implements ISecuredRequest {
+    static class SecuredRoleCommand implements ISecuredRequest {
         @Override
         public String[] getRequiredRoles() {
             return new String[]{"ADMIN", "OFFICER"};
         }
     }
 
-    static class EmptySecuredCommand implements ISecuredRequest {
+    static class SecuredClaimCommand implements ISecuredRequest {
         @Override
-        public String[] getRequiredRoles() {
-            return new String[]{};
+        public String[] claims() {
+            return new String[]{"individual-customers:create"};
         }
     }
+
+    static class EmptySecuredCommand implements ISecuredRequest {}
 
     @BeforeEach
     void setUp() {
@@ -64,7 +66,7 @@ class AuthorizationBehaviorTest {
     @Test
     @DisplayName("Giris yapmamis kullanici icin AuthorizationException firlatilmali")
     void shouldThrowWhenNotAuthenticated() {
-        SecuredCommand command = new SecuredCommand();
+        SecuredRoleCommand command = new SecuredRoleCommand();
         currentUserService.setAuthenticated(false);
 
         assertThatThrownBy(() -> authorizationBehavior.handle(command, next))
@@ -75,8 +77,8 @@ class AuthorizationBehaviorTest {
     }
 
     @Test
-    @DisplayName("Rol gerektirmeyen ISecuredRequest dogrudan gecmeli")
-    void shouldDelegateWhenNoRolesRequired() {
+    @DisplayName("Rol veya claim gerektirmeyen ISecuredRequest dogrudan gecmeli")
+    void shouldDelegateWhenNoRolesOrClaimsRequired() {
         EmptySecuredCommand command = new EmptySecuredCommand();
         currentUserService.setAuthenticated(true);
         given(next.proceed()).willReturn("SUCCESS");
@@ -89,7 +91,7 @@ class AuthorizationBehaviorTest {
     @Test
     @DisplayName("Yetkili role sahip kullanici icin islem gecmeli")
     void shouldDelegateWhenUserHasRequiredRole() {
-        SecuredCommand command = new SecuredCommand();
+        SecuredRoleCommand command = new SecuredRoleCommand();
         currentUserService.setAuthenticated(true);
         currentUserService.setRoles(Set.of("CUSTOMER", "ADMIN"));
         given(next.proceed()).willReturn("SUCCESS");
@@ -101,15 +103,29 @@ class AuthorizationBehaviorTest {
     }
 
     @Test
-    @DisplayName("Yetkisiz role sahip kullanici icin AuthorizationException firlatilmali")
-    void shouldThrowWhenUserLacksRequiredRole() {
-        SecuredCommand command = new SecuredCommand();
+    @DisplayName("Yetkili claim'e sahip kullanici icin islem gecmeli")
+    void shouldDelegateWhenUserHasRequiredClaim() {
+        SecuredClaimCommand command = new SecuredClaimCommand();
+        currentUserService.setAuthenticated(true);
+        currentUserService.setClaims(Set.of("individual-customers:create"));
+        given(next.proceed()).willReturn("SUCCESS");
+
+        String result = authorizationBehavior.handle(command, next);
+
+        assertThat(result).isEqualTo("SUCCESS");
+        verify(next, times(1)).proceed();
+    }
+
+    @Test
+    @DisplayName("Yetkisiz kullanici icin AuthorizationException firlatilmali")
+    void shouldThrowWhenUserLacksRequiredRoleAndClaim() {
+        SecuredRoleCommand command = new SecuredRoleCommand();
         currentUserService.setAuthenticated(true);
         currentUserService.setRoles(Set.of("CUSTOMER"));
 
         assertThatThrownBy(() -> authorizationBehavior.handle(command, next))
                 .isInstanceOf(AuthorizationException.class)
-                .hasMessageContaining("gerekli rol eksik");
+                .hasMessageContaining("gerekli yetki eksik");
         
         verify(next, never()).proceed();
     }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                                     https://jakarta.ee/xml/ns/persistence/orm/orm_3_0.xsd"
+                 version="3.0">
+
+    <entity class="tr.com.huseyinaydin.domain.user.OperationClaim" name="OperationClaim">
+        <table name="operation_claims"/>
+        <attributes>
+            <id name="id">
+                <column name="id" column-definition="UUID"/>
+            </id>
+            <basic name="name">
+                <column name="name" length="255" nullable="false" unique="true"/>
+            </basic>
+            <basic name="createdDate">
+                <column name="created_date" nullable="false" updatable="false"/>
+            </basic>
+            <basic name="updatedDate">
+                <column name="updated_date"/>
+            </basic>
+            <basic name="deletedDate">
+                <column name="deleted_date"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

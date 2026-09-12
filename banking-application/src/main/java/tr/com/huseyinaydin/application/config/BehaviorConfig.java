@@ -97,6 +97,9 @@ public class BehaviorConfig {
         @Override public java.util.Set<String> getCurrentUserRoles() { return java.util.Collections.emptySet(); }
         @Override public boolean hasRole(String role) { return false; }
         @Override public boolean hasAnyRole(String... roles) { return false; }
+        @Override public java.util.Set<String> getCurrentUserClaims() { return java.util.Collections.emptySet(); }
+        @Override public boolean hasClaim(String claim) { return false; }
+        @Override public boolean hasAnyClaim(String... claims) { return false; }
         @Override public boolean isAuthenticated() { return false; }
     }
 

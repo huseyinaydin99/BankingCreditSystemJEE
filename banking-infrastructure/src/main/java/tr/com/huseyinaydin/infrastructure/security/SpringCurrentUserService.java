@@ -5,6 +5,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import tr.com.huseyinaydin.application.pipeline.ICurrentUserService;
 
 import java.util.Arrays;
@@ -83,4 +85,43 @@ public class SpringCurrentUserService implements ICurrentUserService {
                 && auth.isAuthenticated()
                 && !"anonymousUser".equals(auth.getPrincipal());
     }
+
+
+    @Autowired(required = false)
+    private EntityManager entityManager;
+
+    @Override
+    public Set<String> getCurrentUserClaims() {
+        String userId = getCurrentUserId();
+        if (userId == null || entityManager == null) {
+            return Collections.emptySet();
+        }
+        
+        try {
+            java.util.UUID uid = java.util.UUID.fromString(userId);
+            String query = "SELECT c.name FROM OperationClaim c " +
+                           "JOIN UserOperationClaim uc ON uc.operationClaimId = c.id " +
+                           "WHERE uc.userId = :userId";
+            List<String> claims = entityManager.createQuery(query, String.class)
+                    .setParameter("userId", uid)
+                    .getResultList();
+            return new java.util.HashSet<>(claims);
+        } catch (Exception e) {
+            return Collections.emptySet();
+        }
+    }
+
+    @Override
+    public boolean hasClaim(String claim) {
+        if (claim == null) return false;
+        return getCurrentUserClaims().contains(claim);
+    }
+
+    @Override
+    public boolean hasAnyClaim(String... claims) {
+        if (claims == null || claims.length == 0) return false;
+        Set<String> userClaims = getCurrentUserClaims();
+        return Arrays.stream(claims).anyMatch(userClaims::contains);
+    }
+
 }

@@ -2,43 +2,49 @@ package tr.com.huseyinaydin.application.pipeline;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MockCurrentUserService implements ICurrentUserService {
 
     private String userId;
     private String email;
     private Set<String> roles;
+    private Set<String> claims;
     private boolean authenticated;
 
     public MockCurrentUserService(String userId, String email, Set<String> roles) {
         this.userId = userId;
         this.email = email;
         this.roles = roles != null ? roles : Collections.emptySet();
+        this.claims = Collections.emptySet();
+        this.authenticated = true;
+    }
+    
+    public MockCurrentUserService(String userId, String email, Set<String> roles, Set<String> claims) {
+        this.userId = userId;
+        this.email = email;
+        this.roles = roles != null ? roles : Collections.emptySet();
+        this.claims = claims != null ? claims : Collections.emptySet();
         this.authenticated = true;
     }
 
     public MockCurrentUserService() {
         this.authenticated = false;
         this.roles = Collections.emptySet();
+        this.claims = Collections.emptySet();
     }
 
     @Override
-    public String getCurrentUserId() {
-        return userId;
-    }
+    public String getCurrentUserId() { return userId; }
 
     @Override
-    public String getCurrentUserEmail() {
-        return email;
-    }
+    public String getCurrentUserEmail() { return email; }
 
     @Override
-    public Set<String> getCurrentUserRoles() {
-        return roles;
-    }
+    public Set<String> getCurrentUserRoles() { return roles; }
+
+    @Override
+    public Set<String> getCurrentUserClaims() { return claims; }
 
     @Override
     public boolean hasRole(String role) {
@@ -55,23 +61,23 @@ public class MockCurrentUserService implements ICurrentUserService {
     }
 
     @Override
-    public boolean isAuthenticated() {
-        return authenticated;
+    public boolean hasClaim(String claim) {
+        if (claim == null) return false;
+        return claims.contains(claim);
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    @Override
+    public boolean hasAnyClaim(String... claimsToCheck) {
+        if (claimsToCheck == null || claimsToCheck.length == 0) return false;
+        return Arrays.stream(claimsToCheck).anyMatch(claims::contains);
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    @Override
+    public boolean isAuthenticated() { return authenticated; }
 
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
-    }
-
-    public void setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
-    }
+    public void setUserId(String userId) { this.userId = userId; }
+    public void setEmail(String email) { this.email = email; }
+    public void setRoles(Set<String> roles) { this.roles = roles; }
+    public void setClaims(Set<String> claims) { this.claims = claims; }
+    public void setAuthenticated(boolean authenticated) { this.authenticated = authenticated; }
 }

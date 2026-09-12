@@ -30,17 +30,27 @@ public class AuthorizationBehavior<TRequest, TResponse> implements IPipelineBeha
         }
 
         String[] requiredRoles = securedRequest.getRequiredRoles();
-        if (requiredRoles == null || requiredRoles.length == 0) {
+        String[] requiredClaims = securedRequest.claims();
+
+        boolean hasRequiredRoles = requiredRoles != null && requiredRoles.length > 0;
+        boolean hasRequiredClaims = requiredClaims != null && requiredClaims.length > 0;
+
+        if (!hasRequiredRoles && !hasRequiredClaims) {
             return next.proceed();
         }
 
-        boolean authorized = currentUserService.hasAnyRole(requiredRoles);
+        boolean roleAuthorized = hasRequiredRoles && currentUserService.hasAnyRole(requiredRoles);
+        boolean claimAuthorized = hasRequiredClaims && currentUserService.hasAnyClaim(requiredClaims);
 
-        if (!authorized) {
-            throw new AuthorizationException(
-                    request.getClass().getSimpleName(),
-                    "Bu işlem için gerekli rol eksik. Gerekli roller: "
-                            + Arrays.toString(requiredRoles));
+        if (!roleAuthorized && !claimAuthorized) {
+            StringBuilder message = new StringBuilder("Bu işlem için gerekli yetki eksik.");
+            if (hasRequiredRoles) {
+                message.append(" Gerekli roller: ").append(Arrays.toString(requiredRoles));
+            }
+            if (hasRequiredClaims) {
+                message.append(" Gerekli claimler: ").append(Arrays.toString(requiredClaims));
+            }
+            throw new AuthorizationException(request.getClass().getSimpleName(), message.toString());
         }
 
         return next.proceed();
