@@ -17,3 +17,22 @@ banking:
       authenticated: 10
       anonymous: 3
 
+
+  mail:
+    host: ${SMTP_HOST:smtp.example.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:user}
+    password: ${SMTP_PASSWORD:secret}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+resilience4j:
+  retry:
+    instances:
+      emailRetry:
+        maxAttempts: 3
+        waitDuration: 1s

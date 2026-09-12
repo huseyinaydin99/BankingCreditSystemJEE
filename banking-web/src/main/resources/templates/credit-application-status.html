@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kredi Başvurusu Durum Güncellemesi</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <h2>Sayın Müşterimiz,</h2>
+    <p>
+        <strong><span th:text="${applicationId}"></span></strong> numaralı kredi başvurunuzun durumu 
+        <strong><span th:text="${status}"></span></strong> olarak güncellenmiştir.
+    </p>
+    
+    <div th:if="${status == 'REJECTED'}">
+        <p>Maalesef başvurunuz aşağıdaki nedenden dolayı reddedilmiştir:</p>
+        <blockquote style="border-left: 4px solid #cc0000; padding-left: 10px; color: #666;">
+            <em th:text="${rejectionReason}"></em>
+        </blockquote>
+    </div>
+
+    <div th:if="${status == 'APPROVED'}">
+        <p>Tebrikler! Kredi başvurunuz onaylanmıştır. Kredi kullanım adımları için şubemizle iletişime geçebilirsiniz.</p>
+    </div>
+
+    <p>Bizi tercih ettiğiniz için teşekkür ederiz.</p>
+    <p>Saygılarımızla,<br/>Banking Credit System</p>
+</body>
+</html>
