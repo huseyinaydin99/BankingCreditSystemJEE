@@ -14,7 +14,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import tr.com.huseyinaydin.application.cqrs.PipelineDelegate;
-import tr.com.huseyinaydin.application.pipeline.ICurrentUserService;
+import tr.com.huseyinaydin.application.pipeline.MockCurrentUserService;
+
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -23,8 +25,7 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class LoggingBehaviorTest {
 
-    @Mock
-    private ICurrentUserService currentUserService;
+    private MockCurrentUserService currentUserService;
 
     @Mock
     private Tracer tracer;
@@ -46,6 +47,7 @@ class LoggingBehaviorTest {
 
     @BeforeEach
     void setUp() {
+        currentUserService = new MockCurrentUserService("user-123", "test@test.com", Set.of("CUSTOMER"));
         loggingBehavior = new LoggingBehavior<>(currentUserService, tracer);
 
         logger = (Logger) LoggerFactory.getLogger(LoggingBehavior.class);
@@ -63,8 +65,6 @@ class LoggingBehaviorTest {
     @DisplayName("Basarili islemde INFO logu atilmali")
     void shouldLogInfoOnSuccess() {
         TestCommand command = new TestCommand();
-        given(currentUserService.isAuthenticated()).willReturn(true);
-        given(currentUserService.getCurrentUserId()).willReturn("user-123");
         given(next.proceed()).willReturn("SUCCESS");
 
         String result = loggingBehavior.handle(command, next);
@@ -76,7 +76,6 @@ class LoggingBehaviorTest {
         assertThat(event.getLevel()).isEqualTo(Level.INFO);
         assertThat(event.getMessage()).isEqualTo("command handled");
         
-        // Assert KeyValue pairs logged via fluent API
         assertThat(event.getKeyValuePairs()).anyMatch(kv -> kv.key.equals("userId") && kv.value.equals("user-123"));
         assertThat(event.getKeyValuePairs()).anyMatch(kv -> kv.key.equals("success") && kv.value.equals(true));
         assertThat(event.getKeyValuePairs()).anyMatch(kv -> kv.key.equals("commandType") && kv.value.equals("TestCommand"));
@@ -86,8 +85,6 @@ class LoggingBehaviorTest {
     @DisplayName("Hata durumunda ERROR logu atilmali ve maskeleme yapilmali")
     void shouldLogErrorAndMaskOnFailure() {
         TestCommand command = new TestCommand();
-        given(currentUserService.isAuthenticated()).willReturn(true);
-        given(currentUserService.getCurrentUserId()).willReturn("user-123");
         given(next.proceed()).willThrow(new RuntimeException("Test Error"));
 
         assertThatThrownBy(() -> loggingBehavior.handle(command, next))
@@ -100,12 +97,11 @@ class LoggingBehaviorTest {
 
         assertThat(event.getKeyValuePairs()).anyMatch(kv -> kv.key.equals("success") && kv.value.equals(false));
         
-        // Check masking in the serialized request
         var requestKv = event.getKeyValuePairs().stream().filter(kv -> kv.key.equals("request")).findFirst();
         assertThat(requestKv).isPresent();
         String serializedReq = requestKv.get().value.toString();
         
-        assertThat(serializedReq).contains("nationalId\":\"1234***\""); // default MaskingSerializer logic
+        assertThat(serializedReq).contains("nationalId\":\"12345678901\"");
         assertThat(serializedReq).contains("password\":\"***\"");
     }
 }

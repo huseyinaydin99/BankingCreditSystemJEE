@@ -93,7 +93,10 @@ public class BehaviorConfig {
 
     private static class NoOpCurrentUserService implements ICurrentUserService {
         @Override public String getCurrentUserId() { return "anonymous"; }
-        @Override public String[] getCurrentUserRoles() { return new String[0]; }
+        @Override public String getCurrentUserEmail() { return null; }
+        @Override public java.util.Set<String> getCurrentUserRoles() { return java.util.Collections.emptySet(); }
+        @Override public boolean hasRole(String role) { return false; }
+        @Override public boolean hasAnyRole(String... roles) { return false; }
         @Override public boolean isAuthenticated() { return false; }
     }
 

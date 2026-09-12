@@ -8,8 +8,6 @@ import tr.com.huseyinaydin.application.pipeline.ISecuredRequest;
 import tr.com.huseyinaydin.sharedkernel.exception.AuthorizationException;
 
 import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Order(2)
 public class AuthorizationBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
@@ -36,13 +34,7 @@ public class AuthorizationBehavior<TRequest, TResponse> implements IPipelineBeha
             return next.proceed();
         }
 
-        Set<String> userRoles = Arrays.stream(currentUserService.getCurrentUserRoles())
-                .map(String::toUpperCase)
-                .collect(Collectors.toSet());
-
-        boolean authorized = Arrays.stream(requiredRoles)
-                .map(String::toUpperCase)
-                .anyMatch(userRoles::contains);
+        boolean authorized = currentUserService.hasAnyRole(requiredRoles);
 
         if (!authorized) {
             throw new AuthorizationException(

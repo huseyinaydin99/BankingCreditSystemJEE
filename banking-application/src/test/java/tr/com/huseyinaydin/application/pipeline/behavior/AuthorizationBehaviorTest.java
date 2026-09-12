@@ -7,9 +7,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tr.com.huseyinaydin.application.cqrs.PipelineDelegate;
-import tr.com.huseyinaydin.application.pipeline.ICurrentUserService;
 import tr.com.huseyinaydin.application.pipeline.ISecuredRequest;
+import tr.com.huseyinaydin.application.pipeline.MockCurrentUserService;
 import tr.com.huseyinaydin.sharedkernel.exception.AuthorizationException;
+
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,8 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AuthorizationBehaviorTest {
 
-    @Mock
-    private ICurrentUserService currentUserService;
+    private MockCurrentUserService currentUserService;
 
     @Mock
     private PipelineDelegate<String> next;
@@ -45,6 +46,7 @@ class AuthorizationBehaviorTest {
 
     @BeforeEach
     void setUp() {
+        currentUserService = new MockCurrentUserService();
         authorizationBehavior = new AuthorizationBehavior<>(currentUserService);
     }
 
@@ -57,14 +59,13 @@ class AuthorizationBehaviorTest {
         String result = authorizationBehavior.handle(command, next);
 
         assertThat(result).isEqualTo("SUCCESS");
-        verify(currentUserService, never()).isAuthenticated();
     }
 
     @Test
     @DisplayName("Giris yapmamis kullanici icin AuthorizationException firlatilmali")
     void shouldThrowWhenNotAuthenticated() {
         SecuredCommand command = new SecuredCommand();
-        given(currentUserService.isAuthenticated()).willReturn(false);
+        currentUserService.setAuthenticated(false);
 
         assertThatThrownBy(() -> authorizationBehavior.handle(command, next))
                 .isInstanceOf(AuthorizationException.class)
@@ -77,21 +78,20 @@ class AuthorizationBehaviorTest {
     @DisplayName("Rol gerektirmeyen ISecuredRequest dogrudan gecmeli")
     void shouldDelegateWhenNoRolesRequired() {
         EmptySecuredCommand command = new EmptySecuredCommand();
-        given(currentUserService.isAuthenticated()).willReturn(true);
+        currentUserService.setAuthenticated(true);
         given(next.proceed()).willReturn("SUCCESS");
 
         String result = authorizationBehavior.handle(command, next);
 
         assertThat(result).isEqualTo("SUCCESS");
-        verify(currentUserService, never()).getCurrentUserRoles();
     }
 
     @Test
     @DisplayName("Yetkili role sahip kullanici icin islem gecmeli")
     void shouldDelegateWhenUserHasRequiredRole() {
         SecuredCommand command = new SecuredCommand();
-        given(currentUserService.isAuthenticated()).willReturn(true);
-        given(currentUserService.getCurrentUserRoles()).willReturn(new String[]{"CUSTOMER", "ADMIN"});
+        currentUserService.setAuthenticated(true);
+        currentUserService.setRoles(Set.of("CUSTOMER", "ADMIN"));
         given(next.proceed()).willReturn("SUCCESS");
 
         String result = authorizationBehavior.handle(command, next);
@@ -104,8 +104,8 @@ class AuthorizationBehaviorTest {
     @DisplayName("Yetkisiz role sahip kullanici icin AuthorizationException firlatilmali")
     void shouldThrowWhenUserLacksRequiredRole() {
         SecuredCommand command = new SecuredCommand();
-        given(currentUserService.isAuthenticated()).willReturn(true);
-        given(currentUserService.getCurrentUserRoles()).willReturn(new String[]{"CUSTOMER"});
+        currentUserService.setAuthenticated(true);
+        currentUserService.setRoles(Set.of("CUSTOMER"));
 
         assertThatThrownBy(() -> authorizationBehavior.handle(command, next))
                 .isInstanceOf(AuthorizationException.class)

@@ -10,9 +10,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tr.com.huseyinaydin.application.pipeline.ICurrentUserService;
 import tr.com.huseyinaydin.sharedkernel.exception.RateLimitProblemDetail;
 
 import java.io.IOException;
@@ -46,12 +46,15 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
         if ("POST".equalsIgnoreCase(request.getMethod()) && request.getRequestURI().matches(".*/api/(v1/)?credit-?applications.*")) {
             
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            boolean isAuthenticated = auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser");
+            ICurrentUserService currentUserService = WebApplicationContextUtils
+                    .getRequiredWebApplicationContext(request.getServletContext())
+                    .getBean(ICurrentUserService.class);
+
+            boolean isAuthenticated = currentUserService.isAuthenticated();
 
             Bucket bucket;
             if (isAuthenticated) {
-                String username = auth.getName();
+                String username = currentUserService.getCurrentUserId();
                 bucket = authenticatedBuckets.computeIfAbsent(username, this::createAuthenticatedBucket);
             } else {
                 String ip = getClientIP(request);

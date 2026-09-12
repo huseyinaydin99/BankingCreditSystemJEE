@@ -72,7 +72,7 @@ public class CreditApplicationBusinessRules {
                     "Bu işlem için kimlik doğrulama gereklidir");
         }
 
-        Set<String> roles = Arrays.stream(currentUserService.getCurrentUserRoles())
+        Set<String> roles = currentUserService.getCurrentUserRoles().stream()
                 .map(String::toUpperCase)
                 .collect(Collectors.toSet());
 

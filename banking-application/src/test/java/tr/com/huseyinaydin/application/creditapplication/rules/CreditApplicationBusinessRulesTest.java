@@ -40,8 +40,8 @@ public class CreditApplicationBusinessRulesTest {
     private ICreditApplicationRepository creditApplicationRepository;
     @Mock
     private IApplicationUserRepository applicationUserRepository;
-    @Mock
-    private ICurrentUserService currentUserService;
+    @org.mockito.Spy
+    private tr.com.huseyinaydin.application.pipeline.MockCurrentUserService currentUserService = new tr.com.huseyinaydin.application.pipeline.MockCurrentUserService();
 
     @InjectMocks
     private CreditApplicationBusinessRules rules;
@@ -194,7 +194,7 @@ public class CreditApplicationBusinessRulesTest {
     @DisplayName("Kullanıcı doğrulama yapmamışsa AuthorizationException fırlatmalı")
     void userCanAccessApplication_Unauthenticated() {
         CreditApplication app = CreditApplicationTestFixture.random();
-        given(currentUserService.getCurrentUserId()).willReturn(null);
+        currentUserService.setUserId(null);
 
         assertThatThrownBy(() -> rules.userCanAccessApplication(app))
                 .isInstanceOf(AuthorizationException.class)
@@ -205,9 +205,9 @@ public class CreditApplicationBusinessRulesTest {
     @DisplayName("Admin yetkili kullanıcı başvuruya erişebilmeli")
     void userCanAccessApplication_Admin() {
         CreditApplication app = CreditApplicationTestFixture.random();
-        given(currentUserService.getCurrentUserId()).willReturn(UUID.randomUUID().toString());
-        given(currentUserService.isAuthenticated()).willReturn(true);
-        given(currentUserService.getCurrentUserRoles()).willReturn(new String[]{"ADMIN"});
+        currentUserService.setUserId(UUID.randomUUID().toString());
+        currentUserService.setAuthenticated(true);
+        currentUserService.setRoles(java.util.Set.of("ADMIN"));
 
         assertThatCode(() -> rules.userCanAccessApplication(app))
                 .doesNotThrowAnyException();

@@ -23,7 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String AUTH_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final String ROLES_CLAIM = "roles";
+    private static final String ROLES_CLAIM = tr.com.huseyinaydin.infrastructure.security.JwtClaimKeys.ROLES;
 
     private final IJwtService jwtService;
     private final Tracer tracer;
@@ -58,6 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userId, null, authorities);
+            authentication.setDetails(claims);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (ApplicationException ignored) {

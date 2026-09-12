@@ -24,8 +24,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Service
 public class JjwtJwtService implements IJwtService {
 
-    private static final String ROLES_CLAIM = "roles";
-    private static final String EMAIL_CLAIM = "email";
     private static final String JWT_ERROR = "JWT_ERROR";
 
     private final TokenOptions tokenOptions;
@@ -43,8 +41,9 @@ public class JjwtJwtService implements IJwtService {
 
         String token = Jwts.builder()
                 .subject(user.getId().toString())
-                .claim(EMAIL_CLAIM, user.getEmail())
-                .claim(ROLES_CLAIM, roles)
+                .claim(JwtClaimKeys.USER_ID, user.getId().toString())
+                .claim(JwtClaimKeys.EMAIL, user.getEmail())
+                .claim(JwtClaimKeys.ROLES, roles)
                 .issuedAt(toDate(now))
                 .expiration(toDate(expiration))
                 .issuer(tokenOptions.getIssuer())
