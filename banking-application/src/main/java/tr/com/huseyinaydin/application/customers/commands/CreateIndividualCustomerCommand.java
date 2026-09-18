@@ -11,12 +11,9 @@ import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IPasswordHashService;
 import tr.com.huseyinaydin.application.ports.PasswordHash;
 import tr.com.huseyinaydin.domain.repositories.IIndividualCustomerRepository;
-import tr.com.huseyinaydin.domain.repositories.IApplicationUserRepository;
 import tr.com.huseyinaydin.application.validation.constraints.PhoneNumber;
 import tr.com.huseyinaydin.application.validation.constraints.TurkishNationalId;
 import tr.com.huseyinaydin.domain.customer.IndividualCustomer;
-import tr.com.huseyinaydin.domain.enums.UserRole;
-import tr.com.huseyinaydin.domain.user.ApplicationUser;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
 
@@ -40,18 +37,16 @@ public record CreateIndividualCustomerCommand(
     public static class Handler
             implements ICommandHandler<CreateIndividualCustomerCommand, CreatedIndividualCustomerResponse> {
 
-        private final IIndividualCustomerRepository individualCustomers;
-        private final IApplicationUserRepository applicationUsers;
+        private final IIndividualCustomerRepository individualCustomerRepository;
         private final IndividualCustomerBusinessRules businessRules;
         private final IPasswordHashService passwordHashService;
         private final IMapper mapper;
 
-        public Handler(IIndividualCustomerRepository individualCustomers, IApplicationUserRepository applicationUsers,
+        public Handler(IIndividualCustomerRepository individualCustomerRepository,
                        IndividualCustomerBusinessRules businessRules,
                        IPasswordHashService passwordHashService,
                        IMapper mapper) {
-            this.individualCustomers = individualCustomers;
-            this.applicationUsers = applicationUsers;
+            this.individualCustomerRepository = individualCustomerRepository;
             this.businessRules = businessRules;
             this.passwordHashService = passwordHashService;
             this.mapper = mapper;
@@ -61,27 +56,23 @@ public record CreateIndividualCustomerCommand(
         public CreatedIndividualCustomerResponse handle(CreateIndividualCustomerCommand command) {
             businessRules.nationalIdCannotBeDuplicatedWhenInserted(command.nationalId());
 
+            PasswordHash passwordHash = passwordHashService.createHash(command.password());
+
             IndividualCustomer customer = new IndividualCustomer(
                     command.firstName(),
                     command.lastName(),
                     command.nationalId(),
-                    command.email()
+                    command.email(),
+                    passwordHash.hash(),
+                    passwordHash.salt()
             );
             customer.updatePersonalInfo(command.firstName(), command.lastName(), command.dateOfBirth(), command.motherName(), command.fatherName());
             customer.updateContactInfo(command.phoneNumber(), command.email(), command.address());
 
-            PasswordHash passwordHash = passwordHashService.createHash(command.password());
-
-            ApplicationUser user = new ApplicationUser(
-                    customer.getId(),
-                    command.email(),
-                    passwordHash.hash(),
-                    passwordHash.salt(),
-                    UserRole.CUSTOMER
-            );
-
-            individualCustomers.save(customer);
-            applicationUsers.save(user);
+            // SRP and Aggregate Boundaries Fix: ApplicationUser creation is now strictly handled
+            // by another event handler (via IndividualCustomerCreatedEvent). This CommandHandler 
+            // only handles the IndividualCustomer aggregate root.
+            individualCustomerRepository.save(customer);
 
             return new CreatedIndividualCustomerResponse(
                     customer.getId(),

@@ -16,7 +16,7 @@ public class IndividualCustomerTestFixture {
                 "Ahmet",
                 "Yılmaz",
                 nationalId,
-                "ahmet.yilmaz@example.com"
+                "ahmet.yilmaz@example.com", new byte[0], new byte[0]
         );
 
         customer.updatePersonalInfo(
@@ -29,7 +29,7 @@ public class IndividualCustomerTestFixture {
 
         customer.updateContactInfo(
                 "5551234567",
-                "ahmet.yilmaz@example.com",
+                "ahmet.yilmaz@example.com", new byte[0], new byte[0],
                 "Örnek Mahallesi, Test Sokak No:1"
         );
 

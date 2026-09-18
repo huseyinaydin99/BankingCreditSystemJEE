@@ -2,8 +2,6 @@ package tr.com.huseyinaydin.application.mapping;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ObjectFactory;
-import tr.com.huseyinaydin.application.customers.commands.CreateIndividualCustomerCommand;
 import tr.com.huseyinaydin.application.customers.dtos.IndividualCustomerResponse;
 import tr.com.huseyinaydin.domain.customer.IndividualCustomer;
 import tr.com.huseyinaydin.sharedkernel.pagination.Paginate;
@@ -16,19 +14,6 @@ public interface IndividualCustomerMapper {
 
     @Mapping(target = "isActive", source = "active")
     IndividualCustomerResponse toResponse(IndividualCustomer entity);
-
-    @Mapping(target = "active", ignore = true)
-    IndividualCustomer toEntity(CreateIndividualCustomerCommand command);
-
-    @ObjectFactory
-    default IndividualCustomer createIndividualCustomer(CreateIndividualCustomerCommand command) {
-        return new IndividualCustomer(
-                command.firstName(),
-                command.lastName(),
-                command.nationalId(),
-                command.email()
-        );
-    }
 
     default Paginate<IndividualCustomerResponse> toResponsePage(Paginate<IndividualCustomer> page) {
         List<IndividualCustomerResponse> items = page.getItems().stream()

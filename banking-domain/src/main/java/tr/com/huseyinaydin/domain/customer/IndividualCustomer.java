@@ -17,7 +17,7 @@ public class IndividualCustomer extends Customer {
         super();
     }
 
-    public IndividualCustomer(String firstName, String lastName, String nationalId, String email) {
+    public IndividualCustomer(String firstName, String lastName, String nationalId, String email, byte[] passwordHash, byte[] passwordSalt) {
         super();
         this.id = UUID.randomUUID();
         if (firstName == null || firstName.isBlank()) throw new IllegalArgumentException("Ad boş olamaz");
@@ -28,7 +28,7 @@ public class IndividualCustomer extends Customer {
         this.lastName = lastName;
         this.nationalId = nationalId;
         super.updateContactInfo(null, email, null);
-        addDomainEvent(new IndividualCustomerCreatedEvent(this.id, this.firstName, this.lastName, this.nationalId, this.getEmail()));
+        addDomainEvent(new IndividualCustomerCreatedEvent(this.id, this.firstName, this.lastName, this.nationalId, this.getEmail(), passwordHash, passwordSalt));
     }
 
     public void updatePersonalInfo(String firstName, String lastName, LocalDate dateOfBirth, String motherName, String fatherName) {

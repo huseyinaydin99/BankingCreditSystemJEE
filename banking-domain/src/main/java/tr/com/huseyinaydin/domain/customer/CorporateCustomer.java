@@ -18,7 +18,7 @@ public class CorporateCustomer extends Customer {
         super();
     }
 
-    public CorporateCustomer(String companyName, String taxNumber, String email) {
+    public CorporateCustomer(String companyName, String taxNumber, String email, byte[] passwordHash, byte[] passwordSalt) {
         super();
         this.id = UUID.randomUUID();
         if (companyName == null || companyName.isBlank()) throw new IllegalArgumentException("Şirket adı boş olamaz");
@@ -27,7 +27,7 @@ public class CorporateCustomer extends Customer {
         this.companyName = companyName;
         this.taxNumber = taxNumber;
         super.updateContactInfo(null, email, null);
-        addDomainEvent(new CorporateCustomerCreatedEvent(this.id, this.companyName, this.taxNumber, this.getEmail()));
+        addDomainEvent(new CorporateCustomerCreatedEvent(this.id, this.companyName, this.taxNumber, this.getEmail(), passwordHash, passwordSalt));
     }
 
     public void updateCompanyInfo(String companyName, String taxOffice, String companyRegistrationNumber, String tradeRegistrationNumber, String authorizedPersonName, LocalDate companyFoundationDate) {

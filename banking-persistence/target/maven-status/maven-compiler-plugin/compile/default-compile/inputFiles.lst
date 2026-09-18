@@ -14,4 +14,3 @@
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/JpaOutboxRepository.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/JpaRepositoryBase.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/seed/DataInitializer.java
-/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/uow/JpaUnitOfWork.java

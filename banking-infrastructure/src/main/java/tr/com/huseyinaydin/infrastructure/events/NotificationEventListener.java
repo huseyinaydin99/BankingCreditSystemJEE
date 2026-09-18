@@ -6,7 +6,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.IEmailNotificationService;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.ICreditApplicationRepository;
 import tr.com.huseyinaydin.domain.creditapplication.CreditApplication;
 import tr.com.huseyinaydin.domain.customer.Customer;
 import tr.com.huseyinaydin.domain.enums.CreditApplicationStatus;
@@ -23,18 +23,18 @@ public class NotificationEventListener {
     private static final Logger log = LoggerFactory.getLogger(NotificationEventListener.class);
     
     private final IEmailNotificationService emailNotificationService;
-    private final IUnitOfWork uow;
+    private final ICreditApplicationRepository creditApplicationRepository;
 
-    public NotificationEventListener(IEmailNotificationService emailNotificationService, IUnitOfWork uow) {
+    public NotificationEventListener(IEmailNotificationService emailNotificationService, ICreditApplicationRepository creditApplicationRepository) {
         this.emailNotificationService = emailNotificationService;
-        this.uow = uow;
+        this.creditApplicationRepository = creditApplicationRepository;
     }
 
     @EventListener
     public void handle(CreditApplicationApprovedEvent event) {
         log.info("Received CreditApplicationApprovedEvent for application {}", event.getApplicationId());
         
-        Optional<CreditApplication> applicationOpt = uow.creditApplications().findById(event.getApplicationId());
+        Optional<CreditApplication> applicationOpt = creditApplicationRepository.findById(event.getApplicationId());
         if (applicationOpt.isPresent()) {
             Customer customer = applicationOpt.get().getCustomer();
             if (customer != null && customer.getEmail() != null) {
@@ -52,7 +52,7 @@ public class NotificationEventListener {
     public void handle(CreditApplicationRejectedEvent event) {
         log.info("Received CreditApplicationRejectedEvent for application {}", event.getApplicationId());
         
-        Optional<CreditApplication> applicationOpt = uow.creditApplications().findById(event.getApplicationId());
+        Optional<CreditApplication> applicationOpt = creditApplicationRepository.findById(event.getApplicationId());
         if (applicationOpt.isPresent()) {
             Customer customer = applicationOpt.get().getCustomer();
             if (customer != null && customer.getEmail() != null) {
