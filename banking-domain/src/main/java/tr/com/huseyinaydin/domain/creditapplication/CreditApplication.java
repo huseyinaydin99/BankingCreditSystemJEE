@@ -31,7 +31,6 @@ public class CreditApplication extends Entity<UUID> {
     private CreditApplicationStatus status;
     private String rejectionReason;
 
-    private final List<DomainEvent> domainEvents = new ArrayList<>();
 
     protected CreditApplication() {
         super();
@@ -106,13 +105,4 @@ public class CreditApplication extends Entity<UUID> {
     public CreditApplicationStatus getStatus() { return status; }
     public String getRejectionReason() { return rejectionReason; }
 
-    protected void addDomainEvent(DomainEvent event) {
-        this.domainEvents.add(event);
-    }
-
-    public List<DomainEvent> pullDomainEvents() {
-        List<DomainEvent> events = new ArrayList<>(this.domainEvents);
-        this.domainEvents.clear();
-        return Collections.unmodifiableList(events);
-    }
 }

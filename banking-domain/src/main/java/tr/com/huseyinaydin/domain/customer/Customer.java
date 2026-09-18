@@ -19,8 +19,6 @@ public abstract class Customer extends Entity<UUID> {
     private String address;
     private boolean isActive;
 
-    private final List<DomainEvent> domainEvents = new ArrayList<>();
-
     protected Customer() {
         super();
         this.isActive = true;
@@ -45,14 +43,4 @@ public abstract class Customer extends Entity<UUID> {
     public boolean isActive() { return isActive; }
 
     public abstract String getFullName();
-
-    protected void addDomainEvent(DomainEvent event) {
-        this.domainEvents.add(event);
-    }
-
-    public List<DomainEvent> pullDomainEvents() {
-        List<DomainEvent> events = new ArrayList<>(this.domainEvents);
-        this.domainEvents.clear();
-        return Collections.unmodifiableList(events);
-    }
 }

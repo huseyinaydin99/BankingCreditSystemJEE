@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.lang.reflect.Method;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -118,11 +117,12 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
     }
 
     private void extractAndSaveDomainEvents(TEntity entity) {
+        if (!(entity instanceof tr.com.huseyinaydin.domain.common.Entity<?> domainEntity)) {
+            return; // Only aggregate roots and standard entities support events
+        }
+
         try {
-            Method pullMethod = entity.getClass().getMethod("pullDomainEvents");
-            @SuppressWarnings("unchecked")
-            List<tr.com.huseyinaydin.sharedkernel.events.DomainEvent> events = 
-                (List<tr.com.huseyinaydin.sharedkernel.events.DomainEvent>) pullMethod.invoke(entity);
+            List<tr.com.huseyinaydin.sharedkernel.events.DomainEvent> events = domainEntity.pullDomainEvents();
             
             if (events != null && !events.isEmpty()) {
                 for (tr.com.huseyinaydin.sharedkernel.events.DomainEvent event : events) {
@@ -138,11 +138,9 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
                     entityManager.persist(outbox);
                 }
             }
-        } catch (NoSuchMethodException e) {
-            // No domain events support on this entity
         } catch (Exception e) {
             org.slf4j.LoggerFactory.getLogger(JpaRepositoryBase.class)
-                .error("Failed to extract and save domain events for entity: {}", entity.getClass().getSimpleName(), e);
+                .error("Failed to serialize and save domain events for entity: {}", entity.getClass().getSimpleName(), e);
         }
     }
 
