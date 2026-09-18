@@ -23,6 +23,12 @@ import java.util.Properties;
 public class PersistenceConfig {
 
     @Autowired
+    public void setApplicationContext(org.springframework.context.ApplicationContext context) {
+        tr.com.huseyinaydin.persistence.audit.JpaAuditEntityListener.setApplicationContext(context);
+    }
+
+
+    @Autowired
     private Environment env;
 
     @Value("${spring.datasource.url}")

@@ -9,6 +9,8 @@ tr/com/huseyinaydin/persistence/repositories/ApplicationUserJpaRepository.class
 tr/com/huseyinaydin/persistence/repositories/JpaOutboxRepository.class
 tr/com/huseyinaydin/persistence/config/PersistenceConfig.class
 tr/com/huseyinaydin/persistence/repositories/CreditTypeJpaRepository.class
+tr/com/huseyinaydin/persistence/audit/AuditLogSaver.class
 tr/com/huseyinaydin/persistence/repositories/IndividualCustomerJpaRepository.class
 tr/com/huseyinaydin/persistence/read/IndividualCustomerReadServiceImpl.class
 tr/com/huseyinaydin/persistence/seed/DataInitializer.class
+tr/com/huseyinaydin/persistence/audit/JpaAuditEntityListener.class

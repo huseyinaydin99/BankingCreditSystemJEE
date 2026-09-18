@@ -7,6 +7,10 @@
         version="3.1">
 
     <mapped-superclass class="tr.com.huseyinaydin.domain.common.BaseEntity" access="FIELD">
+        
+        <entity-listeners>
+            <entity-listener class="tr.com.huseyinaydin.persistence.audit.JpaAuditEntityListener"/>
+        </entity-listeners>
 
         <pre-persist method-name="onPrePersist"/>
         <pre-update  method-name="onPreUpdate"/>

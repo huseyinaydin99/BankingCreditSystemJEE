@@ -1,3 +1,5 @@
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/audit/AuditLogSaver.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/audit/JpaAuditEntityListener.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/config/PersistenceConfig.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/read/CreditTypeReadServiceImpl.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/read/IndividualCustomerReadServiceImpl.java
