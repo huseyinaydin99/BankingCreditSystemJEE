@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import tr.com.huseyinaydin.sharedkernel.exception.AuthorizationException;
@@ -21,10 +23,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-
-
-
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -50,6 +48,23 @@ public class GlobalExceptionHandler {
 
         ValidationProblemDetail body = new ValidationProblemDetail(
                 type.type(), type.title(), type.status(), ex.getMessage(),
+                instance(request), errors);
+
+        return problem(type.status(), body);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ProblemDetail> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                      HttpServletRequest request) {
+        BankingErrorTypes type = BankingErrorTypes.VALIDATION_FAILED;
+
+        Map<String, List<String>> errors = ex.getBindingResult().getFieldErrors().stream()
+                .collect(Collectors.groupingBy(
+                        FieldError::getField,
+                        Collectors.mapping(FieldError::getDefaultMessage, Collectors.toList())));
+
+        ValidationProblemDetail body = new ValidationProblemDetail(
+                type.type(), type.title(), type.status(), "Doğrulama hatası oluştu",
                 instance(request), errors);
 
         return problem(type.status(), body);
@@ -83,7 +98,6 @@ public class GlobalExceptionHandler {
         return business(BankingErrorTypes.INTERNAL_ERROR, "Sunucu hatası oluştu",
                 "INTERNAL_ERROR", request);
     }
-
 
     private static ResponseEntity<ProblemDetail> business(BankingErrorTypes type,
                                                           String detail,
