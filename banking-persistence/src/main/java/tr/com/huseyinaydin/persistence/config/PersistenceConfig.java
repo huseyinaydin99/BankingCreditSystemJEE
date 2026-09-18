@@ -45,6 +45,11 @@ public class PersistenceConfig {
     }
 
     @Bean
+    public org.springframework.jdbc.core.JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new org.springframework.jdbc.core.JdbcTemplate(dataSource);
+    }
+
+    @Bean
     @Profile("prod")
     public DataSource prodDataSource() {
         HikariConfig config = new HikariConfig();
