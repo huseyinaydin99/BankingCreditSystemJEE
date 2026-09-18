@@ -105,9 +105,7 @@ public record UpdateCreditTypeCommand(
                 creditType.setParentCreditType(null);
             }
 
-            uow.beginTransaction();
             uow.creditTypes().update(creditType);
-            uow.commit();
 
             return new Response(
                     creditType.getId(),

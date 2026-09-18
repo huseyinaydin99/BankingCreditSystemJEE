@@ -80,10 +80,8 @@ public record CreateIndividualCustomerCommand(
                     UserRole.CUSTOMER
             );
 
-            uow.beginTransaction();
             uow.individualCustomers().save(customer);
             uow.applicationUsers().save(user);
-            uow.commit();
 
             return new CreatedIndividualCustomerResponse(
                     customer.getId(),

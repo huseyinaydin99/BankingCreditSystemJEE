@@ -84,10 +84,8 @@ public record CreateCorporateCustomerCommand(
                     UserRole.CUSTOMER
             );
 
-            uow.beginTransaction();
             uow.corporateCustomers().save(customer);
             uow.applicationUsers().save(user);
-            uow.commit();
 
             return new CreatedCorporateCustomerResponse(
                     customer.getId(),

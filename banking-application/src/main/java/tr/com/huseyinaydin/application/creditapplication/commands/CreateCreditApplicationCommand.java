@@ -85,9 +85,7 @@ public record CreateCreditApplicationCommand(
                     DEFAULT_CURRENCY
             );
 
-            uow.beginTransaction();
             uow.creditApplications().save(application);
-            uow.commit();
 
             return new Response(
                     application.getId(),

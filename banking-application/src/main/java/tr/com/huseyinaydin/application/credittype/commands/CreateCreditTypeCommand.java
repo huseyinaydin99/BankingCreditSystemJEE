@@ -90,9 +90,7 @@ public record CreateCreditTypeCommand(
                 creditType.setParentCreditType(parent);
             }
 
-            uow.beginTransaction();
             uow.creditTypes().save(creditType);
-            uow.commit();
 
             return new Response(
                     creditType.getId(),

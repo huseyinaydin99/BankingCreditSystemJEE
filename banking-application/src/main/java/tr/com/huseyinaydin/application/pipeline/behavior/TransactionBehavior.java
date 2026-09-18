@@ -8,7 +8,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import tr.com.huseyinaydin.application.cqrs.IPipelineBehavior;
 import tr.com.huseyinaydin.application.cqrs.PipelineDelegate;
-import tr.com.huseyinaydin.application.pipeline.ITransactionalRequest;
 
 @Order(10)
 public class TransactionBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
@@ -25,7 +24,7 @@ public class TransactionBehavior<TRequest, TResponse> implements IPipelineBehavi
 
     @Override
     public TResponse handle(TRequest request, PipelineDelegate<TResponse> next) {
-        if (!(request instanceof ITransactionalRequest)) {
+        if (!(request instanceof tr.com.huseyinaydin.sharedkernel.messaging.ICommand)) {
             return next.proceed();
         }
 

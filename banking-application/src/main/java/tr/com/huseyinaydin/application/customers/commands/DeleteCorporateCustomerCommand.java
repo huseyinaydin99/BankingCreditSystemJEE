@@ -42,9 +42,7 @@ public record DeleteCorporateCustomerCommand(
 
             customer.setActive(false);
 
-            uow.beginTransaction();
             uow.corporateCustomers().delete(customer, command.permanent());
-            uow.commit();
 
             return new DeletedCorporateCustomerResponse(
                     customer.getId(),

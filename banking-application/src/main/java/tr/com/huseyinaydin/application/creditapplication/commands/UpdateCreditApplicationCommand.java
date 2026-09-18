@@ -77,9 +77,7 @@ public record UpdateCreditApplicationCommand(
                     command.requestedAmount(), command.requestedTerm(),
                     creditType.getAnnualInterestRate(), DEFAULT_CURRENCY);
 
-            uow.beginTransaction();
             uow.creditApplications().update(application);
-            uow.commit();
 
             return new Response(
                     application.getId(),

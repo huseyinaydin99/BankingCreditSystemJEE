@@ -66,9 +66,7 @@ public record UpdateCorporateCustomerCommand(
             customer.setEmail(command.email());
             customer.setAddress(command.address());
 
-            uow.beginTransaction();
             uow.corporateCustomers().update(customer);
-            uow.commit();
 
             return new UpdatedCorporateCustomerResponse(
                     customer.getId(),

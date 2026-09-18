@@ -43,9 +43,7 @@ public record DeleteIndividualCustomerCommand(
 
             customer.setActive(false);
 
-            uow.beginTransaction();
             uow.individualCustomers().delete(customer, command.permanent());
-            uow.commit();
 
             return new DeletedIndividualCustomerResponse(
                     customer.getId(),

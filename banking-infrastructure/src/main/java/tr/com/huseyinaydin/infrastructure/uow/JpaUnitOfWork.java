@@ -1,10 +1,6 @@
 package tr.com.huseyinaydin.infrastructure.uow;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.IUnitOfWork;
 import tr.com.huseyinaydin.domain.repositories.IApplicationUserRepository;
@@ -19,7 +15,6 @@ import tr.com.huseyinaydin.infrastructure.repositories.CreditTypeJpaRepository;
 import tr.com.huseyinaydin.infrastructure.repositories.IndividualCustomerJpaRepository;
 
 @Component
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class JpaUnitOfWork implements IUnitOfWork {
 
     private final EntityManager entityManager;
@@ -30,34 +25,8 @@ public class JpaUnitOfWork implements IUnitOfWork {
     private ICreditTypeRepository creditTypes;
     private IApplicationUserRepository applicationUsers;
 
-    public JpaUnitOfWork(EntityManagerFactory entityManagerFactory) {
-        this.entityManager = entityManagerFactory.createEntityManager();
-    }
-
-    @Override
-    public void beginTransaction() {
-        EntityTransaction tx = entityManager.getTransaction();
-        if (!tx.isActive()) {
-            tx.begin();
-        }
-    }
-
-    @Override
-    public void commit() {
-        entityManager.getTransaction().commit();
-    }
-
-    @Override
-    public void rollback() {
-        EntityTransaction tx = entityManager.getTransaction();
-        if (tx.isActive()) {
-            tx.rollback();
-        }
-    }
-
-    @Override
-    public boolean isActive() {
-        return entityManager.getTransaction().isActive();
+    public JpaUnitOfWork(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     @Override

@@ -49,9 +49,7 @@ public record DeleteCreditTypeCommand(
 
             rules.subCreditTypesMustBeEmpty(creditType);
 
-            uow.beginTransaction();
             uow.creditTypes().delete(creditType, command.permanent());
-            uow.commit();
 
             return new Response(
                     creditType.getId(),

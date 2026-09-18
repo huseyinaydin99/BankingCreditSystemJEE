@@ -61,9 +61,7 @@ public record UpdateIndividualCustomerCommand(
             customer.setEmail(command.email());
             customer.setAddress(command.address());
 
-            uow.beginTransaction();
             uow.individualCustomers().update(customer);
-            uow.commit();
 
             return new UpdatedIndividualCustomerResponse(
                     customer.getId(),

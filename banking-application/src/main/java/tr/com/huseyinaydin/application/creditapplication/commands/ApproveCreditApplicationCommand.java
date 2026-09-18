@@ -73,9 +73,7 @@ public record ApproveCreditApplicationCommand(
                     command.approvedTerm(),
                     command.interestRate());
 
-            uow.beginTransaction();
             uow.creditApplications().update(application);
-            uow.commit();
 
             return new Response(
                     application.getId(),

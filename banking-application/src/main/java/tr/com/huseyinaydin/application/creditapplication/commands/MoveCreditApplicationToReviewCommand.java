@@ -47,9 +47,7 @@ public record MoveCreditApplicationToReviewCommand(
 
             application.moveToReview();
 
-            uow.beginTransaction();
             uow.creditApplications().update(application);
-            uow.commit();
 
             return new Response(
                     application.getId(),

@@ -55,9 +55,7 @@ public record RejectCreditApplicationCommand(
 
             application.reject(command.rejectionReason());
 
-            uow.beginTransaction();
             uow.creditApplications().update(application);
-            uow.commit();
 
             return new Response(
                     application.getId(),

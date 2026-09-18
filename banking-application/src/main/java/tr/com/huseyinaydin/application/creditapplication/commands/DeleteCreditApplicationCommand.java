@@ -50,9 +50,7 @@ public record DeleteCreditApplicationCommand(
             rules.userCanAccessApplication(application);
             rules.onlyPendingCanBeModified(application);
 
-            uow.beginTransaction();
             uow.creditApplications().delete(application, command.permanent());
-            uow.commit();
 
             return new Response(
                     application.getId(),
