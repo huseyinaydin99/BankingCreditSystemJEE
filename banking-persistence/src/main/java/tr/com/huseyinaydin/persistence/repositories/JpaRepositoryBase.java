@@ -18,16 +18,22 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.lang.reflect.Method;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
         implements IAsyncRepository<TEntity, TId> {
 
     protected final EntityManager entityManager;
     protected final Class<TEntity> entityClass;
+    private final ObjectMapper objectMapper;
 
     protected JpaRepositoryBase(EntityManager entityManager, Class<TEntity> entityClass) {
         this.entityManager = entityManager;
         this.entityClass = entityClass;
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
     }
 
     @Override
@@ -62,19 +68,14 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
         }
 
         if (pagination.getCursor() != null && !pagination.getCursor().isBlank()) {
-            // Keyset Pagination (Cursor tabanlı)
             String decoded = new String(Base64.getDecoder().decode(pagination.getCursor()));
             String[] parts = decoded.split("::");
             if (parts.length == 2) {
                 LocalDateTime lastDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(parts[0])), ZoneOffset.UTC);
                 String lastId = parts[1];
 
-                // (createdDate < lastDate) OR (createdDate = lastDate AND id < lastId)
                 Predicate dateLess = cb.lessThan(dataRoot.get("createdDate"), lastDate);
                 Predicate dateEq = cb.equal(dataRoot.get("createdDate"), lastDate);
-                // id cannot be universally compared generically easily in criteria if it's UUID.
-                // For simplicity, we just use dateLess if id comparison is complex. 
-                // Or we do string conversion.
                 Predicate idLess = cb.lessThan(dataRoot.get("id").as(String.class), lastId);
                 Predicate dateEqAndIdLess = cb.and(dateEq, idLess);
                 predicates.add(cb.or(dateLess, dateEqAndIdLess));
@@ -97,7 +98,6 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
             return new Paginate<>(items, nextCursor, pagination.getPageSize());
 
         } else {
-            // Traditional Offset Pagination (Geriye Dönük Uyumluluk İçin)
             dataQuery.where(cb.and(predicates.toArray(Predicate[]::new)));
             dataQuery.orderBy(cb.desc(dataRoot.get("createdDate")));
 
@@ -117,16 +117,46 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
         }
     }
 
+    private void extractAndSaveDomainEvents(TEntity entity) {
+        try {
+            Method pullMethod = entity.getClass().getMethod("pullDomainEvents");
+            @SuppressWarnings("unchecked")
+            List<tr.com.huseyinaydin.sharedkernel.events.DomainEvent> events = 
+                (List<tr.com.huseyinaydin.sharedkernel.events.DomainEvent>) pullMethod.invoke(entity);
+            
+            if (events != null && !events.isEmpty()) {
+                for (tr.com.huseyinaydin.sharedkernel.events.DomainEvent event : events) {
+                    tr.com.huseyinaydin.domain.outbox.DomainEventOutbox outbox = 
+                        new tr.com.huseyinaydin.domain.outbox.DomainEventOutbox(
+                            event.getEventId(),
+                            event.getAggregateType(),
+                            event.getAggregateId(),
+                            event.getClass().getName(),
+                            objectMapper.writeValueAsString(event),
+                            event.getOccurredAt()
+                    );
+                    entityManager.persist(outbox);
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            // No domain events support on this entity
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(JpaRepositoryBase.class)
+                .error("Failed to extract and save domain events for entity: {}", entity.getClass().getSimpleName(), e);
+        }
+    }
+
     @Override
     @io.github.resilience4j.retry.annotation.Retry(name = "jpaRetry")
     public TEntity save(TEntity entity) {
         entityManager.persist(entity);
+        extractAndSaveDomainEvents(entity);
         return entity;
     }
 
     @Override
     public List<TEntity> saveAll(List<TEntity> entities) {
-        entities.forEach(entityManager::persist);
+        entities.forEach(this::save);
         return entities;
     }
 
@@ -134,7 +164,9 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
     @io.github.resilience4j.retry.annotation.Retry(name = "jpaRetry")
     public TEntity update(TEntity entity) {
         entity.markAsUpdated();
-        return entityManager.merge(entity);
+        TEntity merged = entityManager.merge(entity);
+        extractAndSaveDomainEvents(entity);
+        return merged;
     }
 
     @Override
@@ -142,9 +174,11 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
         if (permanent) {
             TEntity managed = entityManager.contains(entity) ? entity : entityManager.merge(entity);
             entityManager.remove(managed);
+            extractAndSaveDomainEvents(entity);
         } else {
             entity.markAsDeleted();
-            entityManager.merge(entity);
+            TEntity merged = entityManager.merge(entity);
+            extractAndSaveDomainEvents(entity);
         }
     }
 
