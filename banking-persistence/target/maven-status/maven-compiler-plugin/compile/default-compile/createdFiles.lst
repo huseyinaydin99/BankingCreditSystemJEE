@@ -6,6 +6,7 @@ tr/com/huseyinaydin/persistence/repositories/CustomerRepository.class
 tr/com/huseyinaydin/persistence/repositories/JpaAuditLogRepository.class
 tr/com/huseyinaydin/persistence/repositories/CorporateCustomerJpaRepository.class
 tr/com/huseyinaydin/persistence/repositories/ApplicationUserJpaRepository.class
+tr/com/huseyinaydin/persistence/read/CreditApplicationReadServiceImpl.class
 tr/com/huseyinaydin/persistence/repositories/JpaOutboxRepository.class
 tr/com/huseyinaydin/persistence/config/PersistenceConfig.class
 tr/com/huseyinaydin/persistence/repositories/CreditTypeJpaRepository.class
