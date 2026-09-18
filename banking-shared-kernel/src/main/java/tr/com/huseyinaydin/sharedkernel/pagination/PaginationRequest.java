@@ -11,8 +11,9 @@ public class PaginationRequest {
     public static final int DEFAULT_PAGE_SIZE = 10;
     public static final int MAX_PAGE_SIZE = 100;
 
-    private int pageIndex;
+    private int pageIndex; // Korundu (Geriye uyumluluk için, ancak tercih edilmez)
     private int pageSize;
+    private String cursor; // Keyset pagination için eklendi (Örn: "timestamp_UUID" base64)
 
     public PaginationRequest() {
         this.pageIndex = 0;
@@ -22,6 +23,12 @@ public class PaginationRequest {
     public PaginationRequest(int pageIndex, int pageSize) {
         this.pageIndex = pageIndex;
         this.pageSize = pageSize;
+    }
+
+    public PaginationRequest(String cursor, int pageSize) {
+        this.cursor = cursor;
+        this.pageSize = pageSize;
+        this.pageIndex = 0;
     }
 
     public void validate() {
@@ -46,4 +53,7 @@ public class PaginationRequest {
 
     public int getPageSize() { return pageSize; }
     public void setPageSize(int pageSize) { this.pageSize = pageSize; }
+
+    public String getCursor() { return cursor; }
+    public void setCursor(String cursor) { this.cursor = cursor; }
 }

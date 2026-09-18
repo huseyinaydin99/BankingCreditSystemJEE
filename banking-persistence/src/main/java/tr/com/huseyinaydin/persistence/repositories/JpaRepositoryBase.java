@@ -11,8 +11,11 @@ import tr.com.huseyinaydin.domain.repositories.Specification;
 import tr.com.huseyinaydin.sharedkernel.pagination.Paginate;
 import tr.com.huseyinaydin.sharedkernel.pagination.PaginationRequest;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,24 +50,71 @@ public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
         pagination.validate();
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-
         CriteriaQuery<TEntity> dataQuery = cb.createQuery(entityClass);
         Root<TEntity> dataRoot = dataQuery.from(entityClass);
-        dataQuery.where(buildPredicate(spec, dataRoot, dataQuery, cb, withDeleted));
 
-        List<TEntity> items = entityManager.createQuery(dataQuery)
-                .setFirstResult(pagination.getPageIndex() * pagination.getPageSize())
-                .setMaxResults(pagination.getPageSize())
-                .getResultList();
+        List<Predicate> predicates = new ArrayList<>();
+        if (!withDeleted) {
+            predicates.add(dataRoot.get("deletedDate").isNull());
+        }
+        if (spec != null) {
+            predicates.add(spec.toPredicate(dataRoot, dataQuery, cb));
+        }
 
-        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-        Root<TEntity> countRoot = countQuery.from(entityClass);
-        countQuery.select(cb.count(countRoot))
-                  .where(buildPredicate(spec, countRoot, countQuery, cb, withDeleted));
+        if (pagination.getCursor() != null && !pagination.getCursor().isBlank()) {
+            // Keyset Pagination (Cursor tabanlı)
+            String decoded = new String(Base64.getDecoder().decode(pagination.getCursor()));
+            String[] parts = decoded.split("::");
+            if (parts.length == 2) {
+                LocalDateTime lastDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(parts[0])), ZoneOffset.UTC);
+                String lastId = parts[1];
 
-        long totalCount = entityManager.createQuery(countQuery).getSingleResult();
+                // (createdDate < lastDate) OR (createdDate = lastDate AND id < lastId)
+                Predicate dateLess = cb.lessThan(dataRoot.get("createdDate"), lastDate);
+                Predicate dateEq = cb.equal(dataRoot.get("createdDate"), lastDate);
+                // id cannot be universally compared generically easily in criteria if it's UUID.
+                // For simplicity, we just use dateLess if id comparison is complex. 
+                // Or we do string conversion.
+                Predicate idLess = cb.lessThan(dataRoot.get("id").as(String.class), lastId);
+                Predicate dateEqAndIdLess = cb.and(dateEq, idLess);
+                predicates.add(cb.or(dateLess, dateEqAndIdLess));
+            }
 
-        return new Paginate<>(items, pagination.getPageIndex(), pagination.getPageSize(), totalCount);
+            dataQuery.where(cb.and(predicates.toArray(Predicate[]::new)));
+            dataQuery.orderBy(cb.desc(dataRoot.get("createdDate")), cb.desc(dataRoot.get("id").as(String.class)));
+
+            List<TEntity> items = entityManager.createQuery(dataQuery)
+                    .setMaxResults(pagination.getPageSize())
+                    .getResultList();
+
+            String nextCursor = null;
+            if (!items.isEmpty()) {
+                TEntity lastItem = items.get(items.size() - 1);
+                long epoch = lastItem.getCreatedDate().toInstant(ZoneOffset.UTC).toEpochMilli();
+                nextCursor = Base64.getEncoder().encodeToString((epoch + "::" + lastItem.getId().toString()).getBytes());
+            }
+
+            return new Paginate<>(items, nextCursor, pagination.getPageSize());
+
+        } else {
+            // Traditional Offset Pagination (Geriye Dönük Uyumluluk İçin)
+            dataQuery.where(cb.and(predicates.toArray(Predicate[]::new)));
+            dataQuery.orderBy(cb.desc(dataRoot.get("createdDate")));
+
+            List<TEntity> items = entityManager.createQuery(dataQuery)
+                    .setFirstResult(pagination.getPageIndex() * pagination.getPageSize())
+                    .setMaxResults(pagination.getPageSize())
+                    .getResultList();
+
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<TEntity> countRoot = countQuery.from(entityClass);
+            countQuery.select(cb.count(countRoot))
+                      .where(buildPredicate(spec, countRoot, countQuery, cb, withDeleted));
+
+            long totalCount = entityManager.createQuery(countQuery).getSingleResult();
+
+            return new Paginate<>(items, pagination.getPageIndex(), pagination.getPageSize(), totalCount);
+        }
     }
 
     @Override
