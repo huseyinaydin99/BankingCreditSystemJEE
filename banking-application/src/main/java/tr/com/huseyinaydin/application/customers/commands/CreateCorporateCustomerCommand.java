@@ -66,13 +66,13 @@ public record CreateCorporateCustomerCommand(
                     command.taxNumber(),
                     command.email()
             );
-            customer.setTradeRegistrationNumber(command.tradeRegistrationNumber());
-            customer.setTaxOffice(command.taxOffice());
-            customer.setCompanyRegistrationNumber(command.companyRegistrationNumber());
-            customer.setAuthorizedPersonName(command.authorizedPersonName());
-            customer.setCompanyFoundationDate(command.companyFoundationDate());
-            customer.setPhoneNumber(command.phoneNumber());
-            customer.setAddress(command.address());
+            
+            
+            
+            
+            customer.updateCompanyInfo(command.companyName(), command.taxOffice(), command.companyRegistrationNumber(), command.tradeRegistrationNumber(), command.authorizedPersonName(), command.companyFoundationDate());
+            
+            customer.updateContactInfo(command.phoneNumber(), command.email(), command.address());
 
             PasswordHash passwordHash = passwordHashService.createHash(command.password());
 

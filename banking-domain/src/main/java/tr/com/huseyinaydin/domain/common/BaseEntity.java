@@ -42,8 +42,8 @@ public abstract class BaseEntity<TId> implements ITimestamp {
     @Override
     public LocalDateTime getDeletedDate() { return deletedDate; }
 
-    public void setUpdatedDate(LocalDateTime updatedDate) { this.updatedDate = updatedDate; }
-    public void setDeletedDate(LocalDateTime deletedDate) { this.deletedDate = deletedDate; }
+    public void markAsUpdated() { this.updatedDate = LocalDateTime.now(); }
+    public void markAsDeleted() { this.deletedDate = LocalDateTime.now(); }
 
     @Override
     public boolean equals(Object o) {

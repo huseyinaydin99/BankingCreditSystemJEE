@@ -44,7 +44,7 @@ public record DeleteIndividualCustomerCommand(
                     .findById(command.id())
                     .orElseThrow();
 
-            customer.setActive(false);
+            customer.deactivate();
 
             uow.individualCustomers().delete(customer, command.permanent());
 

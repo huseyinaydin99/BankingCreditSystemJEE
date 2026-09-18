@@ -20,8 +20,6 @@ public class UserOperationClaim extends Entity<UUID> {
     }
 
     public UUID getUserId() { return userId; }
-    public void setUserId(UUID userId) { this.userId = userId; }
 
     public UUID getOperationClaimId() { return operationClaimId; }
-    public void setOperationClaimId(UUID operationClaimId) { this.operationClaimId = operationClaimId; }
 }

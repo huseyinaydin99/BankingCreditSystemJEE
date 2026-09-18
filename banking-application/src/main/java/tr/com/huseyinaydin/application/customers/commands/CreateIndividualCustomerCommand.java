@@ -64,11 +64,8 @@ public record CreateIndividualCustomerCommand(
                     command.nationalId(),
                     command.email()
             );
-            customer.setDateOfBirth(command.dateOfBirth());
-            customer.setMotherName(command.motherName());
-            customer.setFatherName(command.fatherName());
-            customer.setPhoneNumber(command.phoneNumber());
-            customer.setAddress(command.address());
+            customer.updatePersonalInfo(command.firstName(), command.lastName(), command.dateOfBirth(), command.motherName(), command.fatherName());
+            customer.updateContactInfo(command.phoneNumber(), command.email(), command.address());
 
             PasswordHash passwordHash = passwordHashService.createHash(command.password());
 

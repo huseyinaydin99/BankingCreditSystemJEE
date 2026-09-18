@@ -83,14 +83,14 @@ public record CreateCreditTypeCommand(
                     command.maximumTermMonths(),
                     command.annualInterestRate()
             );
-            creditType.setDescription(command.description());
+            creditType.updateDescription(command.description());
 
             if (command.parentCreditTypeId() != null) {
                 CreditType parent = uow.creditTypes()
                         .findById(command.parentCreditTypeId())
                         .orElseThrow(() -> new NotFoundException(
                                 "CREDIT_TYPE", command.parentCreditTypeId().toString()));
-                creditType.setParentCreditType(parent);
+                creditType.assignParent(parent);
             }
 
             uow.creditTypes().save(creditType);

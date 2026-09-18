@@ -87,22 +87,22 @@ public record UpdateCreditTypeCommand(
                     command.minimumTermMonths(), command.maximumTermMonths(),
                     command.annualInterestRate());
 
-            creditType.setName(command.name());
-            creditType.setDescription(command.description());
-            creditType.setMinimumAmount(minimumAmount);
-            creditType.setMaximumAmount(maximumAmount);
-            creditType.setMinimumTermMonths(command.minimumTermMonths());
-            creditType.setMaximumTermMonths(command.maximumTermMonths());
-            creditType.setAnnualInterestRate(command.annualInterestRate());
+            
+            
+            
+            
+            
+            
+            creditType.updateDetails(command.name(), command.description(), minimumAmount, maximumAmount, command.minimumTermMonths(), command.maximumTermMonths(), command.annualInterestRate());
 
             if (command.parentCreditTypeId() != null) {
                 CreditType parent = uow.creditTypes()
                         .findById(command.parentCreditTypeId())
                         .orElseThrow(() -> new NotFoundException(
                                 "CREDIT_TYPE", command.parentCreditTypeId().toString()));
-                creditType.setParentCreditType(parent);
+                creditType.assignParent(parent);
             } else {
-                creditType.setParentCreditType(null);
+                creditType.removeParent();
             }
 
             uow.creditTypes().update(creditType);

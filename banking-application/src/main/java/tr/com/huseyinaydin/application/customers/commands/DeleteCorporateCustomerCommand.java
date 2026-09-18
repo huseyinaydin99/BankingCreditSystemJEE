@@ -40,7 +40,7 @@ public record DeleteCorporateCustomerCommand(
                     .findById(command.id())
                     .orElseThrow();
 
-            customer.setActive(false);
+            customer.deactivate();
 
             uow.corporateCustomers().delete(customer, command.permanent());
 

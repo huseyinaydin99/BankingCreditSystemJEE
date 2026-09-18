@@ -55,14 +55,14 @@ public record UpdateIndividualCustomerCommand(
 
             businessRules.customerShouldBeActive(customer);
 
-            customer.setFirstName(command.firstName());
-            customer.setLastName(command.lastName());
-            customer.setDateOfBirth(command.dateOfBirth());
-            customer.setMotherName(command.motherName());
-            customer.setFatherName(command.fatherName());
-            customer.setPhoneNumber(command.phoneNumber());
-            customer.setEmail(command.email());
-            customer.setAddress(command.address());
+            
+            
+            
+            
+            customer.updatePersonalInfo(command.firstName(), command.lastName(), command.dateOfBirth(), command.motherName(), command.fatherName());
+            
+            
+            customer.updateContactInfo(command.phoneNumber(), command.email(), command.address());
 
             uow.individualCustomers().update(customer);
 

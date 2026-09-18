@@ -21,50 +21,35 @@ public class CorporateCustomer extends Customer {
     public CorporateCustomer(String companyName, String taxNumber, String email) {
         super();
         this.id = UUID.randomUUID();
-        setCompanyName(companyName);
-        setTaxNumber(taxNumber);
-        setEmail(email);
+        if (companyName == null || companyName.isBlank()) throw new IllegalArgumentException("Şirket adı boş olamaz");
+        if (taxNumber == null || !taxNumber.matches("\\d{10}")) throw new IllegalArgumentException("Vergi numarası 10 rakamdan oluşmalıdır");
+        
+        this.companyName = companyName;
+        this.taxNumber = taxNumber;
+        super.updateContactInfo(null, email, null);
         addDomainEvent(new CorporateCustomerCreatedEvent(this.id, this.companyName, this.taxNumber, this.getEmail()));
     }
 
-    public String getCompanyName() { return companyName; }
-
-    public void setCompanyName(String companyName) {
-        if (companyName == null || companyName.isBlank()) {
-            throw new IllegalArgumentException("Şirket adı boş olamaz");
-        }
-        this.companyName = companyName;
-    }
-
-    public String getTaxNumber() { return taxNumber; }
-
-    public void setTaxNumber(String taxNumber) {
-        if (taxNumber == null || !taxNumber.matches("\\d{10}")) {
-            throw new IllegalArgumentException("Vergi numarası 10 rakamdan oluşmalıdır");
-        }
-        this.taxNumber = taxNumber;
-    }
-
-    public String getTaxOffice() { return taxOffice; }
-    public void setTaxOffice(String taxOffice) { this.taxOffice = taxOffice; }
-
-    public String getCompanyRegistrationNumber() { return companyRegistrationNumber; }
-    public void setCompanyRegistrationNumber(String number) { this.companyRegistrationNumber = number; }
-
-    public String getTradeRegistrationNumber() { return tradeRegistrationNumber; }
-
-    public void setTradeRegistrationNumber(String tradeRegistrationNumber) {
-        if (tradeRegistrationNumber == null || !tradeRegistrationNumber.matches("\\d{4,16}")) {
+    public void updateCompanyInfo(String companyName, String taxOffice, String companyRegistrationNumber, String tradeRegistrationNumber, String authorizedPersonName, LocalDate companyFoundationDate) {
+        if (companyName == null || companyName.isBlank()) throw new IllegalArgumentException("Şirket adı boş olamaz");
+        if (tradeRegistrationNumber != null && !tradeRegistrationNumber.isBlank() && !tradeRegistrationNumber.matches("\\d{4,16}")) {
             throw new IllegalArgumentException("Ticaret Sicil No 4-16 rakamdan oluşmalıdır");
         }
+        this.companyName = companyName;
+        this.taxOffice = taxOffice;
+        this.companyRegistrationNumber = companyRegistrationNumber;
         this.tradeRegistrationNumber = tradeRegistrationNumber;
+        this.authorizedPersonName = authorizedPersonName;
+        this.companyFoundationDate = companyFoundationDate;
     }
 
+    public String getCompanyName() { return companyName; }
+    public String getTaxNumber() { return taxNumber; }
+    public String getTaxOffice() { return taxOffice; }
+    public String getCompanyRegistrationNumber() { return companyRegistrationNumber; }
+    public String getTradeRegistrationNumber() { return tradeRegistrationNumber; }
     public String getAuthorizedPersonName() { return authorizedPersonName; }
-    public void setAuthorizedPersonName(String name) { this.authorizedPersonName = name; }
-
     public LocalDate getCompanyFoundationDate() { return companyFoundationDate; }
-    public void setCompanyFoundationDate(LocalDate date) { this.companyFoundationDate = date; }
 
     @Override
     public String getFullName() {

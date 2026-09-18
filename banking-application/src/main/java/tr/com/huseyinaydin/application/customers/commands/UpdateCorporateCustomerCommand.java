@@ -56,15 +56,15 @@ public record UpdateCorporateCustomerCommand(
             businessRules.tradeRegistrationNumberMustBeUniqueForUpdate(
                     command.tradeRegistrationNumber(), command.id());
 
-            customer.setCompanyName(command.companyName());
-            customer.setTradeRegistrationNumber(command.tradeRegistrationNumber());
-            customer.setTaxOffice(command.taxOffice());
-            customer.setCompanyRegistrationNumber(command.companyRegistrationNumber());
-            customer.setAuthorizedPersonName(command.authorizedPersonName());
-            customer.setCompanyFoundationDate(command.companyFoundationDate());
-            customer.setPhoneNumber(command.phoneNumber());
-            customer.setEmail(command.email());
-            customer.setAddress(command.address());
+            
+            
+            
+            
+            
+            customer.updateCompanyInfo(command.companyName(), command.taxOffice(), command.companyRegistrationNumber(), command.tradeRegistrationNumber(), command.authorizedPersonName(), command.companyFoundationDate());
+            
+            
+            customer.updateContactInfo(command.phoneNumber(), command.email(), command.address());
 
             uow.corporateCustomers().update(customer);
 
