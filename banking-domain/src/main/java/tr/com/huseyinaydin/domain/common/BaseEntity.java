@@ -1,24 +1,15 @@
 package tr.com.huseyinaydin.domain.common;
 
-
-
-
-
-
-
 import java.time.LocalDateTime;
 import java.util.Objects;
-
 
 public abstract class BaseEntity<TId> implements ITimestamp {
 
     protected TId id;
-
     protected LocalDateTime createdDate;
-
     protected LocalDateTime updatedDate;
-
     protected LocalDateTime deletedDate;
+    protected Long version;
 
     protected BaseEntity() {
     }
@@ -41,6 +32,8 @@ public abstract class BaseEntity<TId> implements ITimestamp {
 
     @Override
     public LocalDateTime getDeletedDate() { return deletedDate; }
+
+    public Long getVersion() { return version; }
 
     public void markAsUpdated() { this.updatedDate = LocalDateTime.now(); }
     public void markAsDeleted() { this.deletedDate = LocalDateTime.now(); }
