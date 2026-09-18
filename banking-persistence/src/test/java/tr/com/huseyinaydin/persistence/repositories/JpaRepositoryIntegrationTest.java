@@ -14,7 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import tr.com.huseyinaydin.domain.customer.IndividualCustomer;
 import tr.com.huseyinaydin.domain.repositories.Specification;
-import tr.com.huseyinaydin.infrastructure.repositories.IndividualCustomerJpaRepository;
+import tr.com.huseyinaydin.persistence.repositories.IndividualCustomerJpaRepository;
 import tr.com.huseyinaydin.persistence.config.TestPersistenceConfig;
 import tr.com.huseyinaydin.sharedkernel.pagination.Paginate;
 import tr.com.huseyinaydin.sharedkernel.pagination.PaginationRequest;

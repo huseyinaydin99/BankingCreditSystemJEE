@@ -19,6 +19,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+@org.springframework.context.annotation.ComponentScan(basePackages = "tr.com.huseyinaydin.persistence")
 public class PersistenceConfig {
 
     @Autowired
@@ -114,17 +115,5 @@ public class PersistenceConfig {
         props.setProperty("hibernate.generate_statistics", "false");
         props.setProperty("hibernate.connection.provider_disables_autocommit", "true");
         return props;
-    }
-
-    @Bean
-    public io.github.resilience4j.circuitbreaker.CircuitBreaker oracleCircuitBreaker() {
-        io.github.resilience4j.circuitbreaker.CircuitBreakerConfig config = 
-            io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.custom()
-                .slidingWindowSize(5)
-                .minimumNumberOfCalls(5)
-                .failureRateThreshold(100.0f)
-                .waitDurationInOpenState(java.time.Duration.ofSeconds(30))
-                .build();
-        return io.github.resilience4j.circuitbreaker.CircuitBreaker.of("oracleDb", config);
     }
 }

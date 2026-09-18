@@ -1,2 +1,14 @@
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/config/PersistenceConfig.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/read/CreditTypeReadServiceImpl.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/read/IndividualCustomerReadServiceImpl.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/ApplicationUserJpaRepository.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/CorporateCustomerJpaRepository.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/CreditApplicationJpaRepository.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/CreditTypeJpaRepository.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/CustomerRepository.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/IndividualCustomerJpaRepository.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/JpaAuditLogRepository.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/JpaOutboxRepository.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/repositories/JpaRepositoryBase.java
 /Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/seed/DataInitializer.java
+/Users/huseyinaydin99/Desktop/Projects/BankingCreditSystemJEE/banking-persistence/src/main/java/tr/com/huseyinaydin/persistence/uow/JpaUnitOfWork.java

@@ -1,4 +1,4 @@
-package tr.com.huseyinaydin.infrastructure.repositories;
+package tr.com.huseyinaydin.persistence.repositories;
 
 import org.springframework.stereotype.Repository;
 import jakarta.persistence.EntityManager;

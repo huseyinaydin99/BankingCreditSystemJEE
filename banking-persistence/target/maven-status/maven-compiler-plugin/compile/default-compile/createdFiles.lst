@@ -1,2 +1,14 @@
+tr/com/huseyinaydin/persistence/repositories/CreditApplicationJpaRepository.class
+tr/com/huseyinaydin/persistence/uow/JpaUnitOfWork.class
+tr/com/huseyinaydin/persistence/repositories/JpaRepositoryBase.class
+tr/com/huseyinaydin/persistence/read/CreditTypeReadServiceImpl.class
+tr/com/huseyinaydin/persistence/repositories/CustomerRepository.class
+tr/com/huseyinaydin/persistence/repositories/JpaAuditLogRepository.class
+tr/com/huseyinaydin/persistence/repositories/CorporateCustomerJpaRepository.class
+tr/com/huseyinaydin/persistence/repositories/ApplicationUserJpaRepository.class
+tr/com/huseyinaydin/persistence/repositories/JpaOutboxRepository.class
 tr/com/huseyinaydin/persistence/config/PersistenceConfig.class
+tr/com/huseyinaydin/persistence/repositories/CreditTypeJpaRepository.class
+tr/com/huseyinaydin/persistence/repositories/IndividualCustomerJpaRepository.class
+tr/com/huseyinaydin/persistence/read/IndividualCustomerReadServiceImpl.class
 tr/com/huseyinaydin/persistence/seed/DataInitializer.class

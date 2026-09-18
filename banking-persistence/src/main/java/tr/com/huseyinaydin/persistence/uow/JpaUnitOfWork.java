@@ -1,4 +1,4 @@
-package tr.com.huseyinaydin.infrastructure.uow;
+package tr.com.huseyinaydin.persistence.uow;
 
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Component;
@@ -8,11 +8,11 @@ import tr.com.huseyinaydin.domain.repositories.ICorporateCustomerRepository;
 import tr.com.huseyinaydin.domain.repositories.ICreditApplicationRepository;
 import tr.com.huseyinaydin.domain.repositories.ICreditTypeRepository;
 import tr.com.huseyinaydin.domain.repositories.IIndividualCustomerRepository;
-import tr.com.huseyinaydin.infrastructure.repositories.ApplicationUserJpaRepository;
-import tr.com.huseyinaydin.infrastructure.repositories.CorporateCustomerJpaRepository;
-import tr.com.huseyinaydin.infrastructure.repositories.CreditApplicationJpaRepository;
-import tr.com.huseyinaydin.infrastructure.repositories.CreditTypeJpaRepository;
-import tr.com.huseyinaydin.infrastructure.repositories.IndividualCustomerJpaRepository;
+import tr.com.huseyinaydin.persistence.repositories.ApplicationUserJpaRepository;
+import tr.com.huseyinaydin.persistence.repositories.CorporateCustomerJpaRepository;
+import tr.com.huseyinaydin.persistence.repositories.CreditApplicationJpaRepository;
+import tr.com.huseyinaydin.persistence.repositories.CreditTypeJpaRepository;
+import tr.com.huseyinaydin.persistence.repositories.IndividualCustomerJpaRepository;
 
 @Component
 public class JpaUnitOfWork implements IUnitOfWork {

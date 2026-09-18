@@ -1,4 +1,4 @@
-package tr.com.huseyinaydin.infrastructure.repositories;
+package tr.com.huseyinaydin.persistence.repositories;
 
 import jakarta.persistence.EntityManager;
 import tr.com.huseyinaydin.domain.customer.Customer;

@@ -37,6 +37,12 @@
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-shared-kernel</artifactId>
         </dependency>
+        <dependency>
+            <groupId>tr.com.huseyinaydin</groupId>
+            <artifactId>banking-application</artifactId>
+            <version>1.0.0</version>
+
+        </dependency>
 
         
         <dependency>
