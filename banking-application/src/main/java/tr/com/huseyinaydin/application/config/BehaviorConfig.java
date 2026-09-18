@@ -43,13 +43,27 @@ public class BehaviorConfig {
 
     @Bean
     @Order(3)
+    public tr.com.huseyinaydin.application.pipeline.behavior.CachingBehavior<?, ?> cachingBehavior(
+            tr.com.huseyinaydin.application.ports.cache.IQueryCache<String, Object> queryCache) {
+        return new tr.com.huseyinaydin.application.pipeline.behavior.CachingBehavior(queryCache);
+    }
+
+    @Bean
+    @Order(4)
+    public tr.com.huseyinaydin.application.pipeline.behavior.CacheEvictBehavior<?, ?> cacheEvictBehavior(
+            tr.com.huseyinaydin.application.ports.cache.IQueryCache<String, Object> queryCache) {
+        return new tr.com.huseyinaydin.application.pipeline.behavior.CacheEvictBehavior<>(queryCache);
+    }
+
+    @Bean
+    @Order(5)
     public tr.com.huseyinaydin.application.pipeline.behavior.TracingBehavior<?, ?> tracingBehavior(
             @Autowired(required = false) io.micrometer.tracing.Tracer tracer) {
         return new tr.com.huseyinaydin.application.pipeline.behavior.TracingBehavior<>(tracer);
     }
 
     @Bean
-    @Order(4)
+    @Order(6)
     public AuthorizationBehavior<?, ?> authorizationBehavior(
             @Autowired(required = false) ICurrentUserService currentUserService) {
         if (currentUserService == null) {
@@ -59,7 +73,7 @@ public class BehaviorConfig {
     }
 
     @Bean
-    @Order(5)
+    @Order(7)
     public LoggingBehavior<?, ?> loggingBehavior(
             @Autowired(required = false) ICurrentUserService currentUserService,
             @Autowired(required = false) io.micrometer.tracing.Tracer tracer) {
@@ -67,13 +81,13 @@ public class BehaviorConfig {
     }
 
     @Bean
-    @Order(6)
+    @Order(8)
     public PerformanceBehavior<?, ?> performanceBehavior() {
         return new PerformanceBehavior<>();
     }
 
     @Bean
-    @Order(6)
+    @Order(9)
     public AuditBehavior<?, ?> auditBehavior(
             @Autowired(required = false) IAuditService auditService,
             @Autowired(required = false) IpAddressProvider ipAddressProvider,

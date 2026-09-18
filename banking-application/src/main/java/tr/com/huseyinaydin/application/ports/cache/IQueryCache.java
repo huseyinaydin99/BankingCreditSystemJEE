@@ -4,8 +4,8 @@ import java.time.Duration;
 import java.util.Optional;
 
 public interface IQueryCache<K, V> {
-    Optional<V> get(K key);
-    void put(K key, V value, Duration ttl);
-    void evict(K key);
+    Optional<V> get(String cacheName, K key);
+    void put(String cacheName, K key, V value, Duration ttl);
+    void evict(String cacheName, K key);
     void evictAll(String cacheName);
 }

@@ -22,7 +22,11 @@ public record UpdateIndividualCustomerCommand(
         String phoneNumber,
         String email,
         String address
-) implements ICommand<UpdatedIndividualCustomerResponse> {
+) implements ICommand<UpdatedIndividualCustomerResponse>, tr.com.huseyinaydin.application.pipeline.ICacheEvictRequest {
+
+    @Override public String getCacheName() { return "customers"; }
+    @Override public String getCacheKey() { return id.toString(); }
+    @Override public boolean isEvictAll() { return false; }
 
     @Component
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -42,7 +46,6 @@ public record UpdateIndividualCustomerCommand(
         }
 
         @Override
-        @org.springframework.cache.annotation.CacheEvict(value = "customers", key = "#command.id()")
         public UpdatedIndividualCustomerResponse handle(UpdateIndividualCustomerCommand command) {
             businessRules.customerShouldExistWhenRequested(command.id());
 

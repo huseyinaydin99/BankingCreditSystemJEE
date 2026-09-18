@@ -13,7 +13,11 @@ import java.util.UUID;
 public record DeleteIndividualCustomerCommand(
         UUID id,
         boolean permanent
-) implements ICommand<DeletedIndividualCustomerResponse> {
+) implements ICommand<DeletedIndividualCustomerResponse>, tr.com.huseyinaydin.application.pipeline.ICacheEvictRequest {
+
+    @Override public String getCacheName() { return "customers"; }
+    @Override public String getCacheKey() { return id.toString(); }
+    @Override public boolean isEvictAll() { return false; }
 
     public DeleteIndividualCustomerCommand(UUID id) {
         this(id, false);
@@ -33,7 +37,6 @@ public record DeleteIndividualCustomerCommand(
         }
 
         @Override
-        @org.springframework.cache.annotation.CacheEvict(value = "customers", key = "#command.id()")
         public DeletedIndividualCustomerResponse handle(DeleteIndividualCustomerCommand command) {
             businessRules.customerShouldExistWhenRequested(command.id());
 

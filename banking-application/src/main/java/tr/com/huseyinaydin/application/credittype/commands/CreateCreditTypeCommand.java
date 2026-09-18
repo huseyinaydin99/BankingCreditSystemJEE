@@ -30,7 +30,11 @@ public record CreateCreditTypeCommand(
         @Min(1) int maximumTermMonths,
         @NotNull @DecimalMin("0.01") @DecimalMax("99.99") BigDecimal annualInterestRate,
         UUID parentCreditTypeId
-) implements ICommand<CreateCreditTypeCommand.Response> {
+) implements ICommand<CreateCreditTypeCommand.Response>, tr.com.huseyinaydin.application.pipeline.ICacheEvictRequest {
+
+    @Override public String getCacheName() { return "creditTypes"; }
+    @Override public String getCacheKey() { return null; }
+    @Override public boolean isEvictAll() { return true; }
 
     private static final String DEFAULT_CURRENCY = "TRY";
 
@@ -61,7 +65,6 @@ public record CreateCreditTypeCommand(
         }
 
         @Override
-        @org.springframework.cache.annotation.CacheEvict(value = "creditTypes", allEntries = true)
         public Response handle(CreateCreditTypeCommand command) {
             Money minimumAmount = Money.of(command.minimumAmount(), DEFAULT_CURRENCY);
             Money maximumAmount = Money.of(command.maximumAmount(), DEFAULT_CURRENCY);
