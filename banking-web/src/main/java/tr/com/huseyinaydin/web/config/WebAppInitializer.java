@@ -10,11 +10,14 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 import tr.com.huseyinaydin.web.filter.CorrelationIdFilter;
-import tr.com.huseyinaydin.web.filter.CorsFilter;
 import tr.com.huseyinaydin.web.servlet.HealthServlet;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 
 public class WebAppInitializer implements WebApplicationInitializer {
@@ -58,8 +61,17 @@ public class WebAppInitializer implements WebApplicationInitializer {
                 EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR),
                 false, "/*");
 
-        FilterRegistration.Dynamic cors = ctx.addFilter("corsFilter", CorsFilter.class);
-        cors.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/api/*");
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedOrigins(Arrays.asList("https://trusted-bank-ui.com", "http://localhost:3000"));
+        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfig.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "X-Correlation-ID"));
+        corsConfig.setAllowCredentials(true);
+        corsConfig.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource corsSource = new UrlBasedCorsConfigurationSource();
+        corsSource.registerCorsConfiguration("/**", corsConfig);
+        
+        FilterRegistration.Dynamic cors = ctx.addFilter("corsFilter", new CorsFilter(corsSource));
+        cors.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/*");
 
         FilterRegistration.Dynamic security = ctx.addFilter("springSecurityFilterChain", new DelegatingFilterProxy("springSecurityFilterChain"));
         security.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR), false, "/*");
