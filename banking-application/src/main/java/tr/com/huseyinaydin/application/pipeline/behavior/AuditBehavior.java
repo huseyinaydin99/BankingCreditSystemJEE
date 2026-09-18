@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 
-@Order(6)
+@Order(10)
 public class AuditBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private static final Logger log = LoggerFactory.getLogger(AuditBehavior.class);

@@ -28,10 +28,9 @@ public class BehaviorConfig {
 
     @Bean
     @Order(1)
-    public ValidationBehavior<?, ?> validationBehavior(
-            ApplicationContext context,
-            @Autowired(required = false) Validator beanValidator) {
-        return new ValidationBehavior<>(context, beanValidator);
+    public tr.com.huseyinaydin.application.pipeline.behavior.TracingBehavior<?, ?> tracingBehavior(
+            @Autowired(required = false) io.micrometer.tracing.Tracer tracer) {
+        return new tr.com.huseyinaydin.application.pipeline.behavior.TracingBehavior<>(tracer);
     }
 
     @Bean
@@ -43,27 +42,20 @@ public class BehaviorConfig {
 
     @Bean
     @Order(3)
-    public tr.com.huseyinaydin.application.pipeline.behavior.CachingBehavior<?, ?> cachingBehavior(
-            tr.com.huseyinaydin.application.ports.cache.IQueryCache<String, Object> queryCache) {
-        return new tr.com.huseyinaydin.application.pipeline.behavior.CachingBehavior(queryCache);
+    public LoggingBehavior<?, ?> loggingBehavior(
+            @Autowired(required = false) ICurrentUserService currentUserService,
+            @Autowired(required = false) io.micrometer.tracing.Tracer tracer) {
+        return new LoggingBehavior<>(currentUserService, tracer);
     }
 
     @Bean
     @Order(4)
-    public tr.com.huseyinaydin.application.pipeline.behavior.CacheEvictBehavior<?, ?> cacheEvictBehavior(
-            tr.com.huseyinaydin.application.ports.cache.IQueryCache<String, Object> queryCache) {
-        return new tr.com.huseyinaydin.application.pipeline.behavior.CacheEvictBehavior<>(queryCache);
+    public PerformanceBehavior<?, ?> performanceBehavior() {
+        return new PerformanceBehavior<>();
     }
 
     @Bean
     @Order(5)
-    public tr.com.huseyinaydin.application.pipeline.behavior.TracingBehavior<?, ?> tracingBehavior(
-            @Autowired(required = false) io.micrometer.tracing.Tracer tracer) {
-        return new tr.com.huseyinaydin.application.pipeline.behavior.TracingBehavior<>(tracer);
-    }
-
-    @Bean
-    @Order(6)
     public AuthorizationBehavior<?, ?> authorizationBehavior(
             @Autowired(required = false) ICurrentUserService currentUserService) {
         if (currentUserService == null) {
@@ -73,30 +65,29 @@ public class BehaviorConfig {
     }
 
     @Bean
+    @Order(6)
+    public ValidationBehavior<?, ?> validationBehavior(
+            ApplicationContext context,
+            @Autowired(required = false) Validator beanValidator) {
+        return new ValidationBehavior<>(context, beanValidator);
+    }
+
+    @Bean
     @Order(7)
-    public LoggingBehavior<?, ?> loggingBehavior(
-            @Autowired(required = false) ICurrentUserService currentUserService,
-            @Autowired(required = false) io.micrometer.tracing.Tracer tracer) {
-        return new LoggingBehavior<>(currentUserService, tracer);
+    public tr.com.huseyinaydin.application.pipeline.behavior.CachingBehavior<?, ?> cachingBehavior(
+            tr.com.huseyinaydin.application.ports.cache.IQueryCache<String, Object> queryCache) {
+        return new tr.com.huseyinaydin.application.pipeline.behavior.CachingBehavior(queryCache);
     }
 
     @Bean
     @Order(8)
-    public PerformanceBehavior<?, ?> performanceBehavior() {
-        return new PerformanceBehavior<>();
+    public tr.com.huseyinaydin.application.pipeline.behavior.CacheEvictBehavior<?, ?> cacheEvictBehavior(
+            tr.com.huseyinaydin.application.ports.cache.IQueryCache<String, Object> queryCache) {
+        return new tr.com.huseyinaydin.application.pipeline.behavior.CacheEvictBehavior<>(queryCache);
     }
 
     @Bean
     @Order(9)
-    public AuditBehavior<?, ?> auditBehavior(
-            @Autowired(required = false) IAuditService auditService,
-            @Autowired(required = false) IpAddressProvider ipAddressProvider,
-            @Autowired(required = false) ICurrentUserService currentUserService) {
-        return new AuditBehavior<>(auditService, ipAddressProvider, currentUserService);
-    }
-
-    @Bean
-    @Order(10)
     public TransactionBehavior<?, ?> transactionBehavior(
             @Autowired(required = false) PlatformTransactionManager transactionManager) {
         if (transactionManager == null) {
@@ -104,6 +95,16 @@ public class BehaviorConfig {
         }
         return new TransactionBehavior<>(transactionManager);
     }
+
+    @Bean
+    @Order(10)
+    public AuditBehavior<?, ?> auditBehavior(
+            @Autowired(required = false) IAuditService auditService,
+            @Autowired(required = false) IpAddressProvider ipAddressProvider,
+            @Autowired(required = false) ICurrentUserService currentUserService) {
+        return new AuditBehavior<>(auditService, ipAddressProvider, currentUserService);
+    }
+
 
     private static class NoOpCurrentUserService implements ICurrentUserService {
         @Override public String getCurrentUserId() { return "anonymous"; }

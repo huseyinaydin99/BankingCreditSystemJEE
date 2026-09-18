@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
-@Order(7)
+@Order(11)
 public class DomainEventBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private static final Logger log = LoggerFactory.getLogger(DomainEventBehavior.class);

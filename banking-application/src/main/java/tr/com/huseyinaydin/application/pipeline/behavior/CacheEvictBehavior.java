@@ -10,7 +10,7 @@ import tr.com.huseyinaydin.application.pipeline.ICacheEvictRequest;
 import tr.com.huseyinaydin.application.ports.cache.IQueryCache;
 
 @Component
-@Order(4)
+@Order(8)
 public class CacheEvictBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private static final Logger log = LoggerFactory.getLogger(CacheEvictBehavior.class);

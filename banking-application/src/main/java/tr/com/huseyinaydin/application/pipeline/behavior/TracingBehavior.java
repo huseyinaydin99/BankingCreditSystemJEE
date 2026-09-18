@@ -6,7 +6,7 @@ import org.springframework.core.annotation.Order;
 import tr.com.huseyinaydin.application.cqrs.IPipelineBehavior;
 import tr.com.huseyinaydin.application.cqrs.PipelineDelegate;
 
-@Order(3)
+@Order(1)
 public class TracingBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private final Tracer tracer;

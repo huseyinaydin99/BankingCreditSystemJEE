@@ -9,7 +9,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import tr.com.huseyinaydin.application.cqrs.IPipelineBehavior;
 import tr.com.huseyinaydin.application.cqrs.PipelineDelegate;
 
-@Order(10)
+@Order(9)
 public class TransactionBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private static final Logger log = LoggerFactory.getLogger(TransactionBehavior.class);

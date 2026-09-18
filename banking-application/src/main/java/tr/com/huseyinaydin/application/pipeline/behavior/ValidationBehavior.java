@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Order(1)
+@Order(6)
 public class ValidationBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private final ApplicationContext context;

@@ -9,7 +9,7 @@ import tr.com.huseyinaydin.sharedkernel.exception.AuthorizationException;
 
 import java.util.Arrays;
 
-@Order(2)
+@Order(5)
 public class AuthorizationBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private final ICurrentUserService currentUserService;

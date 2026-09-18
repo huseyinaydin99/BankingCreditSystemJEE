@@ -12,7 +12,7 @@ import tr.com.huseyinaydin.application.ports.cache.IQueryCache;
 import java.util.Optional;
 
 @Component
-@Order(3)
+@Order(7)
 public class CachingBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private static final Logger log = LoggerFactory.getLogger(CachingBehavior.class);
