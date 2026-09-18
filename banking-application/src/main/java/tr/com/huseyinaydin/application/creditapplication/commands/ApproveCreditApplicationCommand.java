@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.creditapplication.rules.CreditApplicationBusinessRules;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.ICreditApplicationRepository;
 import tr.com.huseyinaydin.domain.creditapplication.CreditApplication;
 import tr.com.huseyinaydin.domain.enums.CreditApplicationStatus;
 import tr.com.huseyinaydin.domain.valueobjects.Money;
@@ -49,11 +49,11 @@ public record ApproveCreditApplicationCommand(
     public static class Handler
             implements ICommandHandler<ApproveCreditApplicationCommand, Response> {
 
-        private final IUnitOfWork uow;
+        private final ICreditApplicationRepository creditApplications;
         private final CreditApplicationBusinessRules rules;
 
-        public Handler(IUnitOfWork uow, CreditApplicationBusinessRules rules) {
-            this.uow = uow;
+        public Handler(ICreditApplicationRepository creditApplications, CreditApplicationBusinessRules rules) {
+            this.creditApplications = creditApplications;
             this.rules = rules;
         }
 
@@ -61,7 +61,7 @@ public record ApproveCreditApplicationCommand(
         public Response handle(ApproveCreditApplicationCommand command) {
             rules.applicationMustExist(command.id());
 
-            CreditApplication application = uow.creditApplications()
+            CreditApplication application = creditApplications
                     .findById(command.id())
                     .orElseThrow();
 
@@ -73,7 +73,7 @@ public record ApproveCreditApplicationCommand(
                     command.approvedTerm(),
                     command.interestRate());
 
-            uow.creditApplications().update(application);
+            creditApplications.update(application);
 
             return new Response(
                     application.getId(),

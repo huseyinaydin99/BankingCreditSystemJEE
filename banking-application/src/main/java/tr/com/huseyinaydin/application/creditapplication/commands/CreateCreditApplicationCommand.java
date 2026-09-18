@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.creditapplication.rules.CreditApplicationBusinessRules;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.IIndividualCustomerRepository;
+import tr.com.huseyinaydin.domain.repositories.ICorporateCustomerRepository;
+import tr.com.huseyinaydin.domain.repositories.ICreditApplicationRepository;
 import tr.com.huseyinaydin.domain.creditapplication.CreditApplication;
 import tr.com.huseyinaydin.domain.credittype.CreditType;
 import tr.com.huseyinaydin.domain.customer.Customer;
@@ -45,11 +47,15 @@ public record CreateCreditApplicationCommand(
     public static class Handler
             implements ICommandHandler<CreateCreditApplicationCommand, Response> {
 
-        private final IUnitOfWork uow;
+        private final IIndividualCustomerRepository individualCustomers;
+        private final ICorporateCustomerRepository corporateCustomers;
+        private final ICreditApplicationRepository creditApplications;
         private final CreditApplicationBusinessRules businessRules;
 
-        public Handler(IUnitOfWork uow, CreditApplicationBusinessRules businessRules) {
-            this.uow = uow;
+        public Handler(IIndividualCustomerRepository individualCustomers, ICorporateCustomerRepository corporateCustomers, ICreditApplicationRepository creditApplications, CreditApplicationBusinessRules businessRules) {
+            this.individualCustomers = individualCustomers;
+            this.corporateCustomers = corporateCustomers;
+            this.creditApplications = creditApplications;
             this.businessRules = businessRules;
         }
 
@@ -59,10 +65,10 @@ public record CreateCreditApplicationCommand(
             businessRules.amountMustBeInRange(command.requestedAmount(), creditType);
             businessRules.termMustBeInRange(command.requestedTerm(), creditType);
 
-            Customer customer = uow.individualCustomers()
+            Customer customer = individualCustomers
                     .findById(command.customerId())
                     .<Customer>map(c -> c)
-                    .orElseGet(() -> uow.corporateCustomers()
+                    .orElseGet(() -> corporateCustomers
                             .findById(command.customerId())
                             .<Customer>map(c -> c)
                             .orElse(null));
@@ -85,7 +91,7 @@ public record CreateCreditApplicationCommand(
                     DEFAULT_CURRENCY
             );
 
-            uow.creditApplications().save(application);
+            creditApplications.save(application);
 
             return new Response(
                     application.getId(),

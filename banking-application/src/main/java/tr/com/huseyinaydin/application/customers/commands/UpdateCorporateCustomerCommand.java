@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.customers.dtos.UpdatedCorporateCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.CorporateCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.ICorporateCustomerRepository;
 import tr.com.huseyinaydin.application.validation.constraints.TradeRegistrationNumber;
 import tr.com.huseyinaydin.domain.customer.CorporateCustomer;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
@@ -32,14 +32,14 @@ public record UpdateCorporateCustomerCommand(
     public static class Handler
             implements ICommandHandler<UpdateCorporateCustomerCommand, UpdatedCorporateCustomerResponse> {
 
-        private final IUnitOfWork uow;
+        private final ICorporateCustomerRepository corporateCustomers;
         private final CorporateCustomerBusinessRules businessRules;
         private final IMapper mapper;
 
-        public Handler(IUnitOfWork uow,
+        public Handler(ICorporateCustomerRepository corporateCustomers,
                        CorporateCustomerBusinessRules businessRules,
                        IMapper mapper) {
-            this.uow = uow;
+            this.corporateCustomers = corporateCustomers;
             this.businessRules = businessRules;
             this.mapper = mapper;
         }
@@ -48,7 +48,7 @@ public record UpdateCorporateCustomerCommand(
         public UpdatedCorporateCustomerResponse handle(UpdateCorporateCustomerCommand command) {
             businessRules.customerShouldExistWhenRequested(command.id());
 
-            CorporateCustomer customer = uow.corporateCustomers()
+            CorporateCustomer customer = corporateCustomers
                     .findById(command.id())
                     .orElseThrow();
 
@@ -66,7 +66,7 @@ public record UpdateCorporateCustomerCommand(
             
             customer.updateContactInfo(command.phoneNumber(), command.email(), command.address());
 
-            uow.corporateCustomers().update(customer);
+            corporateCustomers.update(customer);
 
             return new UpdatedCorporateCustomerResponse(
                     customer.getId(),

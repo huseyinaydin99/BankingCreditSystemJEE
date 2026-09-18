@@ -9,7 +9,8 @@ import tr.com.huseyinaydin.application.customers.rules.CorporateCustomerBusiness
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IPasswordHashService;
 import tr.com.huseyinaydin.application.ports.PasswordHash;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.ICorporateCustomerRepository;
+import tr.com.huseyinaydin.domain.repositories.IApplicationUserRepository;
 import tr.com.huseyinaydin.application.validation.constraints.PhoneNumber;
 import tr.com.huseyinaydin.application.validation.constraints.TradeRegistrationNumber;
 import tr.com.huseyinaydin.application.validation.constraints.TurkishTaxNumber;
@@ -40,16 +41,18 @@ public record CreateCorporateCustomerCommand(
     public static class Handler
             implements ICommandHandler<CreateCorporateCustomerCommand, CreatedCorporateCustomerResponse> {
 
-        private final IUnitOfWork uow;
+        private final ICorporateCustomerRepository corporateCustomers;
+        private final IApplicationUserRepository applicationUsers;
         private final CorporateCustomerBusinessRules businessRules;
         private final IPasswordHashService passwordHashService;
         private final IMapper mapper;
 
-        public Handler(IUnitOfWork uow,
+        public Handler(ICorporateCustomerRepository corporateCustomers, IApplicationUserRepository applicationUsers,
                        CorporateCustomerBusinessRules businessRules,
                        IPasswordHashService passwordHashService,
                        IMapper mapper) {
-            this.uow = uow;
+            this.corporateCustomers = corporateCustomers;
+            this.applicationUsers = applicationUsers;
             this.businessRules = businessRules;
             this.passwordHashService = passwordHashService;
             this.mapper = mapper;
@@ -84,8 +87,8 @@ public record CreateCorporateCustomerCommand(
                     UserRole.CUSTOMER
             );
 
-            uow.corporateCustomers().save(customer);
-            uow.applicationUsers().save(user);
+            corporateCustomers.save(customer);
+            applicationUsers.save(user);
 
             return new CreatedCorporateCustomerResponse(
                     customer.getId(),

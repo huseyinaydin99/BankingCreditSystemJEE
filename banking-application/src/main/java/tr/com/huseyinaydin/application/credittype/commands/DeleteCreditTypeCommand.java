@@ -3,7 +3,7 @@ package tr.com.huseyinaydin.application.credittype.commands;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.credittype.rules.CreditTypeBusinessRules;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.ICreditTypeRepository;
 import tr.com.huseyinaydin.domain.credittype.CreditType;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
@@ -31,11 +31,11 @@ public record DeleteCreditTypeCommand(
     public static class Handler
             implements ICommandHandler<DeleteCreditTypeCommand, Response> {
 
-        private final IUnitOfWork uow;
+        private final ICreditTypeRepository creditTypes;
         private final CreditTypeBusinessRules rules;
 
-        public Handler(IUnitOfWork uow, CreditTypeBusinessRules rules) {
-            this.uow = uow;
+        public Handler(ICreditTypeRepository creditTypes, CreditTypeBusinessRules rules) {
+            this.creditTypes = creditTypes;
             this.rules = rules;
         }
 
@@ -43,13 +43,13 @@ public record DeleteCreditTypeCommand(
         public Response handle(DeleteCreditTypeCommand command) {
             rules.creditTypeMustExist(command.id());
 
-            CreditType creditType = uow.creditTypes()
+            CreditType creditType = creditTypes
                     .findById(command.id())
                     .orElseThrow();
 
             rules.subCreditTypesMustBeEmpty(creditType);
 
-            uow.creditTypes().delete(creditType, command.permanent());
+            creditTypes.delete(creditType, command.permanent());
 
             return new Response(
                     creditType.getId(),

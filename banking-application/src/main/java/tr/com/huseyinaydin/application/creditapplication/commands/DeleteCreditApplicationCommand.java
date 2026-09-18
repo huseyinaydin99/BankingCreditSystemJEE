@@ -3,7 +3,7 @@ package tr.com.huseyinaydin.application.creditapplication.commands;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.creditapplication.rules.CreditApplicationBusinessRules;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.ICreditApplicationRepository;
 import tr.com.huseyinaydin.domain.creditapplication.CreditApplication;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
@@ -31,11 +31,11 @@ public record DeleteCreditApplicationCommand(
     public static class Handler
             implements ICommandHandler<DeleteCreditApplicationCommand, Response> {
 
-        private final IUnitOfWork uow;
+        private final ICreditApplicationRepository creditApplications;
         private final CreditApplicationBusinessRules rules;
 
-        public Handler(IUnitOfWork uow, CreditApplicationBusinessRules rules) {
-            this.uow = uow;
+        public Handler(ICreditApplicationRepository creditApplications, CreditApplicationBusinessRules rules) {
+            this.creditApplications = creditApplications;
             this.rules = rules;
         }
 
@@ -43,14 +43,14 @@ public record DeleteCreditApplicationCommand(
         public Response handle(DeleteCreditApplicationCommand command) {
             rules.applicationMustExist(command.id());
 
-            CreditApplication application = uow.creditApplications()
+            CreditApplication application = creditApplications
                     .findById(command.id())
                     .orElseThrow();
 
             rules.userCanAccessApplication(application);
             rules.onlyPendingCanBeModified(application);
 
-            uow.creditApplications().delete(application, command.permanent());
+            creditApplications.delete(application, command.permanent());
 
             return new Response(
                     application.getId(),

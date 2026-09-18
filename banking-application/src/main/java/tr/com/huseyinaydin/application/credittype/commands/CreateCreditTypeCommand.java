@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.credittype.rules.CreditTypeBusinessRules;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.ICreditTypeRepository;
 import tr.com.huseyinaydin.domain.credittype.CreditType;
 import tr.com.huseyinaydin.domain.enums.CustomerType;
 import tr.com.huseyinaydin.domain.valueobjects.Money;
@@ -56,11 +56,11 @@ public record CreateCreditTypeCommand(
     public static class Handler
             implements ICommandHandler<CreateCreditTypeCommand, Response> {
 
-        private final IUnitOfWork uow;
+        private final ICreditTypeRepository creditTypes;
         private final CreditTypeBusinessRules rules;
 
-        public Handler(IUnitOfWork uow, CreditTypeBusinessRules rules) {
-            this.uow = uow;
+        public Handler(ICreditTypeRepository creditTypes, CreditTypeBusinessRules rules) {
+            this.creditTypes = creditTypes;
             this.rules = rules;
         }
 
@@ -86,14 +86,14 @@ public record CreateCreditTypeCommand(
             creditType.updateDescription(command.description());
 
             if (command.parentCreditTypeId() != null) {
-                CreditType parent = uow.creditTypes()
+                CreditType parent = creditTypes
                         .findById(command.parentCreditTypeId())
                         .orElseThrow(() -> new NotFoundException(
                                 "CREDIT_TYPE", command.parentCreditTypeId().toString()));
                 creditType.assignParent(parent);
             }
 
-            uow.creditTypes().save(creditType);
+            creditTypes.save(creditType);
 
             return new Response(
                     creditType.getId(),

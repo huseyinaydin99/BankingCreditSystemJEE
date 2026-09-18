@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.customers.dtos.UpdatedIndividualCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.IndividualCustomerBusinessRules;
 import tr.com.huseyinaydin.application.ports.IMapper;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.IIndividualCustomerRepository;
 import tr.com.huseyinaydin.domain.customer.IndividualCustomer;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
@@ -33,14 +33,14 @@ public record UpdateIndividualCustomerCommand(
     public static class Handler
             implements ICommandHandler<UpdateIndividualCustomerCommand, UpdatedIndividualCustomerResponse> {
 
-        private final IUnitOfWork uow;
+        private final IIndividualCustomerRepository individualCustomers;
         private final IndividualCustomerBusinessRules businessRules;
         private final IMapper mapper;
 
-        public Handler(IUnitOfWork uow,
+        public Handler(IIndividualCustomerRepository individualCustomers,
                        IndividualCustomerBusinessRules businessRules,
                        IMapper mapper) {
-            this.uow = uow;
+            this.individualCustomers = individualCustomers;
             this.businessRules = businessRules;
             this.mapper = mapper;
         }
@@ -49,7 +49,7 @@ public record UpdateIndividualCustomerCommand(
         public UpdatedIndividualCustomerResponse handle(UpdateIndividualCustomerCommand command) {
             businessRules.customerShouldExistWhenRequested(command.id());
 
-            IndividualCustomer customer = uow.individualCustomers()
+            IndividualCustomer customer = individualCustomers
                     .findById(command.id())
                     .orElseThrow();
 
@@ -64,7 +64,7 @@ public record UpdateIndividualCustomerCommand(
             
             customer.updateContactInfo(command.phoneNumber(), command.email(), command.address());
 
-            uow.individualCustomers().update(customer);
+            individualCustomers.update(customer);
 
             return new UpdatedIndividualCustomerResponse(
                     customer.getId(),

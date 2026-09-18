@@ -4,7 +4,8 @@ import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.creditapplication.dtos.CreditApplicationResponse;
 import tr.com.huseyinaydin.application.creditapplication.rules.CreditApplicationBusinessRules;
 import tr.com.huseyinaydin.application.mapping.CreditApplicationMapper;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.ICreditApplicationRepository;
+import tr.com.huseyinaydin.domain.repositories.ICreditTypeRepository;
 import tr.com.huseyinaydin.domain.creditapplication.CreditApplication;
 import tr.com.huseyinaydin.domain.credittype.CreditType;
 import tr.com.huseyinaydin.sharedkernel.exception.NotFoundException;
@@ -23,27 +24,29 @@ public record GetByIdCreditApplicationQuery(
     public static class Handler
             implements IQueryHandler<GetByIdCreditApplicationQuery, CreditApplicationResponse> {
 
-        private final IUnitOfWork uow;
+        private final ICreditApplicationRepository creditApplications;
+        private final ICreditTypeRepository creditTypes;
         private final CreditApplicationMapper mapper;
         private final CreditApplicationBusinessRules rules;
 
-        public Handler(IUnitOfWork uow,
+        public Handler(ICreditApplicationRepository creditApplications, ICreditTypeRepository creditTypes,
                        CreditApplicationMapper mapper,
                        CreditApplicationBusinessRules rules) {
-            this.uow = uow;
+            this.creditApplications = creditApplications;
+            this.creditTypes = creditTypes;
             this.mapper = mapper;
             this.rules = rules;
         }
 
         @Override
         public CreditApplicationResponse handle(GetByIdCreditApplicationQuery query) {
-            CreditApplication application = uow.creditApplications()
+            CreditApplication application = creditApplications
                     .findById(query.id())
                     .orElseThrow(() -> new NotFoundException("CREDIT_APPLICATION", query.id().toString()));
 
             rules.userCanAccessApplication(application);
 
-            CreditType creditType = uow.creditTypes()
+            CreditType creditType = creditTypes
                     .findById(application.getCreditTypeId())
                     .orElse(null);
 

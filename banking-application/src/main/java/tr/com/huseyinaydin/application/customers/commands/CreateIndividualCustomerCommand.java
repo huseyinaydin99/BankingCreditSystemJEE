@@ -10,7 +10,8 @@ import tr.com.huseyinaydin.application.customers.rules.IndividualCustomerBusines
 import tr.com.huseyinaydin.application.ports.IMapper;
 import tr.com.huseyinaydin.application.ports.IPasswordHashService;
 import tr.com.huseyinaydin.application.ports.PasswordHash;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.IIndividualCustomerRepository;
+import tr.com.huseyinaydin.domain.repositories.IApplicationUserRepository;
 import tr.com.huseyinaydin.application.validation.constraints.PhoneNumber;
 import tr.com.huseyinaydin.application.validation.constraints.TurkishNationalId;
 import tr.com.huseyinaydin.domain.customer.IndividualCustomer;
@@ -39,16 +40,18 @@ public record CreateIndividualCustomerCommand(
     public static class Handler
             implements ICommandHandler<CreateIndividualCustomerCommand, CreatedIndividualCustomerResponse> {
 
-        private final IUnitOfWork uow;
+        private final IIndividualCustomerRepository individualCustomers;
+        private final IApplicationUserRepository applicationUsers;
         private final IndividualCustomerBusinessRules businessRules;
         private final IPasswordHashService passwordHashService;
         private final IMapper mapper;
 
-        public Handler(IUnitOfWork uow,
+        public Handler(IIndividualCustomerRepository individualCustomers, IApplicationUserRepository applicationUsers,
                        IndividualCustomerBusinessRules businessRules,
                        IPasswordHashService passwordHashService,
                        IMapper mapper) {
-            this.uow = uow;
+            this.individualCustomers = individualCustomers;
+            this.applicationUsers = applicationUsers;
             this.businessRules = businessRules;
             this.passwordHashService = passwordHashService;
             this.mapper = mapper;
@@ -77,8 +80,8 @@ public record CreateIndividualCustomerCommand(
                     UserRole.CUSTOMER
             );
 
-            uow.individualCustomers().save(customer);
-            uow.applicationUsers().save(user);
+            individualCustomers.save(customer);
+            applicationUsers.save(user);
 
             return new CreatedIndividualCustomerResponse(
                     customer.getId(),

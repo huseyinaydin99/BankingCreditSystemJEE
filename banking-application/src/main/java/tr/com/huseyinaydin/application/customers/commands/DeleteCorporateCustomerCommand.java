@@ -3,7 +3,7 @@ package tr.com.huseyinaydin.application.customers.commands;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.customers.dtos.DeletedCorporateCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.CorporateCustomerBusinessRules;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.ICorporateCustomerRepository;
 import tr.com.huseyinaydin.domain.customer.CorporateCustomer;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
@@ -24,11 +24,11 @@ public record DeleteCorporateCustomerCommand(
     public static class Handler
             implements ICommandHandler<DeleteCorporateCustomerCommand, DeletedCorporateCustomerResponse> {
 
-        private final IUnitOfWork uow;
+        private final ICorporateCustomerRepository corporateCustomers;
         private final CorporateCustomerBusinessRules businessRules;
 
-        public Handler(IUnitOfWork uow, CorporateCustomerBusinessRules businessRules) {
-            this.uow = uow;
+        public Handler(ICorporateCustomerRepository corporateCustomers, CorporateCustomerBusinessRules businessRules) {
+            this.corporateCustomers = corporateCustomers;
             this.businessRules = businessRules;
         }
 
@@ -36,13 +36,13 @@ public record DeleteCorporateCustomerCommand(
         public DeletedCorporateCustomerResponse handle(DeleteCorporateCustomerCommand command) {
             businessRules.customerShouldExistWhenRequested(command.id());
 
-            CorporateCustomer customer = uow.corporateCustomers()
+            CorporateCustomer customer = corporateCustomers
                     .findById(command.id())
                     .orElseThrow();
 
             customer.deactivate();
 
-            uow.corporateCustomers().delete(customer, command.permanent());
+            corporateCustomers.delete(customer, command.permanent());
 
             return new DeletedCorporateCustomerResponse(
                     customer.getId(),

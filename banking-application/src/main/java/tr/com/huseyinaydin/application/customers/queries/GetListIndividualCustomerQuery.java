@@ -3,7 +3,7 @@ package tr.com.huseyinaydin.application.customers.queries;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.customers.dtos.IndividualCustomerResponse;
 import tr.com.huseyinaydin.application.mapping.IndividualCustomerMapper;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.IIndividualCustomerRepository;
 import tr.com.huseyinaydin.domain.repositories.Specification;
 import tr.com.huseyinaydin.sharedkernel.messaging.IQuery;
 import tr.com.huseyinaydin.sharedkernel.messaging.IQueryHandler;
@@ -24,11 +24,11 @@ public record GetListIndividualCustomerQuery(
     public static class Handler
             implements IQueryHandler<GetListIndividualCustomerQuery, Paginate<IndividualCustomerResponse>> {
 
-        private final IUnitOfWork uow;
+        private final IIndividualCustomerRepository individualCustomers;
         private final IndividualCustomerMapper mapper;
 
-        public Handler(IUnitOfWork uow, IndividualCustomerMapper mapper) {
-            this.uow = uow;
+        public Handler(IIndividualCustomerRepository individualCustomers, IndividualCustomerMapper mapper) {
+            this.individualCustomers = individualCustomers;
             this.mapper = mapper;
         }
 
@@ -36,7 +36,7 @@ public record GetListIndividualCustomerQuery(
         public Paginate<IndividualCustomerResponse> handle(GetListIndividualCustomerQuery query) {
             PaginationRequest pagination = new PaginationRequest(query.pageIndex(), query.pageSize());
             return mapper.toResponsePage(
-                    uow.individualCustomers().findAll(Specification.all(), pagination)
+                    individualCustomers.findAll(Specification.all(), pagination)
             );
         }
     }

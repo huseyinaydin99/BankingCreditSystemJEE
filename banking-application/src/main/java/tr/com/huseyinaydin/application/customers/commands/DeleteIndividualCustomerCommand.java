@@ -3,7 +3,7 @@ package tr.com.huseyinaydin.application.customers.commands;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.customers.dtos.DeletedIndividualCustomerResponse;
 import tr.com.huseyinaydin.application.customers.rules.IndividualCustomerBusinessRules;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.IIndividualCustomerRepository;
 import tr.com.huseyinaydin.domain.customer.IndividualCustomer;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
@@ -28,11 +28,11 @@ public record DeleteIndividualCustomerCommand(
     public static class Handler
             implements ICommandHandler<DeleteIndividualCustomerCommand, DeletedIndividualCustomerResponse> {
 
-        private final IUnitOfWork uow;
+        private final IIndividualCustomerRepository individualCustomers;
         private final IndividualCustomerBusinessRules businessRules;
 
-        public Handler(IUnitOfWork uow, IndividualCustomerBusinessRules businessRules) {
-            this.uow = uow;
+        public Handler(IIndividualCustomerRepository individualCustomers, IndividualCustomerBusinessRules businessRules) {
+            this.individualCustomers = individualCustomers;
             this.businessRules = businessRules;
         }
 
@@ -40,13 +40,13 @@ public record DeleteIndividualCustomerCommand(
         public DeletedIndividualCustomerResponse handle(DeleteIndividualCustomerCommand command) {
             businessRules.customerShouldExistWhenRequested(command.id());
 
-            IndividualCustomer customer = uow.individualCustomers()
+            IndividualCustomer customer = individualCustomers
                     .findById(command.id())
                     .orElseThrow();
 
             customer.deactivate();
 
-            uow.individualCustomers().delete(customer, command.permanent());
+            individualCustomers.delete(customer, command.permanent());
 
             return new DeletedIndividualCustomerResponse(
                     customer.getId(),

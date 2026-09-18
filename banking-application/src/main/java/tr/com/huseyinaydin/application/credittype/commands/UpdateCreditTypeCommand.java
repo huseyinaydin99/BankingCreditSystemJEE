@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.credittype.rules.CreditTypeBusinessRules;
-import tr.com.huseyinaydin.application.ports.IUnitOfWork;
+import tr.com.huseyinaydin.domain.repositories.ICreditTypeRepository;
 import tr.com.huseyinaydin.domain.credittype.CreditType;
 import tr.com.huseyinaydin.domain.valueobjects.Money;
 import tr.com.huseyinaydin.sharedkernel.exception.NotFoundException;
@@ -63,11 +63,11 @@ public record UpdateCreditTypeCommand(
     public static class Handler
             implements ICommandHandler<UpdateCreditTypeCommand, Response> {
 
-        private final IUnitOfWork uow;
+        private final ICreditTypeRepository creditTypes;
         private final CreditTypeBusinessRules rules;
 
-        public Handler(IUnitOfWork uow, CreditTypeBusinessRules rules) {
-            this.uow = uow;
+        public Handler(ICreditTypeRepository creditTypes, CreditTypeBusinessRules rules) {
+            this.creditTypes = creditTypes;
             this.rules = rules;
         }
 
@@ -75,7 +75,7 @@ public record UpdateCreditTypeCommand(
         public Response handle(UpdateCreditTypeCommand command) {
             rules.creditTypeMustExist(command.id());
 
-            CreditType creditType = uow.creditTypes()
+            CreditType creditType = creditTypes
                     .findById(command.id())
                     .orElseThrow();
 
@@ -96,7 +96,7 @@ public record UpdateCreditTypeCommand(
             creditType.updateDetails(command.name(), command.description(), minimumAmount, maximumAmount, command.minimumTermMonths(), command.maximumTermMonths(), command.annualInterestRate());
 
             if (command.parentCreditTypeId() != null) {
-                CreditType parent = uow.creditTypes()
+                CreditType parent = creditTypes
                         .findById(command.parentCreditTypeId())
                         .orElseThrow(() -> new NotFoundException(
                                 "CREDIT_TYPE", command.parentCreditTypeId().toString()));
@@ -105,7 +105,7 @@ public record UpdateCreditTypeCommand(
                 creditType.removeParent();
             }
 
-            uow.creditTypes().update(creditType);
+            creditTypes.update(creditType);
 
             return new Response(
                     creditType.getId(),
