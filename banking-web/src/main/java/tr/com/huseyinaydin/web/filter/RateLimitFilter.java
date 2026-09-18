@@ -1,10 +1,16 @@
 package tr.com.huseyinaydin.web.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hazelcast.config.Config;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
 import io.github.bucket4j.Bandwidth;
-import io.github.bucket4j.Bucket;
+import io.github.bucket4j.BucketConfiguration;
 import io.github.bucket4j.ConsumptionProbe;
 import io.github.bucket4j.Refill;
+import io.github.bucket4j.distributed.BucketProxy;
+import io.github.bucket4j.grid.hazelcast.HazelcastProxyManager;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,15 +23,13 @@ import tr.com.huseyinaydin.sharedkernel.exception.RateLimitProblemDetail;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class RateLimitFilter extends OncePerRequestFilter {
 
     private final Environment env;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final ConcurrentHashMap<String, Bucket> authenticatedBuckets = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Bucket> anonymousBuckets = new ConcurrentHashMap<>();
+    private HazelcastProxyManager<String> proxyManager;
 
     private int authLimit;
     private int anonLimit;
@@ -37,7 +41,14 @@ public class RateLimitFilter extends OncePerRequestFilter {
     @Override
     protected void initFilterBean() throws ServletException {
         this.authLimit = env.getProperty("banking.rate-limit.credit-application.authenticated", Integer.class, 10);
-        this. anonLimit = env.getProperty("banking.rate-limit.credit-application.anonymous", Integer.class, 3);
+        this.anonLimit = env.getProperty("banking.rate-limit.credit-application.anonymous", Integer.class, 3);
+
+        Config config = new Config();
+        config.setClusterName("banking-rate-limit-cluster");
+        HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
+
+        IMap<String, byte[]> map = hazelcastInstance.getMap("rate-limits");
+        this.proxyManager = new HazelcastProxyManager<>(map);
     }
 
     @Override
@@ -51,17 +62,24 @@ public class RateLimitFilter extends OncePerRequestFilter {
                     .getBean(ICurrentUserService.class);
 
             boolean isAuthenticated = currentUserService.isAuthenticated();
+            String key;
+            BucketConfiguration configuration;
 
-            Bucket bucket;
             if (isAuthenticated) {
-                String username = currentUserService.getCurrentUserId();
-                bucket = authenticatedBuckets.computeIfAbsent(username, this::createAuthenticatedBucket);
+                key = "auth:" + currentUserService.getCurrentUserId();
+                configuration = BucketConfiguration.builder()
+                        .addLimit(Bandwidth.classic(authLimit, Refill.greedy(authLimit, Duration.ofMinutes(1))))
+                        .build();
             } else {
-                String ip = getClientIP(request);
-                bucket = anonymousBuckets.computeIfAbsent(ip, this::createAnonymousBucket);
+                key = "anon:" + getClientIP(request);
+                configuration = BucketConfiguration.builder()
+                        .addLimit(Bandwidth.classic(anonLimit, Refill.greedy(anonLimit, Duration.ofMinutes(1))))
+                        .build();
             }
 
+            BucketProxy bucket = proxyManager.builder().build(key, configuration);
             ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
+            
             if (probe.isConsumed()) {
                 response.addHeader("X-Rate-Limit-Remaining", String.valueOf(probe.getRemainingTokens()));
                 filterChain.doFilter(request, response);
@@ -76,16 +94,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
         } else {
             filterChain.doFilter(request, response);
         }
-    }
-
-    private Bucket createAuthenticatedBucket(String key) {
-        Bandwidth limit = Bandwidth.classic(authLimit, Refill.greedy(authLimit, Duration.ofMinutes(1)));
-        return Bucket.builder().addLimit(limit).build();
-    }
-
-    private Bucket createAnonymousBucket(String key) {
-        Bandwidth limit = Bandwidth.classic(anonLimit, Refill.greedy(anonLimit, Duration.ofMinutes(1)));
-        return Bucket.builder().addLimit(limit).build();
     }
 
     private String getClientIP(HttpServletRequest request) {

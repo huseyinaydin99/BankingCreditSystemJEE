@@ -23,49 +23,40 @@
         Tüm diğer modülleri bir araya getirir; yalnızca application ve shared-kernel'e doğrudan bağımlıdır.
     </description>
 
-    
-
     <dependencies>
 
-        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-application</artifactId>
         </dependency>
 
-        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-shared-kernel</artifactId>
         </dependency>
 
-        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-infrastructure</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        
         <dependency>
             <groupId>tr.com.huseyinaydin</groupId>
             <artifactId>banking-persistence</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
 
-        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
 
-        
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
@@ -75,33 +66,28 @@
             <artifactId>spring-security-config</artifactId>
         </dependency>
 
-        
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        
         <dependency>
             <groupId>jakarta.faces</groupId>
             <artifactId>jakarta.faces-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
         </dependency>
 
-        
         <dependency>
             <groupId>jakarta.inject</groupId>
             <artifactId>jakarta.inject-api</artifactId>
         </dependency>
 
-        
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
@@ -109,13 +95,11 @@
             <classifier>jakarta</classifier>
         </dependency>
 
-        
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
 
-        
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -125,14 +109,12 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
-        
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
@@ -140,7 +122,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        
         <dependency>
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
@@ -148,7 +129,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -160,7 +140,6 @@
             <scope>test</scope>
         </dependency>
 
-        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-actuator</artifactId>
@@ -170,7 +149,6 @@
             <artifactId>micrometer-core</artifactId>
         </dependency>
 
-        
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
@@ -188,6 +166,16 @@
         <dependency>
             <groupId>com.bucket4j</groupId>
             <artifactId>bucket4j-core</artifactId>
+            <version>8.10.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <version>5.3.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j-hazelcast</artifactId>
             <version>8.10.1</version>
         </dependency>
 
@@ -223,7 +211,6 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warName>banking-credit-system</warName>
-                    
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
