@@ -1,11 +1,9 @@
 package tr.com.huseyinaydin.sharedkernel.exception;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.net.URI;
 
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProblemDetail {
 
     private URI type;

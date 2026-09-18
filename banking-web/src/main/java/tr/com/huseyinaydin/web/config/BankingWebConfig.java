@@ -49,7 +49,7 @@ public class BankingWebConfig extends org.springframework.web.servlet.config.ann
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         ObjectMapper mapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
         converters.add(new MappingJackson2HttpMessageConverter(mapper));
     }
 
