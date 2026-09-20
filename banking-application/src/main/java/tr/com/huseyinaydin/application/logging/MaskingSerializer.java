@@ -1,83 +1,78 @@
 package tr.com.huseyinaydin.application.logging;
 
-import java.lang.reflect.Field;
-import java.util.Set;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import java.util.List;
+import java.util.Set;
 
 public final class MaskingSerializer {
 
     private static final Set<String> SENSITIVE_KEYWORDS =
-            Set.of("password", "token", "secret", "salt", "hash", "pin");
+            Set.of("password", "token", "secret", "salt", "hash", "pin", 
+                   "nationalid", "taxnumber", "phone", "email", "mothername", "fathername",
+                   "tckn", "tckimlik", "vergino", "telefon", "eposta", "anneadi", "babaadi", "cardNumber", "cvv");
 
-    private static final String MASK = "***";
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    static {
+        MAPPER.registerModule(new JavaTimeModule());
+        MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        
+        SimpleModule maskingModule = new SimpleModule();
+        maskingModule.setSerializerModifier(new BeanSerializerModifier() {
+            @Override
+            public List<BeanPropertyWriter> changeProperties(SerializationConfig config, BeanDescription beanDesc, List<BeanPropertyWriter> beanProperties) {
+                for (BeanPropertyWriter writer : beanProperties) {
+                    if (isSensitive(writer)) {
+                        writer.assignSerializer(new JsonSerializer<Object>() {
+                            @Override
+                            public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws java.io.IOException {
+                                gen.writeString("***");
+                            }
+                        });
+                    }
+                }
+                return beanProperties;
+            }
+        });
+        MAPPER.registerModule(maskingModule);
+    }
 
     private MaskingSerializer() {
     }
 
-    public static String serialize(Object obj) {
-        if (obj == null) {
-            return "null";
+    private static boolean isSensitive(BeanPropertyWriter writer) {
+        if (writer.getAnnotation(SensitiveData.class) != null) {
+            return true;
         }
-
-        StringBuilder sb = new StringBuilder("{");
-        Field[] fields = obj.getClass().getDeclaredFields();
-        boolean first = true;
-        for (Field field : fields) {
-            if (field.isSynthetic()) {
-                continue;
-            }
-            if (!first) {
-                sb.append(",");
-            }
-            first = false;
-
-            String name = field.getName();
-            sb.append("\"").append(escape(name)).append("\":");
-
-            if (isSensitive(name)) {
-                sb.append("\"").append(MASK).append("\"");
-            } else {
-                sb.append("\"").append(escape(readValue(field, obj))).append("\"");
-            }
-        }
-        return sb.append("}").toString();
-    }
-
-    private static boolean isSensitive(String fieldName) {
-        String lower = fieldName.toLowerCase();
+        String lower = writer.getName().toLowerCase();
         for (String keyword : SENSITIVE_KEYWORDS) {
-            if (lower.contains(keyword)) {
+            if (lower.contains(keyword.toLowerCase())) {
                 return true;
             }
         }
         return false;
     }
 
-    private static String readValue(Field field, Object obj) {
-        try {
-            field.setAccessible(true);
-            return String.valueOf(field.get(obj));
-        } catch (Exception e) {
-            return "?";
-        }
-    }
-
-    private static String escape(String s) {
-        if (s == null) {
+    public static String serialize(Object obj) {
+        if (obj == null) {
             return "null";
         }
-        StringBuilder out = new StringBuilder(s.length());
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            switch (c) {
-                case '"'  -> out.append("\\\"");
-                case '\\' -> out.append("\\\\");
-                case '\n' -> out.append("\\n");
-                case '\r' -> out.append("\\r");
-                case '\t' -> out.append("\\t");
-                default   -> out.append(c);
-            }
+        try {
+            return MAPPER.writeValueAsString(obj);
+        } catch (Exception e) {
+            return "{\"error\":\"Serialization failed\"}";
         }
-        return out.toString();
     }
 }
