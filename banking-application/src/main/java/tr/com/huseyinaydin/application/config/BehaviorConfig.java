@@ -11,7 +11,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import tr.com.huseyinaydin.application.pipeline.ICurrentUserService;
 import tr.com.huseyinaydin.application.ports.IAuditService;
 import tr.com.huseyinaydin.application.ports.IpAddressProvider;
-import tr.com.huseyinaydin.application.pipeline.behavior.AuditBehavior;
+
 import tr.com.huseyinaydin.application.pipeline.behavior.AuthorizationBehavior;
 import tr.com.huseyinaydin.application.pipeline.behavior.LoggingBehavior;
 import tr.com.huseyinaydin.application.pipeline.behavior.PerformanceBehavior;
@@ -96,14 +96,7 @@ public class BehaviorConfig {
         return new TransactionBehavior<>(transactionManager);
     }
 
-    @Bean
-    @Order(10)
-    public AuditBehavior<?, ?> auditBehavior(
-            @Autowired(required = false) IAuditService auditService,
-            @Autowired(required = false) IpAddressProvider ipAddressProvider,
-            @Autowired(required = false) ICurrentUserService currentUserService) {
-        return new AuditBehavior<>(auditService, ipAddressProvider, currentUserService);
-    }
+
 
 
     private static class NoOpCurrentUserService implements ICurrentUserService {
