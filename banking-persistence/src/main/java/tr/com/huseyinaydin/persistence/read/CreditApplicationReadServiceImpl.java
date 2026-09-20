@@ -81,4 +81,19 @@ public class CreditApplicationReadServiceImpl implements ICreditApplicationReadS
 
         return new Paginate<>(items, pageIndex, pageSize, total);
     }
+
+    @Override
+    public List<tr.com.huseyinaydin.application.creditapplication.dtos.PendingApplicationReminderDto> getPendingApplicationsOlderThan(java.time.Instant olderThan) {
+        String sql = "SELECT ca.ID as app_id, u.EMAIL as user_email " +
+                     "FROM CREDIT_APPLICATIONS ca " +
+                     "JOIN APPLICATION_USERS u ON ca.CUSTOMER_ID = u.CUSTOMER_ID " +
+                     "WHERE ca.STATUS = ? AND ca.CREATED_DATE < ? AND ca.DELETED_DATE IS NULL AND u.DELETED_DATE IS NULL";
+        
+        Timestamp timestamp = Timestamp.from(olderThan);
+        
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new tr.com.huseyinaydin.application.creditapplication.dtos.PendingApplicationReminderDto(
+                UUID.fromString(rs.getString("app_id")),
+                rs.getString("user_email")
+        ), CreditApplicationStatus.PENDING.name(), timestamp);
+    }
 }

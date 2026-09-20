@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface ICreditApplicationReadService {
     Paginate<CreditApplicationResponse> getListByCustomerId(UUID customerId, int pageIndex, int pageSize);
+    java.util.List<tr.com.huseyinaydin.application.creditapplication.dtos.PendingApplicationReminderDto> getPendingApplicationsOlderThan(java.time.Instant olderThan);
 }
