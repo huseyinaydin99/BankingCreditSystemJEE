@@ -2,6 +2,7 @@ package tr.com.huseyinaydin.application.pipeline.behavior;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.Order;
@@ -13,19 +14,35 @@ import tr.com.huseyinaydin.sharedkernel.exception.ValidationError;
 import tr.com.huseyinaydin.sharedkernel.exception.ValidationException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @Order(6)
-public class ValidationBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
+public class ValidationBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse>, SmartInitializingSingleton {
 
     private final ApplicationContext context;
     private final Validator beanValidator;
+    @SuppressWarnings("rawtypes")
+    private final Map<Class<?>, List<IValidator>> validatorCache = new HashMap<>();
 
     public ValidationBehavior(ApplicationContext context, Validator beanValidator) {
         this.context = context;
         this.beanValidator = beanValidator;
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public void afterSingletonsInstantiated() {
+        Map<String, IValidator> allValidators = context.getBeansOfType(IValidator.class);
+        for (IValidator validator : allValidators.values()) {
+            ResolvableType validatorType = ResolvableType.forClass(validator.getClass()).as(IValidator.class);
+            Class<?> validatedType = validatorType.getGeneric(0).resolve();
+            if (validatedType != null) {
+                validatorCache.computeIfAbsent(validatedType, k -> new ArrayList<>()).add(validator);
+            }
+        }
     }
 
     @Override
@@ -41,15 +58,15 @@ public class ValidationBehavior<TRequest, TResponse> implements IPipelineBehavio
             }
         }
 
-        Map<String, IValidator> allValidators = context.getBeansOfType(IValidator.class);
-        for (IValidator validator : allValidators.values()) {
-            ResolvableType validatorType = ResolvableType.forClass(validator.getClass())
-                    .as(IValidator.class);
-            Class<?> validatedType = validatorType.getGeneric(0).resolve();
-            if (validatedType != null && validatedType.isAssignableFrom(request.getClass())) {
-                ValidationResult result = validator.validate(request);
-                if (!result.isValid()) {
-                    allErrors.addAll(result.getErrors());
+        Class<?> requestClass = request.getClass();
+        
+        for (Map.Entry<Class<?>, List<IValidator>> entry : validatorCache.entrySet()) {
+            if (entry.getKey().isAssignableFrom(requestClass)) {
+                for (IValidator validator : entry.getValue()) {
+                    ValidationResult result = validator.validate(request);
+                    if (!result.isValid()) {
+                        allErrors.addAll(result.getErrors());
+                    }
                 }
             }
         }
