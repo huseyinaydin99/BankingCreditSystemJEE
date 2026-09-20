@@ -66,6 +66,10 @@ public class CreditApplicationBusinessRules {
     }
 
     public void userCanAccessApplication(CreditApplication application) {
+        userCanAccessApplicationByCustomerId(application.getCustomerId());
+    }
+
+    public void userCanAccessApplicationByCustomerId(UUID applicationCustomerId) {
         String currentUserId = currentUserService.getCurrentUserId();
         if (currentUserId == null || !currentUserService.isAuthenticated()) {
             throw new AuthorizationException("VIEW_CREDIT_APPLICATION",
@@ -81,7 +85,7 @@ public class CreditApplicationBusinessRules {
         }
 
         UUID ownerCustomerId = resolveCurrentCustomerId(currentUserId);
-        if (ownerCustomerId == null || !ownerCustomerId.equals(application.getCustomerId())) {
+        if (ownerCustomerId == null || !ownerCustomerId.equals(applicationCustomerId)) {
             throw new AuthorizationException("VIEW_CREDIT_APPLICATION",
                     "Bu başvuruya erişim yetkiniz yok");
         }

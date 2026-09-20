@@ -3,17 +3,12 @@ package tr.com.huseyinaydin.application.creditapplication.queries;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.creditapplication.dtos.CreditApplicationResponse;
 import tr.com.huseyinaydin.application.creditapplication.rules.CreditApplicationBusinessRules;
-import tr.com.huseyinaydin.application.mapping.CreditApplicationMapper;
-import tr.com.huseyinaydin.domain.repositories.ICreditApplicationRepository;
-import tr.com.huseyinaydin.domain.repositories.ICreditTypeRepository;
-import tr.com.huseyinaydin.domain.creditapplication.CreditApplication;
-import tr.com.huseyinaydin.domain.credittype.CreditType;
+import tr.com.huseyinaydin.application.ports.read.ICreditApplicationReadService;
 import tr.com.huseyinaydin.sharedkernel.exception.NotFoundException;
 import tr.com.huseyinaydin.sharedkernel.messaging.IQuery;
 import tr.com.huseyinaydin.sharedkernel.messaging.IQueryHandler;
 
 import java.util.UUID;
-
 
 public record GetByIdCreditApplicationQuery(
         UUID id
@@ -24,33 +19,26 @@ public record GetByIdCreditApplicationQuery(
     public static class Handler
             implements IQueryHandler<GetByIdCreditApplicationQuery, CreditApplicationResponse> {
 
-        private final ICreditApplicationRepository creditApplications;
-        private final ICreditTypeRepository creditTypes;
-        private final CreditApplicationMapper mapper;
+        private final ICreditApplicationReadService readService;
         private final CreditApplicationBusinessRules rules;
 
-        public Handler(ICreditApplicationRepository creditApplications, ICreditTypeRepository creditTypes,
-                       CreditApplicationMapper mapper,
+        public Handler(ICreditApplicationReadService readService,
                        CreditApplicationBusinessRules rules) {
-            this.creditApplications = creditApplications;
-            this.creditTypes = creditTypes;
-            this.mapper = mapper;
+            this.readService = readService;
             this.rules = rules;
         }
 
         @Override
         public CreditApplicationResponse handle(GetByIdCreditApplicationQuery query) {
-            CreditApplication application = creditApplications
-                    .findById(query.id())
-                    .orElseThrow(() -> new NotFoundException("CREDIT_APPLICATION", query.id().toString()));
+            CreditApplicationResponse response = readService.getById(query.id());
+            
+            if (response == null) {
+                throw new NotFoundException("CREDIT_APPLICATION", query.id().toString());
+            }
 
-            rules.userCanAccessApplication(application);
+            rules.userCanAccessApplicationByCustomerId(response.customerId());
 
-            CreditType creditType = creditTypes
-                    .findById(application.getCreditTypeId())
-                    .orElse(null);
-
-            return mapper.toResponse(application, creditType);
+            return response;
         }
     }
 }
