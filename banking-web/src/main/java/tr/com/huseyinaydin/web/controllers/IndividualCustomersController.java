@@ -41,6 +41,7 @@ import java.util.UUID;
 @RestController
 @ApiVersion(1)
 @RequestMapping("/api/v1/individual-customers")
+@org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('OFFICER', 'ADMIN')")
 public class IndividualCustomersController extends BaseController {
 
     public IndividualCustomersController(Mediator mediator) {

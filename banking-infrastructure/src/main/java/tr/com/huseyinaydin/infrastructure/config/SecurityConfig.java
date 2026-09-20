@@ -10,8 +10,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import tr.com.huseyinaydin.application.ports.IJwtService;
 import tr.com.huseyinaydin.infrastructure.security.JwtAuthenticationFilter;
 
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final IJwtService jwtService;
@@ -29,11 +32,7 @@ public class SecurityConfig {
             .sessionManagement(session ->
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/actuator/**").hasRole("ADMIN")
                     .requestMatchers("/health", "/api/v1/auth/**").permitAll()
-                    .requestMatchers("/api/v1/credit-applications/**").hasRole("CUSTOMER")
-                    .requestMatchers("/api/v1/*-customers/**", "/api/v1/credit-types/**")
-                            .hasAnyRole("OFFICER", "ADMIN")
                     .anyRequest().authenticated()
             )
             .addFilterBefore(

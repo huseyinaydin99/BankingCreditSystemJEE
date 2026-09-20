@@ -30,6 +30,7 @@ import java.util.UUID;
 @RestController
 @ApiVersion(1)
 @RequestMapping("/api/v1/credit-applications")
+@org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('OFFICER', 'ADMIN')")
 public class ApproveCreditApplicationsController extends BaseController {
 
     public ApproveCreditApplicationsController(Mediator mediator) {

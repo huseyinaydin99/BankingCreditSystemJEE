@@ -27,6 +27,7 @@ import java.util.Map;
 @RequestMapping("/actuator")
 @Tag(name = "Actuator", description = "Sistem sağlık, bilgi ve metrik endpoint'leri (ADMIN rolü gerektirir)")
 @SecurityRequirement(name = "bearerAuth")
+@org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
 public class ActuatorController {
 
     private static final List<String> STATUS_ORDER =

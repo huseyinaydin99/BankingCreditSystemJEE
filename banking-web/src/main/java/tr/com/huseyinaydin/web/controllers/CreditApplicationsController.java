@@ -40,6 +40,7 @@ import tr.com.huseyinaydin.application.ports.metrics.IMeterRegistry;
 @RestController
 @ApiVersion(1)
 @RequestMapping("/api/v1/credit-applications")
+@org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CUSTOMER', 'OFFICER', 'ADMIN')")
 public class CreditApplicationsController extends BaseController {
 
     private final IMeterRegistry meterRegistry;
