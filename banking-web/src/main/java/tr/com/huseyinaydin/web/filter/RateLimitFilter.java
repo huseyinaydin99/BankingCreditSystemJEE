@@ -1,10 +1,6 @@
 package tr.com.huseyinaydin.web.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hazelcast.config.Config;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.IMap;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.BucketConfiguration;
 import io.github.bucket4j.ConsumptionProbe;
@@ -15,8 +11,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.core.env.Environment;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tr.com.huseyinaydin.application.pipeline.ICurrentUserService;
 import tr.com.huseyinaydin.sharedkernel.exception.RateLimitProblemDetail;
@@ -24,43 +20,33 @@ import tr.com.huseyinaydin.sharedkernel.exception.RateLimitProblemDetail;
 import java.io.IOException;
 import java.time.Duration;
 
+@Component("rateLimitFilter")
 public class RateLimitFilter extends OncePerRequestFilter {
 
-    private final Environment env;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private HazelcastProxyManager<String> proxyManager;
+    private final HazelcastProxyManager<String> proxyManager;
+    private final ICurrentUserService currentUserService;
 
-    private int authLimit;
-    private int anonLimit;
+    private final int authLimit;
+    private final int anonLimit;
 
-    public RateLimitFilter(Environment env) {
-        this.env = env;
-    }
-
-    @Override
-    protected void initFilterBean() throws ServletException {
-        this.authLimit = env.getProperty("banking.rate-limit.credit-application.authenticated", Integer.class, 10);
-        this.anonLimit = env.getProperty("banking.rate-limit.credit-application.anonymous", Integer.class, 3);
-
-        Config config = new Config();
-        config.setClusterName("banking-rate-limit-cluster");
-        HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
-
-        IMap<String, byte[]> map = hazelcastInstance.getMap("rate-limits");
-        this.proxyManager = new HazelcastProxyManager<>(map);
+    public RateLimitFilter(HazelcastProxyManager<String> proxyManager,
+                           ICurrentUserService currentUserService,
+                           @Value("${banking.rate-limit.credit-application.authenticated:10}") int authLimit,
+                           @Value("${banking.rate-limit.credit-application.anonymous:3}") int anonLimit) {
+        this.proxyManager = proxyManager;
+        this.currentUserService = currentUserService;
+        this.authLimit = authLimit;
+        this.anonLimit = anonLimit;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        if ("POST".equalsIgnoreCase(request.getMethod()) && request.getRequestURI().matches(".*/api/(v1/)?credit-?applications.*")) {
+        if ("POST".equalsIgnoreCase(request.getMethod())) {
             
-            ICurrentUserService currentUserService = WebApplicationContextUtils
-                    .getRequiredWebApplicationContext(request.getServletContext())
-                    .getBean(ICurrentUserService.class);
-
             boolean isAuthenticated = currentUserService.isAuthenticated();
             String key;
             BucketConfiguration configuration;

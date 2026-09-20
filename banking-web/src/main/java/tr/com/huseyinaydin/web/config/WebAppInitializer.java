@@ -76,10 +76,12 @@ public class WebAppInitializer implements WebApplicationInitializer {
         FilterRegistration.Dynamic security = ctx.addFilter("springSecurityFilterChain", new DelegatingFilterProxy("springSecurityFilterChain"));
         security.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR), false, "/*");
 
-        FilterRegistration.Dynamic rateLimit =
-                ctx.addFilter("rateLimitFilter", new tr.com.huseyinaydin.web.filter.RateLimitFilter(rootCtx.getEnvironment()));
+        DelegatingFilterProxy rateLimitProxy = new DelegatingFilterProxy("rateLimitFilter");
+        rateLimitProxy.setContextAttribute("org.springframework.web.servlet.FrameworkServlet.CONTEXT.apiServlet");
+        
+        FilterRegistration.Dynamic rateLimit = ctx.addFilter("rateLimitFilter", rateLimitProxy);
         rateLimit.addMappingForUrlPatterns(
                 EnumSet.of(DispatcherType.REQUEST),
-                false, "/api/*");
+                false, "/api/v1/credit-applications/*");
     }
 }
